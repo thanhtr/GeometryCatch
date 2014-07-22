@@ -15,16 +15,20 @@ let dropCategory:UInt32 = 1 << 3
 class GameScene: SKScene, SKPhysicsContactDelegate{
     var paddle:SKSpriteNode!
     var speedOffset:Double!
-    
+    var paddleArray:NSMutableArray!
+    var paddleHoldShapeOffset:Float = 0.6
+    var paddleArrayIndex:Int = 0
+    var bgColor:UIColor!
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
         speedOffset = 0.1
         self.size.width = 768
         self.size.height = 1024
-        
+        paddleArray = NSMutableArray(capacity: 3)
         self.physicsWorld.gravity = CGVectorMake(0.0, 0.0)
         self.physicsWorld.contactDelegate = self
-        self.backgroundColor = SKColor(red: 251/255, green: 174/255, blue: 23/255, alpha: 1.0)
+        bgColor = UIColor(red: 251/255, green: 174/255, blue: 23/255, alpha: 1.0)
+        self.backgroundColor = bgColor
         self.physicsBody = SKPhysicsBody(edgeLoopFromRect: self.frame)
         self.physicsBody.categoryBitMask = worldCategory
         self.physicsBody.collisionBitMask = paddleCategory
@@ -36,7 +40,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
         paddle.physicsBody.allowsRotation = false
         paddle.physicsBody.dynamic = true
         paddle.physicsBody.categoryBitMask = paddleCategory
-        paddle.physicsBody.collisionBitMask = worldCategory | dropCategory
+        paddle.physicsBody.collisionBitMask = worldCategory
         paddle.physicsBody.contactTestBitMask = dropCategory
         self.addChild(paddle)
         
@@ -76,7 +80,61 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
     
     
     func didBeginContact(contact: SKPhysicsContact){
-        contact.bodyB.node.removeFromParent()
+        //        contact.bodyB.node.removeFromParent()
+        for var i = 0; i < paddleArray.count; ++i{
+            NSLog("%d", i)
+        }
+        
+        var takenShape:SKSpriteNode
+        let shape = contact.bodyB.node as Drops
+        //        shape.removeFromParent()
+        paddleArray[paddleArrayIndex] = shape.type
+        if paddleArrayIndex >= 1 && paddleArray[paddleArrayIndex-1].integerValue != shape.type && paddleArray[paddleArrayIndex-1] != nil{
+            paddleArray.removeAllObjects()
+            paddleArrayIndex = 0
+            paddle.removeAllChildren()
+            paddleHoldShapeOffset = 0.6
+        }
+        else if paddleArrayIndex != 2{
+            switch(shape.type){
+            case 0:
+                takenShape = SKSpriteNode(imageNamed: "shape_circle")
+                paddle.addChild(takenShape)
+                
+                takenShape.position = CGPointMake(paddle.size.width * (0.2 - paddleHoldShapeOffset), 0)
+                takenShape.color = bgColor
+                takenShape.colorBlendFactor = 1
+                break
+            case 1:
+                takenShape = SKSpriteNode(imageNamed: "shape_square")
+                paddle.addChild(takenShape)
+                
+                takenShape.position = CGPointMake(paddle.size.width * (0.2 - paddleHoldShapeOffset), 0)
+                takenShape.color = bgColor
+                takenShape.colorBlendFactor = 1
+                break
+            case 2:
+                takenShape = SKSpriteNode(imageNamed: "shape_triangle")
+                paddle.addChild(takenShape)
+                
+                takenShape.position = CGPointMake(paddle.size.width * (0.2 - paddleHoldShapeOffset), 0)
+                takenShape.color = bgColor
+                takenShape.colorBlendFactor = 1
+                break
+            default:
+                break
+            }
+        }
+        else {
+            paddleArray.removeAllObjects()
+            paddleArrayIndex = 0
+            paddle.removeAllChildren()
+            paddleHoldShapeOffset = 0.6
+        }
+        paddleHoldShapeOffset -= 0.4
+        if paddleHoldShapeOffset < -0.2{
+            paddleHoldShapeOffset = 0.6
+        }
     }
     
     func randomShapeAndPosition(){
@@ -88,15 +146,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
             drop = Drops(name: "shape_circle")
             drop.type = dropType
             drop.position = CGPointMake(self.size.width * dropPositionOffset, self.size.height)
-            drop.runAction(SKAction.moveToY(-100, duration: 1))
+            drop.runAction(SKAction.moveToY(-100, duration: 10 * speedOffset))
             self.addChild(drop)
+            drop.runAction(SKAction.rotateByAngle(CGFloat(M_PI), duration: 1))
+            drop.color = bgColor
             break
         case 1:
             drop = Drops(name: "shape_square")
             drop.type = dropType
             drop.position = CGPointMake(self.size.width * dropPositionOffset, self.size.height)
-            drop.runAction(SKAction.moveToY(-100, duration: 1))
+            drop.runAction(SKAction.moveToY(-100, duration: 10 * speedOffset))
             self.addChild(drop)
+            drop.runAction(SKAction.rotateByAngle(CGFloat(M_PI), duration: 10 * speedOffset))
             break
         case 2:
             drop = Drops(name: "shape_triangle")
@@ -104,6 +165,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
             drop.position = CGPointMake(self.size.width * dropPositionOffset, self.size.height)
             drop.runAction(SKAction.moveToY(-100, duration: 1))
             self.addChild(drop)
+            drop.runAction(SKAction.rotateByAngle(CGFloat(M_PI), duration: 1))
             break
         default:
             break

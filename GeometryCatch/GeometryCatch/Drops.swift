@@ -34,7 +34,6 @@ class Drops: SKSpriteNode {
         self.physicsBody = SKPhysicsBody(circleOfRadius: self.size.height/2)
         self.physicsBody.dynamic = true
         self.physicsBody.categoryBitMask = dropCategory
-        self.physicsBody.collisionBitMask = paddleCategory
         self.physicsBody.contactTestBitMask = paddleCategory
     }
 }
