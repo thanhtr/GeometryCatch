@@ -14,7 +14,11 @@
 		6A14BD84197E692D005BE9DA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6A14BD82197E692D005BE9DA /* Main.storyboard */; };
 		6A14BD86197E692D005BE9DA /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6A14BD85197E692D005BE9DA /* Images.xcassets */; };
 		6A14BD92197E692D005BE9DA /* GeometryCatchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A14BD91197E692D005BE9DA /* GeometryCatchTests.swift */; };
-		6A14BD9D197E6958005BE9DA /* paddle1.png in Resources */ = {isa = PBXBuildFile; fileRef = 6A14BD9C197E6958005BE9DA /* paddle1.png */; };
+		6A14BDA2197EBFEF005BE9DA /* shape_triangle.png in Resources */ = {isa = PBXBuildFile; fileRef = 6A14BD9E197EBFEF005BE9DA /* shape_triangle.png */; };
+		6A14BDA3197EBFEF005BE9DA /* shape_square.png in Resources */ = {isa = PBXBuildFile; fileRef = 6A14BD9F197EBFEF005BE9DA /* shape_square.png */; };
+		6A14BDA4197EBFEF005BE9DA /* shape_circle.png in Resources */ = {isa = PBXBuildFile; fileRef = 6A14BDA0197EBFEF005BE9DA /* shape_circle.png */; };
+		6A14BDA5197EBFEF005BE9DA /* paddle.png in Resources */ = {isa = PBXBuildFile; fileRef = 6A14BDA1197EBFEF005BE9DA /* paddle.png */; };
+		6A14BDA8197EC7B0005BE9DA /* Drops.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A14BDA7197EC7B0005BE9DA /* Drops.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,7 +43,11 @@
 		6A14BD8B197E692D005BE9DA /* GeometryCatchTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GeometryCatchTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6A14BD90197E692D005BE9DA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6A14BD91197E692D005BE9DA /* GeometryCatchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeometryCatchTests.swift; sourceTree = "<group>"; };
-		6A14BD9C197E6958005BE9DA /* paddle1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = paddle1.png; sourceTree = "<group>"; };
+		6A14BD9E197EBFEF005BE9DA /* shape_triangle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = shape_triangle.png; sourceTree = "<group>"; };
+		6A14BD9F197EBFEF005BE9DA /* shape_square.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = shape_square.png; sourceTree = "<group>"; };
+		6A14BDA0197EBFEF005BE9DA /* shape_circle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = shape_circle.png; sourceTree = "<group>"; };
+		6A14BDA1197EBFEF005BE9DA /* paddle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = paddle.png; sourceTree = "<group>"; };
+		6A14BDA7197EC7B0005BE9DA /* Drops.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Drops.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +89,7 @@
 		6A14BD77197E692D005BE9DA /* GeometryCatch */ = {
 			isa = PBXGroup;
 			children = (
+				6A14BDA6197EC76C005BE9DA /* SupportingFiles */,
 				6A14BD9B197E693B005BE9DA /* Art */,
 				6A14BD7A197E692D005BE9DA /* AppDelegate.swift */,
 				6A14BD7C197E692D005BE9DA /* GameScene.sks */,
@@ -121,9 +130,20 @@
 		6A14BD9B197E693B005BE9DA /* Art */ = {
 			isa = PBXGroup;
 			children = (
-				6A14BD9C197E6958005BE9DA /* paddle1.png */,
+				6A14BD9E197EBFEF005BE9DA /* shape_triangle.png */,
+				6A14BD9F197EBFEF005BE9DA /* shape_square.png */,
+				6A14BDA0197EBFEF005BE9DA /* shape_circle.png */,
+				6A14BDA1197EBFEF005BE9DA /* paddle.png */,
 			);
 			name = Art;
+			sourceTree = "<group>";
+		};
+		6A14BDA6197EC76C005BE9DA /* SupportingFiles */ = {
+			isa = PBXGroup;
+			children = (
+				6A14BDA7197EC7B0005BE9DA /* Drops.swift */,
+			);
+			name = SupportingFiles;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -206,10 +226,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6A14BDA4197EBFEF005BE9DA /* shape_circle.png in Resources */,
 				6A14BD86197E692D005BE9DA /* Images.xcassets in Resources */,
-				6A14BD9D197E6958005BE9DA /* paddle1.png in Resources */,
 				6A14BD7D197E692D005BE9DA /* GameScene.sks in Resources */,
 				6A14BD84197E692D005BE9DA /* Main.storyboard in Resources */,
+				6A14BDA3197EBFEF005BE9DA /* shape_square.png in Resources */,
+				6A14BDA2197EBFEF005BE9DA /* shape_triangle.png in Resources */,
+				6A14BDA5197EBFEF005BE9DA /* paddle.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -229,6 +252,7 @@
 			files = (
 				6A14BD7F197E692D005BE9DA /* GameScene.swift in Sources */,
 				6A14BD81197E692D005BE9DA /* GameViewController.swift in Sources */,
+				6A14BDA8197EC7B0005BE9DA /* Drops.swift in Sources */,
 				6A14BD7B197E692D005BE9DA /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -346,6 +370,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				INFOPLIST_FILE = GeometryCatch/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -357,6 +382,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				INFOPLIST_FILE = GeometryCatch/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
