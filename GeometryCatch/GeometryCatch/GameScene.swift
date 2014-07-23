@@ -47,6 +47,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
         //        NSLog("%fx%f", self.size.width, self.size.height)
         
         self.dropShape()
+
     }
     
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
@@ -81,14 +82,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
     
     func didBeginContact(contact: SKPhysicsContact){
         //        contact.bodyB.node.removeFromParent()
-        for var i = 0; i < paddleArray.count; ++i{
-            NSLog("%d", i)
-        }
-        
+//        for var i = 0; i < paddleArray.count; ++i{
+            NSLog("%d", paddleArrayIndex)
+//        }
         var takenShape:SKSpriteNode
         let shape = contact.bodyB.node as Drops
         //        shape.removeFromParent()
-        paddleArray[paddleArrayIndex] = shape.type
+        paddleArray.addObject(shape.type)
         if paddleArrayIndex >= 1 && paddleArray[paddleArrayIndex-1].integerValue != shape.type && paddleArray[paddleArrayIndex-1] != nil{
             paddleArray.removeAllObjects()
             paddleArrayIndex = 0
@@ -124,6 +124,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
             default:
                 break
             }
+            paddleArrayIndex += 1;
+            paddleHoldShapeOffset -= 0.4
+
         }
         else {
             paddleArray.removeAllObjects()
@@ -131,7 +134,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
             paddle.removeAllChildren()
             paddleHoldShapeOffset = 0.6
         }
-        paddleHoldShapeOffset -= 0.4
         if paddleHoldShapeOffset < -0.2{
             paddleHoldShapeOffset = 0.6
         }
