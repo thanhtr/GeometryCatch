@@ -99,7 +99,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
             speedOffset = speedOffset / 1.5
         }
         if(levelBar.size.width <= 0){
-            self.gameOver()
+            gameOver()
         }
     }
     
@@ -117,37 +117,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
             levelBar.size.width -= 100
         }
         else if paddleArrayIndex != 2{
-            switch(shape.type){
-            case 0:
-                takenShape = SKSpriteNode(imageNamed: "shape_circle")
-                paddle.addChild(takenShape)
-                
-                takenShape.position = CGPointMake(paddle.size.width * (0.2 - paddleHoldShapeOffset), 0)
-                takenShape.color = bgColor
-                takenShape.colorBlendFactor = 1
-                break
-            case 1:
-                takenShape = SKSpriteNode(imageNamed: "shape_square")
-                paddle.addChild(takenShape)
-                
-                takenShape.position = CGPointMake(paddle.size.width * (0.2 - paddleHoldShapeOffset), 0)
-                takenShape.color = bgColor
-                takenShape.colorBlendFactor = 1
-                break
-            case 2:
-                takenShape = SKSpriteNode(imageNamed: "shape_triangle")
-                paddle.addChild(takenShape)
-                
-                takenShape.position = CGPointMake(paddle.size.width * (0.2 - paddleHoldShapeOffset), 0)
-                takenShape.color = bgColor
-                takenShape.colorBlendFactor = 1
-                break
-            default:
-                break
-            }
+            takenShape = SKSpriteNode(imageNamed: self.chooseShape(shape.type))
+            paddle.addChild(takenShape)
+            
+            takenShape.position = CGPointMake(paddle.size.width * (0.2 - paddleHoldShapeOffset), 0)
+            takenShape.color = bgColor
+            takenShape.colorBlendFactor = 1
             paddleArrayIndex += 1;
             paddleHoldShapeOffset -= 0.4
-            
         }
         else {
             paddleArray.removeAllObjects()
@@ -166,41 +143,41 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
         if !isGameOver{
             var dropType = (Int)(arc4random()%3)
             var dropPositionOffset:Float = ((Float)(arc4random()%8 + 1))/10
-            var drop:Drops
-            switch(dropType){
-            case 0:
-                drop = Drops(name: "shape_circle")
-                drop.type = dropType
-                drop.position = CGPointMake(self.size.width * dropPositionOffset, self.size.height)
-                drop.runAction(SKAction.moveToY(-100, duration: 10 * speedOffset))
-                self.addChild(drop)
-                drop.runAction(SKAction.rotateByAngle(CGFloat(M_PI), duration: 1))
-                drop.color = bgColor
-                break
-            case 1:
-                drop = Drops(name: "shape_square")
-                drop.type = dropType
-                drop.position = CGPointMake(self.size.width * dropPositionOffset, self.size.height)
-                drop.runAction(SKAction.moveToY(-100, duration: 10 * speedOffset))
-                self.addChild(drop)
-                drop.runAction(SKAction.rotateByAngle(CGFloat(M_PI), duration: 10 * speedOffset))
-                break
-            case 2:
-                drop = Drops(name: "shape_triangle")
-                drop.type = dropType
-                drop.position = CGPointMake(self.size.width * dropPositionOffset, self.size.height)
-                drop.runAction(SKAction.moveToY(-100, duration: 10 * speedOffset))
-                self.addChild(drop)
-                drop.runAction(SKAction.rotateByAngle(CGFloat(M_PI), duration: 1))
-                break
-            default:
-                break
-            }
+            var drop = Drops(name: self.chooseShape(dropType))
+            drop.type = dropType
+            drop.position = CGPointMake(self.size.width * dropPositionOffset, self.size.height)
+            drop.runAction(SKAction.moveToY(-100, duration: 10 * speedOffset))
+            self.addChild(drop)
+            drop.runAction(SKAction.rotateByAngle(CGFloat(M_PI), duration: 1))
+            drop.color = bgColor
+            
         }
+        
+    }
+    
+    
+    func chooseShape(input:Int)->NSString{
+        var temp:NSString = NSString()
+        switch(input){
+        case 0:
+            temp = "shape_circle"
+            
+        case 1:
+            temp = "shape_square"
+            
+        case 2:
+            temp = "shape_triangle"
+            
+        default:
+            break
+        }
+        return temp
     }
     
     func dropShape(){
-        var dropRandom = SKAction.runBlock({() in self.randomShapeAndPosition()})
+        var dropRandom = SKAction.runBlock({
+            self.randomShapeAndPosition();
+            })
         var delay = SKAction.waitForDuration(0.5)
         var dropAndDelay = SKAction.sequence([dropRandom, delay])
         var dropAndDelayForever = SKAction.repeatActionForever(dropAndDelay)
