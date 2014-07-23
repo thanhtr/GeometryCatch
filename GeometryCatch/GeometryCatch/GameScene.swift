@@ -19,8 +19,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
     var paddleHoldShapeOffset:Float = 0.6
     var paddleArrayIndex:Int = 0
     var bgColor:UIColor!
+    var levelBar:SKSpriteNode!
+    var level:Int = 1
+    var score:Int = 0
+    var scoreLabel:SKLabelNode!
+    var isGameOver:Bool!
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
+        isGameOver = false
         speedOffset = 0.1
         self.size.width = 768
         self.size.height = 1024
@@ -46,54 +52,69 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
         
         //        NSLog("%fx%f", self.size.width, self.size.height)
         
+        levelBar = SKSpriteNode(imageNamed: "levelBar")
+        levelBar.anchorPoint = CGPointMake(0, 0.5)
+        levelBar.position = CGPointMake(0, 0)
+        levelBar.size.width = self.size.width/2
+        levelBar.yScale = 2.0
+        self.addChild(levelBar)
+        
+        scoreLabel = SKLabelNode()
+        scoreLabel.text = String(score)
+        scoreLabel.position = CGPointMake(self.size.width * 0.9, self.size.height * 0.9)
+        scoreLabel.color = SKColor.blackColor()
+        scoreLabel.colorBlendFactor = 1
+        self.addChild(scoreLabel)
+        
         self.dropShape()
-
+        
     }
     
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
         /* Called when a touch begins */
-        let touch:UITouch = touches.anyObject() as UITouch
-        let location = touch.locationInNode(self)
-        paddle.runAction(SKAction.moveToX(location.x, duration: speedOffset))
-        
+        if !isGameOver{
+            let touch:UITouch = touches.anyObject() as UITouch
+            let location = touch.locationInNode(self)
+            paddle.runAction(SKAction.moveToX(location.x, duration: speedOffset))
+        }
         
         
     }
     
     override func touchesMoved(touches: NSSet!, withEvent event: UIEvent!) {
-        let touch:UITouch = touches.anyObject() as UITouch
-        let location = touch.locationInNode(self)
-        paddle.position.x = location.x
+        if !isGameOver{
+            let touch:UITouch = touches.anyObject() as UITouch
+            let location = touch.locationInNode(self)
+            paddle.position.x = location.x
+        }
     }
-    
     
     override func update(currentTime: CFTimeInterval) {
         /* Called before each frame is rendered */
-        //        if paddle.position.x <= paddle.size.width/1.8{
-        //            paddle.position.x = paddle.size.width/1.8
-        //
-        //        }
-        //        else if paddle.position.x >= self.size.width - paddle.size.width/1.8{
-        //            paddle.position.x = self.size.width - paddle.size.width/1.8
-        //        }
-        //
+        levelBar.size.width -= 0.5
+        scoreLabel.text = String(score)
+        if levelBar.size.width  == self.size.width{
+            levelBar.size.width = self.size.width * 0.2
+            level++;
+            speedOffset = speedOffset / 1.5
+        }
+        if(levelBar.size.width <= 0){
+            self.gameOver()
+        }
     }
     
     
     func didBeginContact(contact: SKPhysicsContact){
-        //        contact.bodyB.node.removeFromParent()
-//        for var i = 0; i < paddleArray.count; ++i{
-            NSLog("%d", paddleArrayIndex)
-//        }
         var takenShape:SKSpriteNode
         let shape = contact.bodyB.node as Drops
-        //        shape.removeFromParent()
+        shape.removeFromParent()
         paddleArray.addObject(shape.type)
         if paddleArrayIndex >= 1 && paddleArray[paddleArrayIndex-1].integerValue != shape.type && paddleArray[paddleArrayIndex-1] != nil{
             paddleArray.removeAllObjects()
             paddleArrayIndex = 0
             paddle.removeAllChildren()
             paddleHoldShapeOffset = 0.6
+            levelBar.size.width -= 100
         }
         else if paddleArrayIndex != 2{
             switch(shape.type){
@@ -126,13 +147,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
             }
             paddleArrayIndex += 1;
             paddleHoldShapeOffset -= 0.4
-
+            
         }
         else {
             paddleArray.removeAllObjects()
             paddleArrayIndex = 0
             paddle.removeAllChildren()
             paddleHoldShapeOffset = 0.6
+            levelBar.size.width += 300
+            score += 100
         }
         if paddleHoldShapeOffset < -0.2{
             paddleHoldShapeOffset = 0.6
@@ -140,39 +163,40 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
     }
     
     func randomShapeAndPosition(){
-        var dropType = (Int)(arc4random()%3)
-        var dropPositionOffset:Float = ((Float)(arc4random()%8 + 1))/10
-        var drop:Drops
-        switch(dropType){
-        case 0:
-            drop = Drops(name: "shape_circle")
-            drop.type = dropType
-            drop.position = CGPointMake(self.size.width * dropPositionOffset, self.size.height)
-            drop.runAction(SKAction.moveToY(-100, duration: 10 * speedOffset))
-            self.addChild(drop)
-            drop.runAction(SKAction.rotateByAngle(CGFloat(M_PI), duration: 1))
-            drop.color = bgColor
-            break
-        case 1:
-            drop = Drops(name: "shape_square")
-            drop.type = dropType
-            drop.position = CGPointMake(self.size.width * dropPositionOffset, self.size.height)
-            drop.runAction(SKAction.moveToY(-100, duration: 10 * speedOffset))
-            self.addChild(drop)
-            drop.runAction(SKAction.rotateByAngle(CGFloat(M_PI), duration: 10 * speedOffset))
-            break
-        case 2:
-            drop = Drops(name: "shape_triangle")
-            drop.type = dropType
-            drop.position = CGPointMake(self.size.width * dropPositionOffset, self.size.height)
-            drop.runAction(SKAction.moveToY(-100, duration: 1))
-            self.addChild(drop)
-            drop.runAction(SKAction.rotateByAngle(CGFloat(M_PI), duration: 1))
-            break
-        default:
-            break
+        if !isGameOver{
+            var dropType = (Int)(arc4random()%3)
+            var dropPositionOffset:Float = ((Float)(arc4random()%8 + 1))/10
+            var drop:Drops
+            switch(dropType){
+            case 0:
+                drop = Drops(name: "shape_circle")
+                drop.type = dropType
+                drop.position = CGPointMake(self.size.width * dropPositionOffset, self.size.height)
+                drop.runAction(SKAction.moveToY(-100, duration: 10 * speedOffset))
+                self.addChild(drop)
+                drop.runAction(SKAction.rotateByAngle(CGFloat(M_PI), duration: 1))
+                drop.color = bgColor
+                break
+            case 1:
+                drop = Drops(name: "shape_square")
+                drop.type = dropType
+                drop.position = CGPointMake(self.size.width * dropPositionOffset, self.size.height)
+                drop.runAction(SKAction.moveToY(-100, duration: 10 * speedOffset))
+                self.addChild(drop)
+                drop.runAction(SKAction.rotateByAngle(CGFloat(M_PI), duration: 10 * speedOffset))
+                break
+            case 2:
+                drop = Drops(name: "shape_triangle")
+                drop.type = dropType
+                drop.position = CGPointMake(self.size.width * dropPositionOffset, self.size.height)
+                drop.runAction(SKAction.moveToY(-100, duration: 10 * speedOffset))
+                self.addChild(drop)
+                drop.runAction(SKAction.rotateByAngle(CGFloat(M_PI), duration: 1))
+                break
+            default:
+                break
+            }
         }
-        
     }
     
     func dropShape(){
@@ -180,7 +204,26 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
         var delay = SKAction.waitForDuration(0.5)
         var dropAndDelay = SKAction.sequence([dropRandom, delay])
         var dropAndDelayForever = SKAction.repeatActionForever(dropAndDelay)
-        self.runAction(dropAndDelayForever)
+        self.runAction(dropAndDelayForever, withKey: "dropShape")
     }
     
+    func gameOver(){
+        isGameOver = true
+        let children = self.children
+        var shapesArray:NSMutableArray = NSMutableArray()
+        for child : AnyObject in children{
+            if child.isKindOfClass(Drops){
+                shapesArray.addObject(child)
+            }
+        }
+        for shape : AnyObject in shapesArray{
+            shape.removeAllActions()
+        }
+        var gameOverText:SKLabelNode = SKLabelNode(text: "GAMEOVER")
+        gameOverText.position = CGPointMake(self.size.width/2, self.size.height/2)
+        gameOverText.color = SKColor.redColor()
+        gameOverText.colorBlendFactor = 1
+        self.addChild(gameOverText)
+        self.removeAllActions()
+    }
 }

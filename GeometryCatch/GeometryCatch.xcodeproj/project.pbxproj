@@ -19,6 +19,7 @@
 		6A14BDA4197EBFEF005BE9DA /* shape_circle.png in Resources */ = {isa = PBXBuildFile; fileRef = 6A14BDA0197EBFEF005BE9DA /* shape_circle.png */; };
 		6A14BDA5197EBFEF005BE9DA /* paddle.png in Resources */ = {isa = PBXBuildFile; fileRef = 6A14BDA1197EBFEF005BE9DA /* paddle.png */; };
 		6A14BDA8197EC7B0005BE9DA /* Drops.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A14BDA7197EC7B0005BE9DA /* Drops.swift */; };
+		6AA9F449197FF77300CC3FC0 /* levelBar.png in Resources */ = {isa = PBXBuildFile; fileRef = 6AA9F448197FF77300CC3FC0 /* levelBar.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,6 +49,7 @@
 		6A14BDA0197EBFEF005BE9DA /* shape_circle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = shape_circle.png; sourceTree = "<group>"; };
 		6A14BDA1197EBFEF005BE9DA /* paddle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = paddle.png; sourceTree = "<group>"; };
 		6A14BDA7197EC7B0005BE9DA /* Drops.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Drops.swift; sourceTree = "<group>"; };
+		6AA9F448197FF77300CC3FC0 /* levelBar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = levelBar.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,6 +132,7 @@
 		6A14BD9B197E693B005BE9DA /* Art */ = {
 			isa = PBXGroup;
 			children = (
+				6AA9F448197FF77300CC3FC0 /* levelBar.png */,
 				6A14BD9E197EBFEF005BE9DA /* shape_triangle.png */,
 				6A14BD9F197EBFEF005BE9DA /* shape_square.png */,
 				6A14BDA0197EBFEF005BE9DA /* shape_circle.png */,
@@ -230,6 +233,7 @@
 				6A14BD86197E692D005BE9DA /* Images.xcassets in Resources */,
 				6A14BD7D197E692D005BE9DA /* GameScene.sks in Resources */,
 				6A14BD84197E692D005BE9DA /* Main.storyboard in Resources */,
+				6AA9F449197FF77300CC3FC0 /* levelBar.png in Resources */,
 				6A14BDA3197EBFEF005BE9DA /* shape_square.png in Resources */,
 				6A14BDA2197EBFEF005BE9DA /* shape_triangle.png in Resources */,
 				6A14BDA5197EBFEF005BE9DA /* paddle.png in Resources */,
@@ -443,6 +447,7 @@
 				6A14BD97197E692D005BE9DA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		6A14BD98197E692D005BE9DA /* Build configuration list for PBXNativeTarget "GeometryCatchTests" */ = {
 			isa = XCConfigurationList;
@@ -451,6 +456,7 @@
 				6A14BD9A197E692D005BE9DA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
