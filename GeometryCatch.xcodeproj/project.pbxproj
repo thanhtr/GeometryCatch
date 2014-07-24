@@ -30,6 +30,8 @@
 		6A0CBBFA198041D7003382ED /* shape_circle.png in Resources */ = {isa = PBXBuildFile; fileRef = 6A0CBBF5198041D7003382ED /* shape_circle.png */; };
 		6A0CBBFB198041D7003382ED /* shape_square.png in Resources */ = {isa = PBXBuildFile; fileRef = 6A0CBBF6198041D7003382ED /* shape_square.png */; };
 		6A0CBBFC198041D7003382ED /* shape_triangle.png in Resources */ = {isa = PBXBuildFile; fileRef = 6A0CBBF7198041D7003382ED /* shape_triangle.png */; };
+		6A38B18919812B9B00376662 /* Rain.sks in Resources */ = {isa = PBXBuildFile; fileRef = 6A38B18719812B9B00376662 /* Rain.sks */; };
+		6A38B18A19812B9B00376662 /* spark.png in Resources */ = {isa = PBXBuildFile; fileRef = 6A38B18819812B9B00376662 /* spark.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -73,6 +75,8 @@
 		6A0CBBF5198041D7003382ED /* shape_circle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = shape_circle.png; sourceTree = "<group>"; };
 		6A0CBBF6198041D7003382ED /* shape_square.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = shape_square.png; sourceTree = "<group>"; };
 		6A0CBBF7198041D7003382ED /* shape_triangle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = shape_triangle.png; sourceTree = "<group>"; };
+		6A38B18719812B9B00376662 /* Rain.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Rain.sks; sourceTree = "<group>"; };
+		6A38B18819812B9B00376662 /* spark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spark.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -147,6 +151,8 @@
 				6A0CBBBC1980411A003382ED /* Supporting Files */,
 				6A0CBBEF198041BA003382ED /* Drops.h */,
 				6A0CBBF0198041BA003382ED /* Drops.m */,
+				6A38B18719812B9B00376662 /* Rain.sks */,
+				6A38B18819812B9B00376662 /* spark.png */,
 			);
 			path = GeometryCatch;
 			sourceTree = "<group>";
@@ -268,9 +274,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6A38B18A19812B9B00376662 /* spark.png in Resources */,
 				6A0CBBFC198041D7003382ED /* shape_triangle.png in Resources */,
 				6A0CBBFA198041D7003382ED /* shape_circle.png in Resources */,
 				6A0CBBF8198041D7003382ED /* levelBar.png in Resources */,
+				6A38B18919812B9B00376662 /* Rain.sks in Resources */,
 				6A0CBBF9198041D7003382ED /* paddle.png in Resources */,
 				6A0CBBC01980411A003382ED /* InfoPlist.strings in Resources */,
 				6A0CBBFB198041D7003382ED /* shape_square.png in Resources */,
@@ -506,6 +514,7 @@
 				6A0CBBEB1980411A003382ED /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		6A0CBBEC1980411A003382ED /* Build configuration list for PBXNativeTarget "GeometryCatchTests" */ = {
 			isa = XCConfigurationList;
@@ -514,6 +523,7 @@
 				6A0CBBEE1980411A003382ED /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

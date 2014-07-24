@@ -9,7 +9,7 @@
 #import "MyScene.h"
 
 @implementation MyScene
-@synthesize paddle,speedOffset,paddleArray,paddleHoldShapeOffset, paddleArrayIndex, bgColor, level, levelBar, score, scoreLabel, isGameOver,gameOverTextCanBeAdded,gameOverText,levelLabel;
+@synthesize paddle,speedOffset,paddleArray,paddleHoldShapeOffset, paddleArrayIndex, bgColor, level, levelBar, score, scoreLabel, isGameOver,gameOverTextCanBeAdded,gameOverText,levelLabel,rainNode;
 
 -(id)initWithSize:(CGSize)size {
     if (self = [super initWithSize:size]) {
@@ -70,6 +70,17 @@
         
         //Drop shapes
         [self dropShape];
+        
+        
+        //Particle rain
+        //Particle effects
+        NSString *rainPath =
+        [[NSBundle mainBundle]
+         pathForResource:@"Rain" ofType:@"sks"];
+        rainNode =
+        [NSKeyedUnarchiver unarchiveObjectWithFile:rainPath];
+        rainNode.position = CGPointMake(self.size.width/2, self.size.height);
+        [self addChild:rainNode];
 
     }
     return self;
@@ -113,14 +124,15 @@
 -(void)update:(CFTimeInterval)currentTime {
     /* Called before each frame is rendered */
     //Level bar reduce over time
-    levelBar.size = CGSizeMake(levelBar.size.width - 0.5, levelBar.size.height);
-    
+    levelBar.size = CGSizeMake(levelBar.size.width - 0.1, levelBar.size.height);
+    levelLabel.text = [NSString stringWithFormat:@"%d", level];
+    scoreLabel.text = [NSString stringWithFormat:@"%d",score];
+
     // if level bar > screen next level, if level bar < 0 gameover
     if(levelBar.size.width == self.size.width){
         levelBar.size = CGSizeMake(self.size.width*0.2, levelBar.size.height);
         level++;
         speedOffset = speedOffset/1.5;
-        levelLabel.text = [NSString stringWithFormat:@"%d", level];
 
     }
     if(levelBar.size.width <= 0){
@@ -157,8 +169,6 @@
         paddleHoldShapeOffset = 0.6;
         levelBar.size = CGSizeMake(levelBar.size.width + self.size.width*0.3, levelBar.size.height);
         score += 100;
-        level ++;
-        scoreLabel.text = [NSString stringWithFormat:@"%d",score];
 
     }
     
@@ -203,7 +213,7 @@
     SKAction *dropRandom = [SKAction runBlock:^{
         [self randomShapeAndPosition];
     }];
-    SKAction *delay = [SKAction waitForDuration:0.5];
+    SKAction *delay = [SKAction waitForDuration:0.25];
     SKAction *dropAndDelay = [SKAction sequence:@[dropRandom, delay]];
     SKAction *dropAndDelayForever = [SKAction repeatActionForever:dropAndDelay];
     [self runAction:dropAndDelayForever withKey:@"dropShape"];
