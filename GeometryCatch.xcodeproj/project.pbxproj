@@ -32,6 +32,7 @@
 		6A0CBBFC198041D7003382ED /* shape_triangle.png in Resources */ = {isa = PBXBuildFile; fileRef = 6A0CBBF7198041D7003382ED /* shape_triangle.png */; };
 		6A38B18919812B9B00376662 /* Rain.sks in Resources */ = {isa = PBXBuildFile; fileRef = 6A38B18719812B9B00376662 /* Rain.sks */; };
 		6A38B18A19812B9B00376662 /* spark.png in Resources */ = {isa = PBXBuildFile; fileRef = 6A38B18819812B9B00376662 /* spark.png */; };
+		6A38B21119815DF000376662 /* Spark.sks in Resources */ = {isa = PBXBuildFile; fileRef = 6A38B20F19815DF000376662 /* Spark.sks */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -77,6 +78,7 @@
 		6A0CBBF7198041D7003382ED /* shape_triangle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = shape_triangle.png; sourceTree = "<group>"; };
 		6A38B18719812B9B00376662 /* Rain.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Rain.sks; sourceTree = "<group>"; };
 		6A38B18819812B9B00376662 /* spark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spark.png; sourceTree = "<group>"; };
+		6A38B20F19815DF000376662 /* Spark.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; name = Spark.sks; path = ../Spark.sks; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -152,6 +154,7 @@
 				6A0CBBEF198041BA003382ED /* Drops.h */,
 				6A0CBBF0198041BA003382ED /* Drops.m */,
 				6A38B18719812B9B00376662 /* Rain.sks */,
+				6A38B20F19815DF000376662 /* Spark.sks */,
 				6A38B18819812B9B00376662 /* spark.png */,
 			);
 			path = GeometryCatch;
@@ -279,6 +282,7 @@
 				6A0CBBFA198041D7003382ED /* shape_circle.png in Resources */,
 				6A0CBBF8198041D7003382ED /* levelBar.png in Resources */,
 				6A38B18919812B9B00376662 /* Rain.sks in Resources */,
+				6A38B21119815DF000376662 /* Spark.sks in Resources */,
 				6A0CBBF9198041D7003382ED /* paddle.png in Resources */,
 				6A0CBBC01980411A003382ED /* InfoPlist.strings in Resources */,
 				6A0CBBFB198041D7003382ED /* shape_square.png in Resources */,

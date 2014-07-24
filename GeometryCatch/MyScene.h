@@ -27,4 +27,6 @@ static UInt32 dropCategory = 1 << 3;
 @property SKLabelNode *gameOverText;
 @property SKLabelNode *levelLabel;
 @property SKEmitterNode *rainNode;
+@property SKEmitterNode *sparkNode;
+
 @end

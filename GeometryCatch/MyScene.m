@@ -9,7 +9,7 @@
 #import "MyScene.h"
 
 @implementation MyScene
-@synthesize paddle,speedOffset,paddleArray,paddleHoldShapeOffset, paddleArrayIndex, bgColor, level, levelBar, score, scoreLabel, isGameOver,gameOverTextCanBeAdded,gameOverText,levelLabel,rainNode;
+@synthesize paddle,speedOffset,paddleArray,paddleHoldShapeOffset, paddleArrayIndex, bgColor, level, levelBar, score, scoreLabel, isGameOver,gameOverTextCanBeAdded,gameOverText,levelLabel,rainNode, sparkNode;
 
 -(id)initWithSize:(CGSize)size {
     if (self = [super initWithSize:size]) {
@@ -144,6 +144,26 @@
 -(void)didBeginContact:(SKPhysicsContact *)contact{
     SKSpriteNode * takenShape;
     Drops *shape = (Drops*)contact.bodyB.node;
+    
+    //Spark
+    NSString *sparkPath =
+    [[NSBundle mainBundle]
+     pathForResource:@"Spark" ofType:@"sks"];
+    sparkNode =
+    [NSKeyedUnarchiver unarchiveObjectWithFile:sparkPath];
+    sparkNode.position = shape.position;
+    [sparkNode setParticleTexture:[SKTexture textureWithImageNamed:[self chooseShape:shape.type]]];
+    SKAction *spark = [SKAction runBlock:^{
+        NSLog(@"abc");
+        [self addChild:sparkNode];
+    }];
+    SKAction *delay = [SKAction waitForDuration:0.2];
+    SKAction *disappear = [SKAction runBlock:^{
+        [sparkNode removeFromParent];
+    }];
+    SKAction *sparkAndDisappear = [SKAction sequence:@[spark, delay, disappear]];
+    [self runAction:sparkAndDisappear withKey:@"Spark"];
+    
     [shape removeFromParent];
     [paddleArray addObject:[NSNumber numberWithInt:shape.type]];
     if(paddleArrayIndex >= 1 && [paddleArray[paddleArrayIndex-1] integerValue] != shape.type && paddleArray[paddleArrayIndex-1] != nil){
@@ -175,6 +195,8 @@
     if(paddleHoldShapeOffset < -0.4){
         paddleHoldShapeOffset = 0.8;
     }
+    
+    
 }
 
 -(void)randomShapeAndPosition{
@@ -235,12 +257,9 @@
     for (int i = 0; i < children.count; i++) {
         if(([[children[i] name]  isEqual: @"gameOverText"])){
             gameOverTextCanBeAdded = NO;
-            NSLog(@"%d", gameOverTextCanBeAdded);
             break;
         }
     }
-    
-    NSLog(@"%d", gameOverTextCanBeAdded);
     
     if(gameOverTextCanBeAdded){
         
@@ -256,5 +275,7 @@
     }
     
     [self removeActionForKey:@"dropShape"];
+    [self removeActionForKey:@"Spark"];
+
 }
 @end
