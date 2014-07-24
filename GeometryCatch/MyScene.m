@@ -9,7 +9,7 @@
 #import "MyScene.h"
 
 @implementation MyScene
-@synthesize paddle,speedOffset,paddleArray,paddleHoldShapeOffset, paddleArrayIndex, bgColor, level, levelBar, score, scoreLabel, isGameOver;
+@synthesize paddle,speedOffset,paddleArray,paddleHoldShapeOffset, paddleArrayIndex, bgColor, level, levelBar, score, scoreLabel, isGameOver,gameOverTextCanBeAdded,gameOverText,levelLabel;
 
 -(id)initWithSize:(CGSize)size {
     if (self = [super initWithSize:size]) {
@@ -46,7 +46,7 @@
         levelBar.anchorPoint = CGPointMake(0, 0.5);
         levelBar.position = CGPointMake(0, 0);
         levelBar.size = CGSizeMake(self.size.width/2, levelBar.size.height);
-//        levelBar.yScale = 2.0;
+        //        levelBar.yScale = 2.0;
         [self addChild:levelBar];
         
         //Score label
@@ -58,6 +58,19 @@
         [self addChild:scoreLabel];
         
         [self dropShape];
+        
+        //Level label
+        levelLabel = [[SKLabelNode alloc] init];
+        levelLabel.text = [NSString stringWithFormat:@"%d", level];
+        levelLabel.position = CGPointMake(self.size.width*0.1, self.size.height*0.9);
+        levelLabel.color = [SKColor blackColor];
+        levelLabel.colorBlendFactor = 1;
+        [self addChild:levelLabel];
+        
+        
+        //Drop shapes
+        [self dropShape];
+
     }
     return self;
 }
@@ -69,6 +82,23 @@
             [paddle runAction:[SKAction moveToX:location.x duration:speedOffset]];
         }
     }
+    else{
+        NSArray *children = self.children;
+        for (int i = 0; i < children.count; i++) {
+            if([children[i] isKindOfClass:[Drops class]]){
+                [children[i] removeFromParent];
+            }
+        }
+        paddle.position = CGPointMake(self.size.width /2, self.size.height*0.2);
+        score = 0;
+        levelBar.size = CGSizeMake(self.size.width/2, levelBar.size.height);
+        level = 1;
+        isGameOver = NO;
+        [gameOverText removeFromParent];
+        [self dropShape];
+        
+    }
+
 }
 
 -(void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event{
@@ -78,24 +108,25 @@
             paddle.position = CGPointMake(location.x, paddle.position.y);
         }
     }
-}
+    }
 
 -(void)update:(CFTimeInterval)currentTime {
     /* Called before each frame is rendered */
     //Level bar reduce over time
     levelBar.size = CGSizeMake(levelBar.size.width - 0.5, levelBar.size.height);
     
-    scoreLabel.text = [NSString stringWithFormat:@"%d",score];
-    
     // if level bar > screen next level, if level bar < 0 gameover
     if(levelBar.size.width == self.size.width){
         levelBar.size = CGSizeMake(self.size.width*0.2, levelBar.size.height);
         level++;
         speedOffset = speedOffset/1.5;
+        levelLabel.text = [NSString stringWithFormat:@"%d", level];
+
     }
     if(levelBar.size.width <= 0){
         [self gameOver];
     }
+    
 }
 
 -(void)didBeginContact:(SKPhysicsContact *)contact{
@@ -126,6 +157,9 @@
         paddleHoldShapeOffset = 0.6;
         levelBar.size = CGSizeMake(levelBar.size.width + self.size.width*0.3, levelBar.size.height);
         score += 100;
+        level ++;
+        scoreLabel.text = [NSString stringWithFormat:@"%d",score];
+
     }
     
     if(paddleHoldShapeOffset < -0.4){
@@ -143,7 +177,6 @@
         [drop runAction:[SKAction moveToY:-100 duration:10*speedOffset]];
         [self addChild:drop];
         [drop runAction:[SKAction rotateByAngle:M_PI duration:1]];
-        NSLog(@"%f", dropPositionOffset);
     }
 }
 
@@ -178,6 +211,7 @@
 
 -(void)gameOver{
     isGameOver = YES;
+    gameOverTextCanBeAdded = YES;
     NSArray *children = self.children;
     NSMutableArray *shapesArray = [[NSMutableArray alloc] init];
     for (int i = 0; i < children.count; i++) {
@@ -188,13 +222,29 @@
     for (int i = 0; i<shapesArray.count; i++) {
         [shapesArray[i] removeAllActions];
     }
+    for (int i = 0; i < children.count; i++) {
+        if(([[children[i] name]  isEqual: @"gameOverText"])){
+            gameOverTextCanBeAdded = NO;
+            NSLog(@"%d", gameOverTextCanBeAdded);
+            break;
+        }
+    }
     
-    SKLabelNode *gameOverText = [[SKLabelNode alloc] init];
-    gameOverText.text = [NSString stringWithFormat:@"GAMEOVER"];
-    gameOverText.position = CGPointMake(self.size.width/2, self.size.height/2);
-    gameOverText.color = [SKColor redColor];
-    gameOverText.colorBlendFactor = 1;
-    [self addChild:gameOverText];
+    NSLog(@"%d", gameOverTextCanBeAdded);
+    
+    if(gameOverTextCanBeAdded){
+        
+        gameOverText = [[SKLabelNode alloc] init];
+        gameOverText.text = [NSString stringWithFormat:@"GAMEOVER"];
+        gameOverText.name = @"gameOverText";
+        gameOverText.position = CGPointMake(self.size.width/2, self.size.height/2);
+        gameOverText.color = [SKColor redColor];
+        gameOverText.colorBlendFactor = 1;
+        [self addChild:gameOverText];
+        gameOverTextCanBeAdded = NO;
+        
+    }
+    
     [self removeActionForKey:@"dropShape"];
 }
 @end

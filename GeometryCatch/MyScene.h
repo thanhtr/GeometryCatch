@@ -23,5 +23,7 @@ static UInt32 dropCategory = 1 << 3;
 @property int score;
 @property SKLabelNode *scoreLabel;
 @property BOOL isGameOver;
-
+@property BOOL gameOverTextCanBeAdded;
+@property SKLabelNode *gameOverText;
+@property SKLabelNode *levelLabel;
 @end
