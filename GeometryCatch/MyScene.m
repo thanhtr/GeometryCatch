@@ -9,7 +9,7 @@
 #import "MyScene.h"
 
 @implementation MyScene
-@synthesize paddle,speedOffset,paddleArray,paddleHoldShapeOffset, paddleArrayIndex, bgColor, level, levelBar, score, scoreLabel, isGameOver,gameOverTextCanBeAdded,gameOverText,levelLabel,rainNode, sparkNode;
+@synthesize paddle,speedOffset,paddleArray,paddleHoldShapeOffset, paddleArrayIndex, bgColor, level, levelBar, score, scoreLabel, isGameOver,gameOverTextCanBeAdded,gameOverText,levelLabel,rainNode,sparkArrayPaddle, sparkArrayWorld, sparkArrayIndex;
 
 -(id)initWithSize:(CGSize)size {
     if (self = [super initWithSize:size]) {
@@ -19,13 +19,19 @@
         level = 1;
         score = 0;
         isGameOver = NO;
-        speedOffset = 0.1;
+        speedOffset = 0.2;
         paddleArray = [[NSMutableArray alloc] initWithCapacity:3];
+        
+        sparkArrayIndex = 0;
+        sparkArrayPaddle = [[NSMutableArray alloc] init];
+        sparkArrayWorld = [[NSMutableArray alloc] init];
+        
+        
         self.physicsWorld.gravity = CGVectorMake(0, 0);
         self.physicsWorld.contactDelegate = self;
         bgColor = [SKColor colorWithRed:(float)251/255 green:(float)174/255 blue:(float)23/255 alpha:1.0];
         self.backgroundColor = bgColor;
-        self.physicsBody = [SKPhysicsBody bodyWithEdgeLoopFromRect:self.frame];
+        self.physicsBody = [SKPhysicsBody bodyWithEdgeLoopFromRect:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height * 1.1)];
         self.physicsBody.categoryBitMask = worldCategory;
         self.physicsBody.collisionBitMask = paddleCategory;
         
@@ -73,7 +79,6 @@
         
         
         //Particle rain
-        //Particle effects
         NSString *rainPath =
         [[NSBundle mainBundle]
          pathForResource:@"Rain" ofType:@"sks"];
@@ -81,19 +86,22 @@
         [NSKeyedUnarchiver unarchiveObjectWithFile:rainPath];
         rainNode.position = CGPointMake(self.size.width/2, self.size.height);
         [self addChild:rainNode];
-
+        
+        
     }
     return self;
 }
 
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     if(!isGameOver){
+        //Move paddle
         for (UITouch *touch in touches) {
             CGPoint location = [touch locationInNode:self];
-            [paddle runAction:[SKAction moveToX:location.x duration:speedOffset]];
+            [paddle runAction:[SKAction moveToX:location.x duration:0.1]];
         }
     }
     else{
+        //Repositioning and reset action
         NSArray *children = self.children;
         for (int i = 0; i < children.count; i++) {
             if([children[i] isKindOfClass:[Drops class]]){
@@ -105,21 +113,23 @@
         levelBar.size = CGSizeMake(self.size.width/2, levelBar.size.height);
         level = 1;
         isGameOver = NO;
+        speedOffset = 0.2;
         [gameOverText removeFromParent];
         [self dropShape];
         
     }
-
+    
 }
 
 -(void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event{
     if(!isGameOver){
+        //Position paddle to touch position
         for (UITouch *touch in touches) {
             CGPoint location = [touch locationInNode:self];
             paddle.position = CGPointMake(location.x, paddle.position.y);
         }
     }
-    }
+}
 
 -(void)update:(CFTimeInterval)currentTime {
     /* Called before each frame is rendered */
@@ -127,13 +137,13 @@
     levelBar.size = CGSizeMake(levelBar.size.width - 0.1, levelBar.size.height);
     levelLabel.text = [NSString stringWithFormat:@"%d", level];
     scoreLabel.text = [NSString stringWithFormat:@"%d",score];
-
+    
     // if level bar > screen next level, if level bar < 0 gameover
-    if(levelBar.size.width == self.size.width){
+    if(levelBar.size.width >= self.size.width){
         levelBar.size = CGSizeMake(self.size.width*0.2, levelBar.size.height);
         level++;
         speedOffset = speedOffset/1.5;
-
+        
     }
     if(levelBar.size.width <= 0){
         [self gameOver];
@@ -145,60 +155,94 @@
     SKSpriteNode * takenShape;
     Drops *shape = (Drops*)contact.bodyB.node;
     
-    //Spark
+    //Spark particle init
     NSString *sparkPath =
     [[NSBundle mainBundle]
      pathForResource:@"Spark" ofType:@"sks"];
-    sparkNode =
+    SKEmitterNode *sparkNode =
     [NSKeyedUnarchiver unarchiveObjectWithFile:sparkPath];
     sparkNode.position = shape.position;
     [sparkNode setParticleTexture:[SKTexture textureWithImageNamed:[self chooseShape:shape.type]]];
-    SKAction *spark = [SKAction runBlock:^{
-        NSLog(@"abc");
-        [self addChild:sparkNode];
-    }];
-    SKAction *delay = [SKAction waitForDuration:0.2];
-    SKAction *disappear = [SKAction runBlock:^{
-        [sparkNode removeFromParent];
-    }];
-    SKAction *sparkAndDisappear = [SKAction sequence:@[spark, delay, disappear]];
-    [self runAction:sparkAndDisappear withKey:@"Spark"];
-    
     [shape removeFromParent];
-    [paddleArray addObject:[NSNumber numberWithInt:shape.type]];
-    if(paddleArrayIndex >= 1 && [paddleArray[paddleArrayIndex-1] integerValue] != shape.type && paddleArray[paddleArrayIndex-1] != nil){
-        [paddleArray removeAllObjects];
-        paddleArrayIndex = 0;
-        [paddle removeAllChildren];
-        paddleHoldShapeOffset = 0.8;
-        levelBar.size = CGSizeMake(levelBar.size.width - self.size.width*0.2, levelBar.size.height);
-    }
-    else if(paddleArrayIndex != 2){
-        takenShape = [SKSpriteNode spriteNodeWithImageNamed:[self chooseShape:shape.type]];
-        [paddle addChild:takenShape];
-        takenShape.position = CGPointMake(paddle.size.width*(0.2-paddleHoldShapeOffset), 0);
-        takenShape.color = bgColor;
-        takenShape.colorBlendFactor = 1;
-        paddleArrayIndex += 1;
-        paddleHoldShapeOffset -= 0.6;
-    }
-    else{
-        [paddleArray removeAllObjects];
-        paddleArrayIndex = 0;
-        [paddle removeAllChildren];
-        paddleHoldShapeOffset = 0.6;
-        levelBar.size = CGSizeMake(levelBar.size.width + self.size.width*0.3, levelBar.size.height);
-        score += 100;
-
+    sparkNode.name = @"sparkNode";
+    
+    //If paddle is hit
+    if(contact.bodyA.categoryBitMask == paddleCategory){
+        //Add particle and delayed-remove
+        [sparkArrayPaddle addObject:sparkNode];
+        SKAction *spark = [SKAction runBlock:^{
+            [self addChild:sparkNode];
+        }];
+        SKAction *delay = [SKAction waitForDuration:0.2];
+        SKAction *disappear = [SKAction runBlock:^{
+            for (int i = 0; i < sparkArrayPaddle.count; i++) {
+                [sparkArrayPaddle[i] removeFromParent];
+            }
+        }];
+        SKAction *sparkAndDisappear = [SKAction sequence:@[spark, delay, disappear]];
+        [self runAction:sparkAndDisappear];
+        
+        //Add taken shapes to paddle
+        [paddleArray addObject:[NSNumber numberWithInt:shape.type]];
+        
+        //If the taken shape is not the same as the previous one
+        if(paddleArrayIndex >= 1 && [paddleArray[paddleArrayIndex-1] integerValue] != shape.type && paddleArray[paddleArrayIndex-1] != nil){
+            [paddleArray removeAllObjects];
+            paddleArrayIndex = 0;
+            [paddle removeAllChildren];
+            paddleHoldShapeOffset = 0.8;
+            levelBar.size = CGSizeMake(levelBar.size.width - self.size.width*0.2, levelBar.size.height);
+        }
+        
+        //Or if the paddle array isn't full yet
+        else if(paddleArrayIndex != 2){
+            takenShape = [SKSpriteNode spriteNodeWithImageNamed:[self chooseShape:shape.type]];
+            [paddle addChild:takenShape];
+            takenShape.position = CGPointMake(paddle.size.width*(0.2-paddleHoldShapeOffset), 0);
+            takenShape.color = bgColor;
+            takenShape.colorBlendFactor = 1;
+            paddleArrayIndex += 1;
+            paddleHoldShapeOffset -= 0.6;
+        }
+        
+        //Or else- this case mean match 3 has been made
+        else{
+            [paddleArray removeAllObjects];
+            paddleArrayIndex = 0;
+            [paddle removeAllChildren];
+            paddleHoldShapeOffset = 0.6;
+            levelBar.size = CGSizeMake(levelBar.size.width + self.size.width*0.3, levelBar.size.height);
+            score += 100;
+            
+        }
+        
+        //Offset for taken shape displaying
+        if(paddleHoldShapeOffset < -0.4){
+            paddleHoldShapeOffset = 0.8;
+        }
+        
     }
     
-    if(paddleHoldShapeOffset < -0.4){
-        paddleHoldShapeOffset = 0.8;
+    //If world's edge is hit
+    else if(contact.bodyA.categoryBitMask == worldCategory){
+        [sparkArrayWorld addObject:sparkNode];
+        SKAction *spark = [SKAction runBlock:^{
+            [self addChild:sparkNode];
+        }];
+        SKAction *delay = [SKAction waitForDuration:0.2];
+        SKAction *disappear = [SKAction runBlock:^{
+            for (int i = 0; i < sparkArrayWorld.count; i++) {
+                [sparkArrayWorld[i] removeFromParent];
+            }
+        }];
+        SKAction *sparkAndDisappear = [SKAction sequence:@[spark, delay, disappear]];
+        [self runAction:sparkAndDisappear];
+        
     }
-    
     
 }
 
+//Random shape and position of drops
 -(void)randomShapeAndPosition{
     if(!isGameOver){
         int dropType = arc4random()%3;
@@ -212,7 +256,7 @@
     }
 }
 
-
+//Cased-load function for drop texture
 -(NSString*)chooseShape:(int)input{
     NSString *temp = [[NSString alloc] init];
     switch (input) {
@@ -231,16 +275,18 @@
     return temp;
 }
 
+//Init the dropping main loop
 -(void)dropShape{
     SKAction *dropRandom = [SKAction runBlock:^{
         [self randomShapeAndPosition];
     }];
-    SKAction *delay = [SKAction waitForDuration:0.25];
+    SKAction *delay = [SKAction waitForDuration:0.3];
     SKAction *dropAndDelay = [SKAction sequence:@[dropRandom, delay]];
     SKAction *dropAndDelayForever = [SKAction repeatActionForever:dropAndDelay];
     [self runAction:dropAndDelayForever withKey:@"dropShape"];
 }
 
+//Gameover handling: disable actions and such
 -(void)gameOver{
     isGameOver = YES;
     gameOverTextCanBeAdded = YES;
@@ -249,6 +295,9 @@
     for (int i = 0; i < children.count; i++) {
         if([children[i] isKindOfClass:[Drops class]]){
             [shapesArray addObject:children[i]];
+        }
+        if([[children[i] name]isEqual:@"sparkNode"]){
+            [children[i] removeFromParent];
         }
     }
     for (int i = 0; i<shapesArray.count; i++) {
@@ -273,9 +322,8 @@
         gameOverTextCanBeAdded = NO;
         
     }
+    [self removeAllActions];
+    [sparkArrayPaddle removeAllObjects];
     
-    [self removeActionForKey:@"dropShape"];
-    [self removeActionForKey:@"Spark"];
-
 }
 @end

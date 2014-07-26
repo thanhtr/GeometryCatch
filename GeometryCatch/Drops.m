@@ -17,7 +17,7 @@
     self.physicsBody = [SKPhysicsBody bodyWithCircleOfRadius:self.size.height/2];
     self.physicsBody.dynamic = true;
     self.physicsBody.categoryBitMask = dropCategory;
-    self.physicsBody.contactTestBitMask = paddleCategory;
+    self.physicsBody.contactTestBitMask = paddleCategory | worldCategory;
     return self;
 }
 @end

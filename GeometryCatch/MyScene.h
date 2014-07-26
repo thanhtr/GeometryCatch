@@ -8,6 +8,7 @@
 
 #import <SpriteKit/SpriteKit.h>
 #import "Drops.h"
+
 static UInt32 worldCategory = 1 << 1;
 static UInt32 paddleCategory = 1 << 2;
 static UInt32 dropCategory = 1 << 3;
@@ -27,6 +28,7 @@ static UInt32 dropCategory = 1 << 3;
 @property SKLabelNode *gameOverText;
 @property SKLabelNode *levelLabel;
 @property SKEmitterNode *rainNode;
-@property SKEmitterNode *sparkNode;
-
+@property NSMutableArray *sparkArrayPaddle;
+@property NSMutableArray *sparkArrayWorld;
+@property int sparkArrayIndex;
 @end
