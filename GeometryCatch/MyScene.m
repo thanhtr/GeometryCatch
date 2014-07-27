@@ -175,9 +175,9 @@
         }];
         SKAction *delay = [SKAction waitForDuration:0.2];
         SKAction *disappear = [SKAction runBlock:^{
-            for (int i = 0; i < sparkArrayPaddle.count; i++) {
-                [sparkArrayPaddle[i] removeFromParent];
-            }
+//            for (int i = 0; i < sparkArrayPaddle.count; i++) {
+//                [sparkArrayPaddle[i] removeFromParent];
+//            }
         }];
         SKAction *sparkAndDisappear = [SKAction sequence:@[spark, delay, disappear]];
         [self runAction:sparkAndDisappear];
@@ -231,9 +231,9 @@
         }];
         SKAction *delay = [SKAction waitForDuration:0.2];
         SKAction *disappear = [SKAction runBlock:^{
-            for (int i = 0; i < sparkArrayWorld.count; i++) {
-                [sparkArrayWorld[i] removeFromParent];
-            }
+//            for (int i = 0; i < sparkArrayWorld.count; i++) {
+//                [sparkArrayWorld[i] removeFromParent];
+//            }
         }];
         SKAction *sparkAndDisappear = [SKAction sequence:@[spark, delay, disappear]];
         [self runAction:sparkAndDisappear];

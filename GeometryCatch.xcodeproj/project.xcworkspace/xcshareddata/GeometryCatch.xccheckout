@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>8A029EC4-0AAB-4E79-AA03-6E6E8FB9D6C6</string>
+	<key>IDESourceControlProjectName</key>
+	<string>GeometryCatch</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>CE109EC2-BDD8-42C9-AD49-FC01464A520E</key>
+		<string>https://github.com/thanhtr/GeometryCatch.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>GeometryCatch.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>CE109EC2-BDD8-42C9-AD49-FC01464A520E</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/thanhtr/GeometryCatch.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>CE109EC2-BDD8-42C9-AD49-FC01464A520E</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>CE109EC2-BDD8-42C9-AD49-FC01464A520E</string>
+			<key>IDESourceControlWCCName</key>
+			<string>GeometryCatch</string>
+		</dict>
+	</array>
+</dict>
+</plist>
