@@ -19,7 +19,7 @@
         level = 1;
         score = 0;
         isGameOver = NO;
-        speedOffset = 0.2;
+        speedOffset = -6;
         paddleArray = [[NSMutableArray alloc] initWithCapacity:3];
         
         sparkArrayIndex = 0;
@@ -63,7 +63,7 @@
         scoreLabel.colorBlendFactor = 1;
         [self addChild:scoreLabel];
         
-        [self dropShape];
+//        [self dropShape];
         
         //Level label
         levelLabel = [[SKLabelNode alloc] init];
@@ -87,7 +87,13 @@
         rainNode.position = CGPointMake(self.size.width/2, self.size.height);
         [self addChild:rainNode];
         
-        
+//        int dropType = arc4random()%3;
+//        float dropPositionOffset = (float)((arc4random()%8 + 1)*0.1);
+//        self.testShape = [[Drops alloc] init:[self chooseShape:dropType]];
+//        self.testShape.type = dropType;
+//        self.testShape.name = @"drop";
+//        self.testShape.position = CGPointMake(self.size.width * dropPositionOffset, self.size.height);
+//        [self addChild:self.testShape];
     }
     return self;
 }
@@ -113,7 +119,7 @@
         levelBar.size = CGSizeMake(self.size.width/2, levelBar.size.height);
         level = 1;
         isGameOver = NO;
-        speedOffset = 0.2;
+        speedOffset = -5;
         [gameOverText removeFromParent];
         [self dropShape];
         
@@ -142,12 +148,18 @@
     if(levelBar.size.width >= self.size.width){
         levelBar.size = CGSizeMake(self.size.width*0.2, levelBar.size.height);
         level++;
-        speedOffset = speedOffset/1.5;
-        
-    }
+        speedOffset -= 2;
+            }
     if(levelBar.size.width <= 0){
         [self gameOver];
     }
+    
+//    [self.testShape runAction:[SKAction moveBy:CGVectorMake(0, -1) duration:speedOffset]];
+    for (int i = 0; i < self.children.count; i++) {
+        if([[self.children[i] name] isEqual: @"drop"])
+            [self.children[i] runAction:[SKAction moveBy:CGVectorMake(0, speedOffset) duration:0.01]];
+    }
+
     
 }
 
@@ -168,6 +180,13 @@
     
     //If paddle is hit
     if(contact.bodyA.categoryBitMask == paddleCategory){
+        
+        SKAction *moveBack = [SKAction moveBy:CGVectorMake(0, -10.0) duration:0.02];
+        SKAction *moveForth = [SKAction moveBy:CGVectorMake(0, 10.0) duration:0.3];
+        SKAction *wait = [SKAction waitForDuration:0.02];
+        SKAction *paddleImpact = [SKAction sequence:@[moveBack, wait, moveForth]];
+        [paddle runAction:paddleImpact];
+        
         //Add particle and delayed-remove
         [sparkArrayPaddle addObject:sparkNode];
         SKAction *spark = [SKAction runBlock:^{
@@ -249,8 +268,9 @@
         float dropPositionOffset = (float)((arc4random()%8 + 1)*0.1);
         Drops *drop = [[Drops alloc] init:[self chooseShape:dropType]];
         drop.type = dropType;
+        drop.name = @"drop";
         drop.position = CGPointMake(self.size.width * dropPositionOffset, self.size.height);
-        [drop runAction:[SKAction moveToY:-100 duration:10*speedOffset]];
+//        [drop runAction:[SKAction moveToY:-10 duration:(drop.position.y - self.size.width)*speedOffset]];
         [self addChild:drop];
         [drop runAction:[SKAction rotateByAngle:M_PI duration:1]];
     }
