@@ -9,11 +9,25 @@
 #import "MyScene.h"
 
 @implementation MyScene
-@synthesize paddle,speedOffset,paddleArray,paddleHoldShapeOffset, paddleArrayIndex, bgColor, level, levelBar, score, scoreLabel, isGameOver,gameOverTextCanBeAdded,gameOverText,levelLabel,rainNode,sparkArrayPaddle, sparkArrayWorld, sparkArrayIndex;
+@synthesize paddle,speedOffset,paddleArray,paddleHoldShapeOffset, paddleArrayIndex, bgColor, level, levelBar, score, scoreLabel, isGameOver,gameOverTextCanBeAdded,gameOverText,levelLabel,rainNode,sparkArrayPaddle, sparkArrayWorld, sparkArrayIndex, bgColorArray, bg;
 
 -(id)initWithSize:(CGSize)size {
     if (self = [super initWithSize:size]) {
         //First init
+        
+        bgColorArray = [NSArray arrayWithObjects:
+                        [SKColor colorWithRed:(float)219/255 green:(float)68/255 blue:(float)83/255 alpha:1.0],
+                        [SKColor colorWithRed:(float)233/255 green:(float)87/255 blue:(float)63/255 alpha:1.0],
+                        [SKColor colorWithRed:(float)246/255 green:(float)187/255 blue:(float)66/255 alpha:1.0],
+                        [SKColor colorWithRed:(float)140/255 green:(float)193/255 blue:(float)82/255 alpha:1.0],
+                        [SKColor colorWithRed:(float)55/255 green:(float)188/255 blue:(float)155/255 alpha:1.0],
+                        [SKColor colorWithRed:(float)59/255 green:(float)175/255 blue:(float)218/255 alpha:1.0],
+                        [SKColor colorWithRed:(float)74/255 green:(float)137/255 blue:(float)220/255 alpha:1.0],
+                        [SKColor colorWithRed:(float)67/255 green:(float)74/255 blue:(float)84/255 alpha:1.0],
+                        nil];
+        int bgColorIndex = arc4random()%(bgColorArray.count);
+        bgColor = bgColorArray[bgColorIndex];
+        
         paddleHoldShapeOffset = 0.8;
         paddleArrayIndex = 0;
         level = 1;
@@ -29,8 +43,13 @@
         
         self.physicsWorld.gravity = CGVectorMake(0, 0);
         self.physicsWorld.contactDelegate = self;
-        bgColor = [SKColor colorWithRed:(float)251/255 green:(float)174/255 blue:(float)23/255 alpha:1.0];
-        self.backgroundColor = bgColor;
+//        self.backgroundColor = bgColor;
+        bg = [[SKSpriteNode alloc] initWithImageNamed:@"bg"];
+        bg.position = CGPointMake(self.size.width/2, self.size.height/2);
+        [bg runAction:[SKAction colorizeWithColor:bgColor colorBlendFactor:1 duration:0.0]];
+
+        [self addChild:bg];
+        
         self.physicsBody = [SKPhysicsBody bodyWithEdgeLoopFromRect:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height * 1.1)];
         self.physicsBody.categoryBitMask = worldCategory;
         self.physicsBody.collisionBitMask = paddleCategory;
@@ -63,7 +82,7 @@
         scoreLabel.colorBlendFactor = 1;
         [self addChild:scoreLabel];
         
-//        [self dropShape];
+        //        [self dropShape];
         
         //Level label
         levelLabel = [[SKLabelNode alloc] init];
@@ -87,13 +106,6 @@
         rainNode.position = CGPointMake(self.size.width/2, self.size.height);
         [self addChild:rainNode];
         
-//        int dropType = arc4random()%3;
-//        float dropPositionOffset = (float)((arc4random()%8 + 1)*0.1);
-//        self.testShape = [[Drops alloc] init:[self chooseShape:dropType]];
-//        self.testShape.type = dropType;
-//        self.testShape.name = @"drop";
-//        self.testShape.position = CGPointMake(self.size.width * dropPositionOffset, self.size.height);
-//        [self addChild:self.testShape];
     }
     return self;
 }
@@ -105,6 +117,7 @@
             CGPoint location = [touch locationInNode:self];
             [paddle runAction:[SKAction moveToX:location.x duration:0.1]];
         }
+//        [paddle runAction:[SKAction colorizeWithColor:bgColor colorBlendFactor:1.0 duration:0.5]];
     }
     else{
         //Repositioning and reset action
@@ -149,17 +162,23 @@
         levelBar.size = CGSizeMake(self.size.width*0.2, levelBar.size.height);
         level++;
         speedOffset -= 2;
-            }
+        
+        int bgColorIndex = arc4random()%(bgColorArray.count);
+        bgColor = bgColorArray[bgColorIndex];
+//        self.backgroundColor = bgColor;
+        [bg runAction:[SKAction colorizeWithColor:bgColor colorBlendFactor:1 duration:0.3]];
+
+        
+    }
     if(levelBar.size.width <= 0){
         [self gameOver];
     }
     
-//    [self.testShape runAction:[SKAction moveBy:CGVectorMake(0, -1) duration:speedOffset]];
     for (int i = 0; i < self.children.count; i++) {
         if([[self.children[i] name] isEqual: @"drop"])
             [self.children[i] runAction:[SKAction moveBy:CGVectorMake(0, speedOffset) duration:0.01]];
     }
-
+    
     
 }
 
@@ -194,9 +213,6 @@
         }];
         SKAction *delay = [SKAction waitForDuration:0.2];
         SKAction *disappear = [SKAction runBlock:^{
-//            for (int i = 0; i < sparkArrayPaddle.count; i++) {
-//                [sparkArrayPaddle[i] removeFromParent];
-//            }
         }];
         SKAction *sparkAndDisappear = [SKAction sequence:@[spark, delay, disappear]];
         [self runAction:sparkAndDisappear];
@@ -222,6 +238,8 @@
             takenShape.colorBlendFactor = 1;
             paddleArrayIndex += 1;
             paddleHoldShapeOffset -= 0.6;
+            
+            
         }
         
         //Or else- this case mean match 3 has been made
@@ -250,9 +268,6 @@
         }];
         SKAction *delay = [SKAction waitForDuration:0.2];
         SKAction *disappear = [SKAction runBlock:^{
-//            for (int i = 0; i < sparkArrayWorld.count; i++) {
-//                [sparkArrayWorld[i] removeFromParent];
-//            }
         }];
         SKAction *sparkAndDisappear = [SKAction sequence:@[spark, delay, disappear]];
         [self runAction:sparkAndDisappear];
@@ -270,7 +285,7 @@
         drop.type = dropType;
         drop.name = @"drop";
         drop.position = CGPointMake(self.size.width * dropPositionOffset, self.size.height);
-//        [drop runAction:[SKAction moveToY:-10 duration:(drop.position.y - self.size.width)*speedOffset]];
+        //        [drop runAction:[SKAction moveToY:-10 duration:(drop.position.y - self.size.width)*speedOffset]];
         [self addChild:drop];
         [drop runAction:[SKAction rotateByAngle:M_PI duration:1]];
     }

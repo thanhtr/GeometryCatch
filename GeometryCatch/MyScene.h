@@ -31,5 +31,7 @@ static UInt32 dropCategory = 1 << 3;
 @property NSMutableArray *sparkArrayPaddle;
 @property NSMutableArray *sparkArrayWorld;
 @property int sparkArrayIndex;
+@property NSArray *bgColorArray;
 //@property Drops *testShape;
+@property SKSpriteNode *bg;
 @end
