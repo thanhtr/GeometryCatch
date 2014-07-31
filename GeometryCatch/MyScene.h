@@ -12,6 +12,8 @@
 static UInt32 worldCategory = 1 << 1;
 static UInt32 paddleCategory = 1 << 2;
 static UInt32 dropCategory = 1 << 3;
+
+
 @interface MyScene : SKScene <SKPhysicsContactDelegate>
 @property SKSpriteNode *paddle;
 @property float speedOffset;
@@ -20,7 +22,7 @@ static UInt32 dropCategory = 1 << 3;
 @property int paddleArrayIndex;
 @property SKColor *bgColor;
 @property SKSpriteNode *levelBar;
-@property int level;
+//@property int level;
 @property int score;
 @property SKLabelNode *scoreLabel;
 @property BOOL isGameOver;
@@ -34,4 +36,6 @@ static UInt32 dropCategory = 1 << 3;
 @property NSArray *bgColorArray;
 //@property Drops *testShape;
 @property SKSpriteNode *bg;
+@property SKSpriteNode *bgBlack;
+@property BOOL isPause;
 @end

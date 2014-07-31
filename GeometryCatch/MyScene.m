@@ -9,7 +9,8 @@
 #import "MyScene.h"
 
 @implementation MyScene
-@synthesize paddle,speedOffset,paddleArray,paddleHoldShapeOffset, paddleArrayIndex, bgColor, level, levelBar, score, scoreLabel, isGameOver,gameOverTextCanBeAdded,gameOverText,levelLabel,rainNode,sparkArrayPaddle, sparkArrayWorld, sparkArrayIndex, bgColorArray, bg;
+@synthesize paddle,speedOffset,paddleArray,paddleHoldShapeOffset, paddleArrayIndex, bgColor, levelBar, score, scoreLabel, isGameOver,gameOverTextCanBeAdded,gameOverText,levelLabel,rainNode,sparkArrayPaddle, sparkArrayWorld, sparkArrayIndex, bgColorArray, bg, bgBlack, isPause;
+//@synthesize level;
 
 -(id)initWithSize:(CGSize)size {
     if (self = [super initWithSize:size]) {
@@ -28,11 +29,12 @@
         int bgColorIndex = arc4random()%(bgColorArray.count);
         bgColor = bgColorArray[bgColorIndex];
         
-        paddleHoldShapeOffset = 0.8;
+        paddleHoldShapeOffset = 1;
         paddleArrayIndex = 0;
-        level = 1;
+        //        level = 1;
         score = 0;
         isGameOver = NO;
+        isPause = NO;
         speedOffset = -6;
         paddleArray = [[NSMutableArray alloc] initWithCapacity:3];
         
@@ -43,12 +45,18 @@
         
         self.physicsWorld.gravity = CGVectorMake(0, 0);
         self.physicsWorld.contactDelegate = self;
-//        self.backgroundColor = bgColor;
+        //        self.backgroundColor = bgColor;
         bg = [[SKSpriteNode alloc] initWithImageNamed:@"bg"];
         bg.position = CGPointMake(self.size.width/2, self.size.height/2);
-        [bg runAction:[SKAction colorizeWithColor:bgColor colorBlendFactor:1 duration:0.0]];
-
+        bg.color = bgColor;
+        bg.colorBlendFactor = 1;
         [self addChild:bg];
+        
+        bgBlack = [[SKSpriteNode alloc] initWithImageNamed:@"bgBlack"];
+        bgBlack.position = CGPointMake(self.size.width/2, self.size.height/2);
+        bgBlack.alpha = 0.0;
+        [self addChild:bgBlack];
+        
         
         self.physicsBody = [SKPhysicsBody bodyWithEdgeLoopFromRect:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height * 1.1)];
         self.physicsBody.categoryBitMask = worldCategory;
@@ -72,6 +80,8 @@
         levelBar.position = CGPointMake(0, 0);
         levelBar.size = CGSizeMake(self.size.width/2, levelBar.size.height);
         //        levelBar.yScale = 2.0;
+        levelBar.color = bgColor;
+        levelBar.colorBlendFactor = 0.7;
         [self addChild:levelBar];
         
         //Score label
@@ -85,13 +95,13 @@
         //        [self dropShape];
         
         //Level label
-        levelLabel = [[SKLabelNode alloc] init];
-        levelLabel.text = [NSString stringWithFormat:@"%d", level];
-        levelLabel.position = CGPointMake(self.size.width*0.1, self.size.height*0.9);
-        levelLabel.color = [SKColor blackColor];
-        levelLabel.colorBlendFactor = 1;
-        [self addChild:levelLabel];
-        
+        //        levelLabel = [[SKLabelNode alloc] init];
+        //        levelLabel.text = [NSString stringWithFormat:@"%d", level];
+        //        levelLabel.position = CGPointMake(self.size.width*0.1, self.size.height*0.9);
+        //        levelLabel.color = [SKColor blackColor];
+        //        levelLabel.colorBlendFactor = 1;
+        //        [self addChild:levelLabel];
+        //
         
         //Drop shapes
         [self dropShape];
@@ -104,38 +114,67 @@
         rainNode =
         [NSKeyedUnarchiver unarchiveObjectWithFile:rainPath];
         rainNode.position = CGPointMake(self.size.width/2, self.size.height);
+        [rainNode setParticleColorSequence:nil];
+        [rainNode setParticleColor:bgColor];
+        [rainNode setParticleColorBlendFactor:0.8];
         [self addChild:rainNode];
         
+        //Pause
+        SKSpriteNode *pauseBtn = [[SKSpriteNode alloc] initWithImageNamed:@"pauseBtn"];
+        [pauseBtn setScale:0.1];
+        pauseBtn.position = CGPointMake(self.size.width*0.1, self.size.height*0.93);
+        pauseBtn.name = @"pauseBtn";
+        [self addChild:pauseBtn];
     }
     return self;
 }
 
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-    if(!isGameOver){
-        //Move paddle
-        for (UITouch *touch in touches) {
-            CGPoint location = [touch locationInNode:self];
-            [paddle runAction:[SKAction moveToX:location.x duration:0.1]];
+    for (UITouch *touch in touches) {
+        CGPoint location = [touch locationInNode:self];
+        SKNode *node = [self nodeAtPoint:location];
+        if(!isGameOver){
+            //Move paddle
+            if(![node.name isEqualToString:@"pauseBtn"])
+                [paddle runAction:[SKAction moveToX:location.x duration:0.1]];
+            
         }
-//        [paddle runAction:[SKAction colorizeWithColor:bgColor colorBlendFactor:1.0 duration:0.5]];
-    }
-    else{
-        //Repositioning and reset action
-        NSArray *children = self.children;
-        for (int i = 0; i < children.count; i++) {
-            if([children[i] isKindOfClass:[Drops class]]){
-                [children[i] removeFromParent];
+        else if(isGameOver){
+            //Repositioning and reset action
+            NSArray *children = self.children;
+            for (int i = 0; i < children.count; i++) {
+                if([children[i] isKindOfClass:[Drops class]]){
+                    [children[i] removeFromParent];
+                }
             }
+            paddle.position = CGPointMake(self.size.width /2, self.size.height*0.2);
+            score = 0;
+            levelBar.size = CGSizeMake(self.size.width/2, levelBar.size.height);
+            //        level = 1;
+            isGameOver = NO;
+            speedOffset = -5;
+            [gameOverText removeFromParent];
+            [self dropShape];
+            
         }
-        paddle.position = CGPointMake(self.size.width /2, self.size.height*0.2);
-        score = 0;
-        levelBar.size = CGSizeMake(self.size.width/2, levelBar.size.height);
-        level = 1;
-        isGameOver = NO;
-        speedOffset = -5;
-        [gameOverText removeFromParent];
-        [self dropShape];
         
+        if([node.name isEqualToString:@"pauseBtn"] && !isPause){
+            bgBlack.alpha = 0.3;
+            isPause = YES;
+            [self runAction:[SKAction runBlock:^{
+                [self runAction:[SKAction waitForDuration:0.1]];
+//                self.scene.view.paused = YES;
+                self.scene.physicsWorld.speed = 0.0;
+
+            }]];
+        }
+        else if ([node.name isEqualToString:@"pauseBtn"] && isPause){
+            isPause = NO;
+//            self.scene.view.paused = NO;
+            bgBlack.alpha = 0.0;
+            self.scene.physicsWorld.speed = 1.0;
+            
+        }
     }
     
 }
@@ -154,20 +193,25 @@
     /* Called before each frame is rendered */
     //Level bar reduce over time
     levelBar.size = CGSizeMake(levelBar.size.width - 0.1, levelBar.size.height);
-    levelLabel.text = [NSString stringWithFormat:@"%d", level];
+    //    levelLabel.text = [NSString stringWithFormat:@"%d", level];
     scoreLabel.text = [NSString stringWithFormat:@"%d",score];
     
     // if level bar > screen next level, if level bar < 0 gameover
     if(levelBar.size.width >= self.size.width){
         levelBar.size = CGSizeMake(self.size.width*0.2, levelBar.size.height);
-        level++;
+        //        level++;
         speedOffset -= 2;
         
         int bgColorIndex = arc4random()%(bgColorArray.count);
         bgColor = bgColorArray[bgColorIndex];
-//        self.backgroundColor = bgColor;
+        //        self.backgroundColor = bgColor;
         [bg runAction:[SKAction colorizeWithColor:bgColor colorBlendFactor:1 duration:0.3]];
-
+        
+        levelBar.color = bgColor;
+        levelBar.colorBlendFactor = 0.7;
+        [rainNode setParticleColorSequence:nil];
+        [rainNode setParticleColor:bgColor];
+        [rainNode setParticleColorBlendFactor:0.8];
         
     }
     if(levelBar.size.width <= 0){
@@ -178,7 +222,15 @@
         if([[self.children[i] name] isEqual: @"drop"])
             [self.children[i] runAction:[SKAction moveBy:CGVectorMake(0, speedOffset) duration:0.01]];
     }
-    
+    //    NSLog(isPause ? @"YES" : @"NO");
+    //    if(!isPause){
+    ////        if(self.physicsWorld.speed <= 1)
+    //            self.physicsWorld.speed += 0.05;
+    //    }
+    //    else if(isPause){
+    ////        if(self.physicsWorld.speed >= 0)
+    //            self.physicsWorld.speed -= 0.05;
+    //    }
     
 }
 
@@ -193,7 +245,7 @@
     SKEmitterNode *sparkNode =
     [NSKeyedUnarchiver unarchiveObjectWithFile:sparkPath];
     sparkNode.position = shape.position;
-    [sparkNode setParticleTexture:[SKTexture textureWithImageNamed:[self chooseShape:shape.type]]];
+    [sparkNode setParticleTexture:[SKTexture textureWithImageNamed:[self chooseParticleShape:shape.type]]];
     [shape removeFromParent];
     sparkNode.name = @"sparkNode";
     
@@ -210,6 +262,7 @@
         [sparkArrayPaddle addObject:sparkNode];
         SKAction *spark = [SKAction runBlock:^{
             [self addChild:sparkNode];
+            
         }];
         SKAction *delay = [SKAction waitForDuration:0.2];
         SKAction *disappear = [SKAction runBlock:^{
@@ -225,7 +278,7 @@
             [paddleArray removeAllObjects];
             paddleArrayIndex = 0;
             [paddle removeAllChildren];
-            paddleHoldShapeOffset = 0.8;
+            paddleHoldShapeOffset = 1;
             levelBar.size = CGSizeMake(levelBar.size.width - self.size.width*0.2, levelBar.size.height);
         }
         
@@ -233,11 +286,11 @@
         else if(paddleArrayIndex != 2){
             takenShape = [SKSpriteNode spriteNodeWithImageNamed:[self chooseShape:shape.type]];
             [paddle addChild:takenShape];
-            takenShape.position = CGPointMake(paddle.size.width*(0.2-paddleHoldShapeOffset), 0);
+            takenShape.position = CGPointMake(paddle.size.width*(0-paddleHoldShapeOffset), 0);
             takenShape.color = bgColor;
             takenShape.colorBlendFactor = 1;
             paddleArrayIndex += 1;
-            paddleHoldShapeOffset -= 0.6;
+            paddleHoldShapeOffset -= 1;
             
             
         }
@@ -247,15 +300,15 @@
             [paddleArray removeAllObjects];
             paddleArrayIndex = 0;
             [paddle removeAllChildren];
-            paddleHoldShapeOffset = 0.6;
+            paddleHoldShapeOffset = 1;
             levelBar.size = CGSizeMake(levelBar.size.width + self.size.width*0.3, levelBar.size.height);
-            score += 100;
+            score += 1;
             
         }
         
         //Offset for taken shape displaying
-        if(paddleHoldShapeOffset < -0.4){
-            paddleHoldShapeOffset = 0.8;
+        if(paddleHoldShapeOffset < -1){
+            paddleHoldShapeOffset = 1;
         }
         
     }
@@ -296,7 +349,7 @@
     NSString *temp = [[NSString alloc] init];
     switch (input) {
         case 0:
-            temp = [NSString stringWithFormat:@"shape_circle"];
+            temp = [NSString stringWithFormat:@"shape_x"];
             break;
         case 1:
             temp = [NSString stringWithFormat:@"shape_square"];
@@ -309,6 +362,26 @@
     }
     return temp;
 }
+
+//Cased-load function for particle texture
+-(NSString*)chooseParticleShape:(int)input{
+    NSString *temp = [[NSString alloc] init];
+    switch (input) {
+        case 0:
+            temp = [NSString stringWithFormat:@"shape_x"];
+            break;
+        case 1:
+            temp = [NSString stringWithFormat:@"square_particle"];
+            break;
+        case 2:
+            temp = [NSString stringWithFormat:@"triangle_particle"];
+            break;
+        default:
+            break;
+    }
+    return temp;
+}
+
 
 //Init the dropping main loop
 -(void)dropShape{
