@@ -66,12 +66,16 @@
         paddle = [[SKSpriteNode alloc] initWithImageNamed:@"paddle"];
         [paddle setScale:0.2];
         paddle.position = CGPointMake(self.size.width /2, self.size.height*0.2);
+        paddle.name = @"paddle";
+        paddle.blendMode = SKBlendModeAdd;
         paddle.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:paddle.size];
         paddle.physicsBody.allowsRotation = NO;
         paddle.physicsBody.dynamic = true;
         paddle.physicsBody.categoryBitMask = paddleCategory;
         paddle.physicsBody.collisionBitMask = worldCategory;
         paddle.physicsBody.contactTestBitMask = dropCategory;
+        paddle.color = [SKColor whiteColor];
+        paddle.colorBlendFactor = 1;
         [self addChild:paddle];
         
         //Level bar init
@@ -163,14 +167,14 @@
             isPause = YES;
             [self runAction:[SKAction runBlock:^{
                 [self runAction:[SKAction waitForDuration:0.1]];
-//                self.scene.view.paused = YES;
+                //                self.scene.view.paused = YES;
                 self.scene.physicsWorld.speed = 0.0;
-
+                
             }]];
         }
         else if ([node.name isEqualToString:@"pauseBtn"] && isPause){
             isPause = NO;
-//            self.scene.view.paused = NO;
+            //            self.scene.view.paused = NO;
             bgBlack.alpha = 0.0;
             self.scene.physicsWorld.speed = 1.0;
             
@@ -292,8 +296,7 @@
             paddleArrayIndex += 1;
             paddleHoldShapeOffset -= 1;
             
-            
-        }
+                   }
         
         //Or else- this case mean match 3 has been made
         else{
@@ -304,6 +307,21 @@
             levelBar.size = CGSizeMake(levelBar.size.width + self.size.width*0.3, levelBar.size.height);
             score += 1;
             
+            SKNode *sprite = [self childNodeWithName:@"paddle"];
+            
+            SKSpriteNode *trailSprite1 = [SKSpriteNode spriteNodeWithImageNamed:@"paddle"];
+            [trailSprite1 setScale:0.3];
+            trailSprite1.blendMode = SKBlendModeAdd;
+            trailSprite1.position = CGPointMake(sprite.position.x, sprite.position.y);
+            
+            [self addChild:trailSprite1];
+            
+            [trailSprite1 runAction:[SKAction sequence:@[
+                                                         [SKAction fadeAlphaTo:0 duration:0.1],
+                                                         [SKAction removeFromParent]
+                                                         ]]];
+            
+
         }
         
         //Offset for taken shape displaying
@@ -397,7 +415,20 @@
 //Gameover handling: disable actions and such
 -(void)gameOver{
     isGameOver = YES;
+    
+    UIView *myView = self.scene.view;
+    CABasicAnimation *animation =
+    [CABasicAnimation animationWithKeyPath:@"position"];
+    [animation setDuration:0.05];
+    [animation setRepeatCount:6];
+    [animation setAutoreverses:YES];
+    [animation setFromValue:[NSValue valueWithCGPoint:
+                             CGPointMake([myView center].x - 5.0f, [myView center].y - 5.0f)]];
+    [animation setToValue:[NSValue valueWithCGPoint:
+                           CGPointMake([myView center].x + 5.0f, [myView center].y + 5.0f)]];
+    
     gameOverTextCanBeAdded = YES;
+    
     NSArray *children = self.children;
     NSMutableArray *shapesArray = [[NSMutableArray alloc] init];
     for (int i = 0; i < children.count; i++) {
@@ -419,7 +450,7 @@
     }
     
     if(gameOverTextCanBeAdded){
-        
+        [[myView layer] addAnimation:animation forKey:@"position"];
         gameOverText = [[SKLabelNode alloc] init];
         gameOverText.text = [NSString stringWithFormat:@"GAMEOVER"];
         gameOverText.name = @"gameOverText";
