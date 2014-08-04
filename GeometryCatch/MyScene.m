@@ -126,9 +126,12 @@
         //Pause
         SKSpriteNode *pauseBtn = [[SKSpriteNode alloc] initWithImageNamed:@"pauseBtn"];
         [pauseBtn setScale:0.1];
-        pauseBtn.position = CGPointMake(self.size.width*0.1, self.size.height*0.93);
+        pauseBtn.position = CGPointMake(self.size.width*0.05, self.size.height*0.93);
         pauseBtn.name = @"pauseBtn";
         [self addChild:pauseBtn];
+        
+        
+
     }
     return self;
 }
@@ -306,21 +309,20 @@
             paddleHoldShapeOffset = 1;
             levelBar.size = CGSizeMake(levelBar.size.width + self.size.width*0.3, levelBar.size.height);
             score += 1;
-            
-            SKNode *sprite = [self childNodeWithName:@"paddle"];
-            
-            SKSpriteNode *trailSprite1 = [SKSpriteNode spriteNodeWithImageNamed:@"paddle"];
-            [trailSprite1 setScale:0.3];
-            trailSprite1.blendMode = SKBlendModeAdd;
-            trailSprite1.position = CGPointMake(sprite.position.x, sprite.position.y);
-            
-            [self addChild:trailSprite1];
-            
-            [trailSprite1 runAction:[SKAction sequence:@[
-                                                         [SKAction fadeAlphaTo:0 duration:0.1],
-                                                         [SKAction removeFromParent]
-                                                         ]]];
-            
+//            
+//            SKSpriteNode *trailSprite1 = [SKSpriteNode spriteNodeWithImageNamed:@"paddle"];
+//            [trailSprite1 setScale:1.1];
+//            trailSprite1.blendMode = SKBlendModeAdd;
+//            trailSprite1.color = [SKColor grayColor];
+//            trailSprite1.colorBlendFactor = 1.0;
+//            [paddle addChild:trailSprite1];
+//            
+            SKAction *trailSpriteFlash = [SKAction repeatAction:[SKAction sequence:@[[SKAction fadeOutWithDuration:0.05], [SKAction waitForDuration:0.05], [SKAction fadeInWithDuration:0.05]]] count:4];
+//            [trailSprite1 runAction:[SKAction sequence:@[
+//                                                         [SKAction fadeAlphaTo:0 duration:0.1],
+//                                                         [SKAction removeFromParent]
+//                                                         ]]];
+            [paddle runAction:trailSpriteFlash];
 
         }
         
@@ -463,6 +465,6 @@
     }
     [self removeAllActions];
     [sparkArrayPaddle removeAllObjects];
-    
+    [paddle removeAllChildren];
 }
 @end

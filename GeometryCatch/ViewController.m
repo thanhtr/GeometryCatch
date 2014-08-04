@@ -8,11 +8,15 @@
 
 #import "ViewController.h"
 #import "MyScene.h"
+#import "StartScene.h"
+#import "AboutScene.h"
+#import "OptionScene.h"
 
 @implementation ViewController
 
 - (void)viewDidLoad
 {
+    
     [super viewDidLoad];
 
     // Configure the view.
@@ -21,7 +25,7 @@
     skView.showsNodeCount = YES;
     
     // Create and configure the scene.
-    SKScene * scene = [MyScene sceneWithSize:skView.bounds.size];
+    SKScene * scene = [StartScene sceneWithSize:skView.bounds.size];
     scene.scaleMode = SKSceneScaleModeAspectFill;
     
     // Present the scene.
