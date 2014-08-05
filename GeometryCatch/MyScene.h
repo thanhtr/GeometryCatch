@@ -38,4 +38,5 @@ static UInt32 dropCategory = 1 << 3;
 @property SKSpriteNode *bg;
 @property SKSpriteNode *bgBlack;
 @property BOOL isPause;
+@property NSMutableArray *moveGroup;
 @end

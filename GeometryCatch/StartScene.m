@@ -8,6 +8,8 @@
 
 #import "StartScene.h"
 #import "OptionScene.h"
+#import "MyScene.h"
+
 @implementation StartScene
 @synthesize startLbl, titleLbl,menuBtn;
 
@@ -77,6 +79,10 @@
             OptionScene *optionScene = [[OptionScene alloc] initWithSize:self.size];
 //            SKTransition *transition = [SKTransition revealWithDirection:SKTransitionDirectionLeft duration:1];
             [self.view presentScene:optionScene];
+        }
+        else if([node.name isEqualToString:@"startLbl"]){
+            MyScene *myScene = [[MyScene alloc]initWithSize:self.size];
+            [self.view presentScene:myScene];
         }
     }
 

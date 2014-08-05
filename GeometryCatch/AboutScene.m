@@ -7,7 +7,7 @@
 //
 
 #import "AboutScene.h"
-
+#import "OptionScene.h"
 @implementation AboutScene
 -(id)initWithSize:(CGSize)size{
     if(self = [super initWithSize:size]){
@@ -17,5 +17,14 @@
         [self addChild:aboutBg];
     }
     return self;
+}
+
+-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
+    for (UITouch *touch in touches) {
+        CGPoint location = [touch locationInNode:self];
+        OptionScene *optionScene = [[OptionScene alloc] initWithSize:self.size];
+        SKTransition *transition = [SKTransition flipHorizontalWithDuration:1];
+        [self.view presentScene:optionScene transition:transition];
+    }
 }
 @end

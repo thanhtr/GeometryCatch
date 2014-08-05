@@ -9,7 +9,7 @@
 #import "MyScene.h"
 
 @implementation MyScene
-@synthesize paddle,speedOffset,paddleArray,paddleHoldShapeOffset, paddleArrayIndex, bgColor, levelBar, score, scoreLabel, isGameOver,gameOverTextCanBeAdded,gameOverText,levelLabel,rainNode,sparkArrayPaddle, sparkArrayWorld, sparkArrayIndex, bgColorArray, bg, bgBlack, isPause;
+@synthesize paddle,speedOffset,paddleArray,paddleHoldShapeOffset, paddleArrayIndex, bgColor, levelBar, score, scoreLabel, isGameOver,gameOverTextCanBeAdded,gameOverText,levelLabel,rainNode,sparkArrayPaddle, sparkArrayWorld, sparkArrayIndex, bgColorArray, bg, bgBlack, isPause,moveGroup;
 //@synthesize level;
 
 -(id)initWithSize:(CGSize)size {
@@ -107,8 +107,7 @@
         //        [self addChild:levelLabel];
         //
         
-        //Drop shapes
-        [self dropShape];
+
         
         
         //Particle rain
@@ -131,6 +130,69 @@
         [self addChild:pauseBtn];
         
         
+        
+        moveGroup = [[NSMutableArray alloc]init];
+        
+        SKSpriteNode *column1 = [SKSpriteNode spriteNodeWithColor:[SKColor colorWithRed:(float)219/255 green:(float)68/255 blue:(float)83/255 alpha:1.0] size:CGSizeMake(self.size.width/8, self.size.height)];
+        column1.position = CGPointMake(self.size.width/8 - column1.size.width/2, self.size.height/2);
+        [self addChild:column1];
+        [moveGroup addObject:column1];
+        
+        SKSpriteNode *column2 = [SKSpriteNode spriteNodeWithColor:[SKColor colorWithRed:(float)233/255 green:(float)87/255 blue:(float)63/255 alpha:1.0] size:CGSizeMake(self.size.width/8, self.size.height)];
+        column2.position = CGPointMake(2*self.size.width/8 - column2.size.width/2, self.size.height/2);
+        [self addChild:column2];
+        [moveGroup addObject:column2];
+        
+        SKSpriteNode *column3 = [SKSpriteNode spriteNodeWithColor:[SKColor colorWithRed:(float)246/255 green:(float)187/255 blue:(float)66/255 alpha:1.0] size:CGSizeMake(self.size.width/8, self.size.height)];
+        column3.position = CGPointMake(3*self.size.width/8 - column3.size.width/2, self.size.height/2);
+        [self addChild:column3];
+        [moveGroup addObject:column3];
+        
+        SKSpriteNode *column4 = [SKSpriteNode spriteNodeWithColor:[SKColor colorWithRed:(float)140/255 green:(float)193/255 blue:(float)82/255 alpha:1.0] size:CGSizeMake(self.size.width/8, self.size.height)];
+        column4.position = CGPointMake(4*self.size.width/8 - column4.size.width/2, self.size.height/2);
+        [self addChild:column4];
+        [moveGroup addObject:column4];
+        
+        SKSpriteNode *column5 = [SKSpriteNode spriteNodeWithColor:[SKColor colorWithRed:(float)55/255 green:(float)188/255 blue:(float)155/255 alpha:1.0] size:CGSizeMake(self.size.width/8, self.size.height)];
+        column5.position = CGPointMake(5*self.size.width/8 - column5.size.width/2, self.size.height/2);
+        [self addChild:column5];
+        [moveGroup addObject:column5];
+        
+        SKSpriteNode *column6 = [SKSpriteNode spriteNodeWithColor:[SKColor colorWithRed:(float)59/255 green:(float)175/255 blue:(float)218/255 alpha:1.0] size:CGSizeMake(self.size.width/8, self.size.height)];
+        column6.position = CGPointMake(6*self.size.width/8 - column6.size.width/2, self.size.height/2);
+        [self addChild:column6];
+        [moveGroup addObject:column6];
+        
+        SKSpriteNode *column7 = [SKSpriteNode spriteNodeWithColor:[SKColor colorWithRed:(float)74/255 green:(float)137/255 blue:(float)220/255 alpha:1.0] size:CGSizeMake(self.size.width/8, self.size.height)];
+        column7.position = CGPointMake(7*self.size.width/8 - column7.size.width/2, self.size.height/2);
+        [self addChild:column7];
+        [moveGroup addObject:column7];
+        
+        SKSpriteNode *column8 = [SKSpriteNode spriteNodeWithColor:[SKColor clearColor] size:CGSizeMake(self.size.width/8, self.size.height)];
+        column8.position = CGPointMake(8*self.size.width/8 - column8.size.width/2, self.size.height/2);
+        [self addChild:column8];
+        [moveGroup addObject:column8];
+        
+        SKAction *move = [SKAction runBlock:^{
+            for (int i = 0; i< moveGroup.count; i++) {
+                if(i < bgColorIndex){
+                    [moveGroup[i] runAction:[SKAction moveByX:-self.size.width y:0 duration:1]];
+                }
+                else if (i > bgColorIndex){
+                    [moveGroup[i] runAction:[SKAction moveByX:self.size.width y:0 duration:1]];
+                }
+                else if (i == bgColorIndex){
+                    [moveGroup[i] runAction:[SKAction colorizeWithColor:[SKColor clearColor] colorBlendFactor:1 duration:0.0]];
+                }
+                
+            }
+        }];
+        SKAction *wait = [SKAction waitForDuration:1.5];
+        SKAction *drop = [SKAction runBlock:^{
+            //Drop shapes
+            [self dropShape];
+        }];
+        [self runAction:[SKAction sequence:@[move, wait, drop]]];
 
     }
     return self;
