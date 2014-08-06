@@ -10,7 +10,7 @@
 #import "OptionScene.h"
 #import "MyScene.h"
 #import "AboutScene.h"
-
+#import "SKEase.h"
 @implementation StartScene
 @synthesize startLbl, titleLbl,menuBtn,options, soundBtn, musicBtn,creditBtn, moveGroup, isInOption;
 
@@ -113,17 +113,15 @@
         CGPoint location = [touch locationInNode:self];
         SKNode *node = [self nodeAtPoint:location];
         if([node.name isEqualToString:@"menuBtn"]){
-//            OptionScene *optionScene = [[OptionScene alloc] initWithSize:self.size];
-//            SKTransition *transition = [SKTransition revealWithDirection:SKTransitionDirectionLeft duration:1];
-//            [self.view presentScene:optionScene];
             for (int i =0; i< self.children.count; i++) {
                 int direction;
                 if(!isInOption)
                     direction = -1;
                 else direction = 1;
-                SKAction *moveLeft =[SKAction moveByX: direction * (self.size.width - self.size.width/8) y:0 duration:0.5];
-                moveLeft.timingMode = SKActionTimingEaseInEaseOut;
-                [self.children[i] runAction:moveLeft];
+                SKAction *move =[SKAction moveByX: direction * (self.size.width - self.size.width/8) y:0 duration:0.5];
+                move.timingMode = SKActionTimingEaseInEaseOut;
+                SKAction *elasticMove = [SKEase MoveToWithNode:self.children[i] EaseFunction:CurveTypeBack Mode:EaseInOut Time:0.5 ToVector:CGVectorMake([self.children[i] position].x + direction * (self.size.width - self.size.width/8),[self.children[i] position].y)];
+                [self.children[i] runAction:elasticMove];
             }
             isInOption = !isInOption;
 
@@ -136,7 +134,10 @@
         else if ([node.name isEqualToString:@"creditBtn"]) {
             SKAction *moveLeft =[SKAction moveByX: (-self.size.width - self.size.width/8) y:0 duration:0.5];
             moveLeft.timingMode = SKActionTimingEaseInEaseOut;
+            
             for (int i =0; i< self.children.count; i++) {
+                SKAction *elasticMove = [SKEase MoveToWithNode:self.children[i] EaseFunction:CurveTypeBack Mode:EaseInOut Time:0.5 ToVector:CGVectorMake([self.children[i] position].x -(self.size.width + self.size.width/8),[self.children[i] position].y)];
+                [self.children[i] runAction:elasticMove];
                 [self.children[i] runAction:moveLeft];
             }
         }
@@ -157,6 +158,8 @@
             SKAction *moveRight =[SKAction moveByX: (self.size.width + self.size.width/8) y:0 duration:0.5];
             moveRight.timingMode = SKActionTimingEaseInEaseOut;
             for (int i =0; i< self.children.count; i++) {
+                SKAction *elasticMove = [SKEase MoveToWithNode:self.children[i] EaseFunction:CurveTypeBack Mode:EaseInOut Time:0.5 ToVector:CGVectorMake([self.children[i] position].x - (-self.size.width - self.size.width/8),[self.children[i] position].y)];
+                [self.children[i] runAction:elasticMove];
                 [self.children[i] runAction:moveRight];
             }
         }
