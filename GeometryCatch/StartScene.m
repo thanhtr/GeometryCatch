@@ -9,9 +9,10 @@
 #import "StartScene.h"
 #import "OptionScene.h"
 #import "MyScene.h"
+#import "AboutScene.h"
 
 @implementation StartScene
-@synthesize startLbl, titleLbl,menuBtn;
+@synthesize startLbl, titleLbl,menuBtn,options, soundBtn, musicBtn,creditBtn, moveGroup, isInOption;
 
 -(id)initWithSize:(CGSize)size{
     if(self = [super initWithSize:size]){        
@@ -67,7 +68,43 @@
         [menuBtn setScale:0.5];
         [self addChild:menuBtn];
         
-           }
+        
+        SKSpriteNode *bg = [[SKSpriteNode alloc]initWithImageNamed:@"option_bg"];
+        bg.position = CGPointMake(3*self.size.width/2, self.size.height/2);
+        [bg setScale:0.5];
+        [self addChild:bg];
+        
+        options = [[Options alloc] init];
+        
+        soundBtn = [[SKSpriteNode alloc] initWithImageNamed:[self chooseConfigSprite:options.soundOn baseFileName:@"sfx"]];
+        soundBtn.anchorPoint = CGPointMake(0, 0.5);
+        soundBtn.name = @"soundBtn";
+        [soundBtn setScale:0.5];
+        soundBtn.position = CGPointMake(self.size.width*1.33, self.size.height*0.43);
+        [self addChild:soundBtn];
+        
+        musicBtn = [[SKSpriteNode alloc] initWithImageNamed:[self chooseConfigSprite:options.musicOn baseFileName:@"music"]];
+        musicBtn.anchorPoint = CGPointMake(0, 0.5);
+        musicBtn.position = CGPointMake(self.size.width*1.22, self.size.height*0.63);
+        musicBtn.name = @"musicBtn";
+        [musicBtn setScale:0.5];
+        [self addChild:musicBtn];
+        
+        creditBtn = [[SKSpriteNode alloc] initWithImageNamed:@"aboutus"];
+        creditBtn.anchorPoint = CGPointMake(0, 0.5);
+        creditBtn.position = CGPointMake(self.size.width * 1.23, self.size.height*0.22);
+        creditBtn.name = @"creditBtn";
+        [creditBtn setScale:0.5];
+        [self addChild:creditBtn];
+        
+        SKSpriteNode *aboutBg = [[SKSpriteNode alloc]initWithImageNamed:@"credit_screen"];
+        aboutBg.position = CGPointMake(5*self.size.width/2, self.size.height/2);
+        aboutBg.name = @"aboutBg";
+        [aboutBg setScale:0.5];
+        [self addChild:aboutBg];
+
+        isInOption = NO;
+    }
     return self;
 }
 
@@ -76,19 +113,68 @@
         CGPoint location = [touch locationInNode:self];
         SKNode *node = [self nodeAtPoint:location];
         if([node.name isEqualToString:@"menuBtn"]){
-            OptionScene *optionScene = [[OptionScene alloc] initWithSize:self.size];
+//            OptionScene *optionScene = [[OptionScene alloc] initWithSize:self.size];
 //            SKTransition *transition = [SKTransition revealWithDirection:SKTransitionDirectionLeft duration:1];
-            [self.view presentScene:optionScene];
+//            [self.view presentScene:optionScene];
+            for (int i =0; i< self.children.count; i++) {
+                int direction;
+                if(!isInOption)
+                    direction = -1;
+                else direction = 1;
+                SKAction *moveLeft =[SKAction moveByX: direction * (self.size.width - self.size.width/8) y:0 duration:0.5];
+                moveLeft.timingMode = SKActionTimingEaseInEaseOut;
+                [self.children[i] runAction:moveLeft];
+            }
+            isInOption = !isInOption;
+
         }
         else if([node.name isEqualToString:@"startLbl"]){
             MyScene *myScene = [[MyScene alloc]initWithSize:self.size];
             [self.view presentScene:myScene];
         }
+        
+        else if ([node.name isEqualToString:@"creditBtn"]) {
+            SKAction *moveLeft =[SKAction moveByX: (-self.size.width - self.size.width/8) y:0 duration:0.5];
+            moveLeft.timingMode = SKActionTimingEaseInEaseOut;
+            for (int i =0; i< self.children.count; i++) {
+                [self.children[i] runAction:moveLeft];
+            }
+        }
+        else if ([node.name isEqualToString:@"musicBtn"]){
+            [options loadConfig];
+            options.musicOn = !options.musicOn;
+            musicBtn.texture = [SKTexture textureWithImageNamed:[self chooseConfigSprite:options.musicOn baseFileName:@"music"]];
+            [options saveConfig];
+            
+        }
+        else if ([node.name isEqualToString:@"soundBtn"]){
+            [options loadConfig];
+            options.soundOn = !options.soundOn;
+            soundBtn.texture = [SKTexture textureWithImageNamed:[self chooseConfigSprite:options.soundOn baseFileName:@"sfx"]];
+            [options saveConfig];
+        }
+        else if ([node.name isEqualToString:@"aboutBg"]) {
+            SKAction *moveRight =[SKAction moveByX: (self.size.width + self.size.width/8) y:0 duration:0.5];
+            moveRight.timingMode = SKActionTimingEaseInEaseOut;
+            for (int i =0; i< self.children.count; i++) {
+                [self.children[i] runAction:moveRight];
+            }
+        }
     }
 
 }
 
--(void)drawBg{
-
-}
-@end
+-(NSString*)chooseConfigSprite:(BOOL)value baseFileName:(NSString*)baseFileName{
+    NSString* state = [[NSString alloc] init];
+    switch (value) {
+        case YES:
+            state = [NSString stringWithFormat:@"%@", baseFileName];
+            break;
+        case NO:
+            state = [NSString stringWithFormat:@"%@_off", baseFileName];
+            break;
+        default:
+            break;
+    }
+    return state;
+}@end

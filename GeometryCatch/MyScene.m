@@ -288,8 +288,11 @@
     }
     
     for (int i = 0; i < self.children.count; i++) {
-        if([[self.children[i] name] isEqual: @"drop"])
+        if([[self.children[i] name] isEqual: @"drop"]){
             [self.children[i] runAction:[SKAction moveBy:CGVectorMake(0, speedOffset) duration:0.01]];
+            if([self.children[i] position].y < 0)
+               [self.children[i] removeFromParent];
+        }
     }
     //    NSLog(isPause ? @"YES" : @"NO");
     //    if(!isPause){

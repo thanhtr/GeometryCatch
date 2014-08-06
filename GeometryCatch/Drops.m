@@ -13,7 +13,7 @@
     self = [super initWithImageNamed:name];
     self.type = 0;
     self.checkMatchArray = [[NSMutableArray alloc] initWithCapacity:3];
-    [self setScale:0.5];
+    [self setScale:0.35];
     self.physicsBody = [SKPhysicsBody bodyWithCircleOfRadius:self.size.height/2];
     self.physicsBody.dynamic = true;
     self.physicsBody.categoryBitMask = dropCategory;
