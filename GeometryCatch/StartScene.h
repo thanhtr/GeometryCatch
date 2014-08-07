@@ -19,4 +19,6 @@
 @property Options* options;
 @property NSMutableArray *moveGroup;
 @property BOOL isInOption;
+@property SKSpriteNode* aboutBg;
+@property BOOL properlyInView;
 @end

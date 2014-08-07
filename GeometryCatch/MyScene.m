@@ -9,8 +9,9 @@
 #import "MyScene.h"
 
 @implementation MyScene
-@synthesize paddle,speedOffset,paddleArray,paddleHoldShapeOffset, paddleArrayIndex, bgColor, levelBar, score, scoreLabel, isGameOver,gameOverTextCanBeAdded,gameOverText,levelLabel,rainNode,sparkArrayPaddle, sparkArrayWorld, sparkArrayIndex, bgColorArray, bg, bgBlack, isPause,moveGroup;
+@synthesize paddle,speedOffset,paddleArray,paddleHoldShapeOffset, paddleArrayIndex, bgColor, levelBar, score, scoreLabel, isGameOver,gameOverTextCanBeAdded,gameOverText,levelLabel,rainNode,sparkArrayPaddle, sparkArrayWorld, sparkArrayIndex, bgColorArray, bg, bgBlack, isPause,moveGroup, bgColorIndex;
 //@synthesize level;
+@synthesize gameOverBg,bestScoreLbl,bestScorePoint,yourScoreLbl,yourScorePoint,shareBtn,playBtn,gameOverGroup;
 
 -(id)initWithSize:(CGSize)size {
     if (self = [super initWithSize:size]) {
@@ -26,7 +27,7 @@
                         [SKColor colorWithRed:(float)74/255 green:(float)137/255 blue:(float)220/255 alpha:1.0],
                         [SKColor colorWithRed:(float)67/255 green:(float)74/255 blue:(float)84/255 alpha:1.0],
                         nil];
-        int bgColorIndex = arc4random()%(bgColorArray.count);
+        bgColorIndex = arc4random()%(bgColorArray.count);
         bgColor = bgColorArray[bgColorIndex];
         
         paddleHoldShapeOffset = 1;
@@ -128,51 +129,9 @@
         pauseBtn.position = CGPointMake(self.size.width*0.05, self.size.height*0.93);
         pauseBtn.name = @"pauseBtn";
         [self addChild:pauseBtn];
-        
-        
-        
-        moveGroup = [[NSMutableArray alloc]init];
-        
-        SKSpriteNode *column1 = [SKSpriteNode spriteNodeWithColor:[SKColor colorWithRed:(float)219/255 green:(float)68/255 blue:(float)83/255 alpha:1.0] size:CGSizeMake(self.size.width/8, self.size.height)];
-        column1.position = CGPointMake(self.size.width/8 - column1.size.width/2, self.size.height/2);
-        [self addChild:column1];
-        [moveGroup addObject:column1];
-        
-        SKSpriteNode *column2 = [SKSpriteNode spriteNodeWithColor:[SKColor colorWithRed:(float)233/255 green:(float)87/255 blue:(float)63/255 alpha:1.0] size:CGSizeMake(self.size.width/8, self.size.height)];
-        column2.position = CGPointMake(2*self.size.width/8 - column2.size.width/2, self.size.height/2);
-        [self addChild:column2];
-        [moveGroup addObject:column2];
-        
-        SKSpriteNode *column3 = [SKSpriteNode spriteNodeWithColor:[SKColor colorWithRed:(float)246/255 green:(float)187/255 blue:(float)66/255 alpha:1.0] size:CGSizeMake(self.size.width/8, self.size.height)];
-        column3.position = CGPointMake(3*self.size.width/8 - column3.size.width/2, self.size.height/2);
-        [self addChild:column3];
-        [moveGroup addObject:column3];
-        
-        SKSpriteNode *column4 = [SKSpriteNode spriteNodeWithColor:[SKColor colorWithRed:(float)140/255 green:(float)193/255 blue:(float)82/255 alpha:1.0] size:CGSizeMake(self.size.width/8, self.size.height)];
-        column4.position = CGPointMake(4*self.size.width/8 - column4.size.width/2, self.size.height/2);
-        [self addChild:column4];
-        [moveGroup addObject:column4];
-        
-        SKSpriteNode *column5 = [SKSpriteNode spriteNodeWithColor:[SKColor colorWithRed:(float)55/255 green:(float)188/255 blue:(float)155/255 alpha:1.0] size:CGSizeMake(self.size.width/8, self.size.height)];
-        column5.position = CGPointMake(5*self.size.width/8 - column5.size.width/2, self.size.height/2);
-        [self addChild:column5];
-        [moveGroup addObject:column5];
-        
-        SKSpriteNode *column6 = [SKSpriteNode spriteNodeWithColor:[SKColor colorWithRed:(float)59/255 green:(float)175/255 blue:(float)218/255 alpha:1.0] size:CGSizeMake(self.size.width/8, self.size.height)];
-        column6.position = CGPointMake(6*self.size.width/8 - column6.size.width/2, self.size.height/2);
-        [self addChild:column6];
-        [moveGroup addObject:column6];
-        
-        SKSpriteNode *column7 = [SKSpriteNode spriteNodeWithColor:[SKColor colorWithRed:(float)74/255 green:(float)137/255 blue:(float)220/255 alpha:1.0] size:CGSizeMake(self.size.width/8, self.size.height)];
-        column7.position = CGPointMake(7*self.size.width/8 - column7.size.width/2, self.size.height/2);
-        [self addChild:column7];
-        [moveGroup addObject:column7];
-        
-        SKSpriteNode *column8 = [SKSpriteNode spriteNodeWithColor:[SKColor clearColor] size:CGSizeMake(self.size.width/8, self.size.height)];
-        column8.position = CGPointMake(8*self.size.width/8 - column8.size.width/2, self.size.height/2);
-        [self addChild:column8];
-        [moveGroup addObject:column8];
-        
+
+        //Initial opening animation
+        [self initColoredBackground];
         SKAction *move = [SKAction runBlock:^{
             for (int i = 0; i< moveGroup.count; i++) {
                 if(i < bgColorIndex){
@@ -193,6 +152,66 @@
             [self dropShape];
         }];
         [self runAction:[SKAction sequence:@[move, wait, drop]]];
+
+        //Game over frame
+        gameOverGroup = [[NSMutableArray alloc]init];
+        
+        gameOverBg = [[SKSpriteNode alloc] initWithImageNamed:@"bg"];
+        gameOverBg.position = CGPointMake(self.size.width/2, self.size.height/2 + self.size.height);
+        gameOverBg.xScale = 0.5;
+        gameOverBg.yScale = 0.5;
+//        [self addChild:gameOverBg];
+        [gameOverGroup addObject:gameOverBg];
+        
+        bestScoreLbl = [[SKLabelNode alloc] initWithFontNamed:@"HelveticaNeue-UltraLight"];
+        bestScoreLbl.position = CGPointMake(self.size.width/2, self.size.height*0.6 + self.size.height);
+        bestScoreLbl.text = @"Best score";
+        bestScoreLbl.fontColor = [SKColor blackColor];
+        bestScoreLbl.fontSize = 90;
+        [bestScoreLbl setScale:0.5];
+//        [self addChild:bestScoreLbl];
+        [gameOverGroup addObject:bestScoreLbl];
+
+        bestScorePoint = [[SKLabelNode alloc] initWithFontNamed:@"HelveticaNeue-UltraLight"];
+        bestScorePoint.position = CGPointMake(self.size.width/2, self.size.height*0.5 + self.size.height);
+        bestScorePoint.text = @"25";
+        bestScorePoint.fontColor = [SKColor blackColor];
+        bestScorePoint.fontSize = 90;
+        [bestScorePoint setScale:0.5];
+//        [self addChild:bestScorePoint];
+        [gameOverGroup addObject:bestScorePoint];
+
+        yourScoreLbl = [[SKLabelNode alloc] initWithFontNamed:@"HelveticaNeue-UltraLight"];
+        yourScoreLbl.position = CGPointMake(self.size.width/2, self.size.height*0.8 + self.size.height);
+        yourScoreLbl.text = @"Your score";
+        yourScoreLbl.fontColor = [SKColor blackColor];
+        yourScoreLbl.fontSize = 120;
+        [yourScoreLbl setScale:0.5];
+//        [self addChild:yourScoreLbl];
+        [gameOverGroup addObject:yourScoreLbl];
+
+        yourScorePoint = [[SKLabelNode alloc] initWithFontNamed:@"HelveticaNeue-UltraLight"];
+        yourScorePoint.position = CGPointMake(self.size.width/2, self.size.height*0.7 + self.size.height);
+        yourScorePoint.text = @"12";
+        yourScorePoint.fontColor = [SKColor blackColor];
+        yourScorePoint.fontSize = 120;
+        [yourScorePoint setScale:0.5];
+//        [self addChild:yourScorePoint];
+        [gameOverGroup addObject:yourScorePoint];
+
+        shareBtn = [[SKSpriteNode alloc] initWithImageNamed:@"share"];
+        shareBtn.position = CGPointMake(self.size.width/2, self.size.height*0.4 + self.size.height);
+        [shareBtn setScale:0.5];
+        shareBtn.name = @"shareBtn";
+//        [self addChild:shareBtn];
+        [gameOverGroup addObject:shareBtn];
+
+        playBtn  = [[SKSpriteNode alloc] initWithImageNamed:@"play"];
+        playBtn.position = CGPointMake(self.size.width/2, self.size.height*0.25 +self.size.height);
+        [playBtn setScale:0.5];
+        playBtn.name = @"playBtn";
+//        [self addChild:playBtn];
+        [gameOverGroup addObject:playBtn];
 
     }
     return self;
@@ -223,8 +242,22 @@
             isGameOver = NO;
             speedOffset = -5;
             [gameOverText removeFromParent];
-            [self dropShape];
-            
+            if([node.name isEqualToString:@"playBtn"]){
+                SKAction *moveGameOverBoard = [SKAction runBlock:^{
+                    for (int i = 0; i < gameOverGroup.count; i++) {
+                        SKAction *slideIn = [SKAction moveByX:0 y:self.size.height duration:0.2];
+                        slideIn.timingMode = SKActionTimingEaseInEaseOut;
+                        [gameOverGroup[i] runAction:slideIn];
+                    }
+                }];
+                SKAction *removeGameOverBoardAndDropShape = [SKAction runBlock:^{
+                    for (int i = 0; i < gameOverGroup.count; i++) {
+                        [gameOverGroup[i] removeFromParent];
+                    }
+                    [self dropShape];
+                }];
+                [self runAction:[SKAction sequence:@[moveGameOverBoard, [SKAction waitForDuration:1], removeGameOverBoardAndDropShape]]];
+            }
         }
         
         if([node.name isEqualToString:@"pauseBtn"] && !isPause){
@@ -271,8 +304,12 @@
         //        level++;
         speedOffset -= 2;
         
-        int bgColorIndex = arc4random()%(bgColorArray.count);
-        bgColor = bgColorArray[bgColorIndex];
+        int randomBgColorIndex = arc4random()%(bgColorArray.count);
+        while (bgColorIndex == randomBgColorIndex) {
+            randomBgColorIndex = arc4random()%(bgColorArray.count);
+        }
+        bgColorIndex = randomBgColorIndex;
+        bgColor = bgColorArray[randomBgColorIndex];
         //        self.backgroundColor = bgColor;
         [bg runAction:[SKAction colorizeWithColor:bgColor colorBlendFactor:1 duration:0.3]];
         
@@ -374,20 +411,9 @@
             paddleHoldShapeOffset = 1;
             levelBar.size = CGSizeMake(levelBar.size.width + self.size.width*0.3, levelBar.size.height);
             score += 1;
-//            
-//            SKSpriteNode *trailSprite1 = [SKSpriteNode spriteNodeWithImageNamed:@"paddle"];
-//            [trailSprite1 setScale:1.1];
-//            trailSprite1.blendMode = SKBlendModeAdd;
-//            trailSprite1.color = [SKColor grayColor];
-//            trailSprite1.colorBlendFactor = 1.0;
-//            [paddle addChild:trailSprite1];
-//            
-            SKAction *trailSpriteFlash = [SKAction repeatAction:[SKAction sequence:@[[SKAction fadeOutWithDuration:0.05], [SKAction waitForDuration:0.05], [SKAction fadeInWithDuration:0.05]]] count:4];
-//            [trailSprite1 runAction:[SKAction sequence:@[
-//                                                         [SKAction fadeAlphaTo:0 duration:0.1],
-//                                                         [SKAction removeFromParent]
-//                                                         ]]];
-            [paddle runAction:trailSpriteFlash];
+
+            SKAction *flash = [SKAction repeatAction:[SKAction sequence:@[[SKAction fadeOutWithDuration:0.05], [SKAction waitForDuration:0.05], [SKAction fadeInWithDuration:0.05]]] count:4];
+            [paddle runAction:flash];
 
         }
         
@@ -522,14 +548,65 @@
         gameOverText.text = [NSString stringWithFormat:@"GAMEOVER"];
         gameOverText.name = @"gameOverText";
         gameOverText.position = CGPointMake(self.size.width/2, self.size.height/2);
-        gameOverText.color = [SKColor redColor];
-        gameOverText.colorBlendFactor = 1;
         [self addChild:gameOverText];
+        yourScorePoint.text = [NSString stringWithFormat:@"%d", score];
+        for (int i = 0; i < gameOverGroup.count; i++) {
+            [self addChild:gameOverGroup[i]];
+            SKAction *slideIn = [SKAction moveByX:0 y:-self.size.height duration:0.5];
+            slideIn.timingMode = SKActionTimingEaseInEaseOut;
+            [gameOverGroup[i] runAction:slideIn];
+        }
         gameOverTextCanBeAdded = NO;
         
     }
     [self removeAllActions];
     [sparkArrayPaddle removeAllObjects];
     [paddle removeAllChildren];
+}
+
+-(void)initColoredBackground{
+    
+    moveGroup = [[NSMutableArray alloc]init];
+    
+    SKSpriteNode *column1 = [SKSpriteNode spriteNodeWithColor:[SKColor colorWithRed:(float)219/255 green:(float)68/255 blue:(float)83/255 alpha:1.0] size:CGSizeMake(self.size.width/8, self.size.height)];
+    column1.position = CGPointMake(self.size.width/8 - column1.size.width/2, self.size.height/2);
+    [self addChild:column1];
+    [moveGroup addObject:column1];
+    
+    SKSpriteNode *column2 = [SKSpriteNode spriteNodeWithColor:[SKColor colorWithRed:(float)233/255 green:(float)87/255 blue:(float)63/255 alpha:1.0] size:CGSizeMake(self.size.width/8, self.size.height)];
+    column2.position = CGPointMake(2*self.size.width/8 - column2.size.width/2, self.size.height/2);
+    [self addChild:column2];
+    [moveGroup addObject:column2];
+    
+    SKSpriteNode *column3 = [SKSpriteNode spriteNodeWithColor:[SKColor colorWithRed:(float)246/255 green:(float)187/255 blue:(float)66/255 alpha:1.0] size:CGSizeMake(self.size.width/8, self.size.height)];
+    column3.position = CGPointMake(3*self.size.width/8 - column3.size.width/2, self.size.height/2);
+    [self addChild:column3];
+    [moveGroup addObject:column3];
+    
+    SKSpriteNode *column4 = [SKSpriteNode spriteNodeWithColor:[SKColor colorWithRed:(float)140/255 green:(float)193/255 blue:(float)82/255 alpha:1.0] size:CGSizeMake(self.size.width/8, self.size.height)];
+    column4.position = CGPointMake(4*self.size.width/8 - column4.size.width/2, self.size.height/2);
+    [self addChild:column4];
+    [moveGroup addObject:column4];
+    
+    SKSpriteNode *column5 = [SKSpriteNode spriteNodeWithColor:[SKColor colorWithRed:(float)55/255 green:(float)188/255 blue:(float)155/255 alpha:1.0] size:CGSizeMake(self.size.width/8, self.size.height)];
+    column5.position = CGPointMake(5*self.size.width/8 - column5.size.width/2, self.size.height/2);
+    [self addChild:column5];
+    [moveGroup addObject:column5];
+    
+    SKSpriteNode *column6 = [SKSpriteNode spriteNodeWithColor:[SKColor colorWithRed:(float)59/255 green:(float)175/255 blue:(float)218/255 alpha:1.0] size:CGSizeMake(self.size.width/8, self.size.height)];
+    column6.position = CGPointMake(6*self.size.width/8 - column6.size.width/2, self.size.height/2);
+    [self addChild:column6];
+    [moveGroup addObject:column6];
+    
+    SKSpriteNode *column7 = [SKSpriteNode spriteNodeWithColor:[SKColor colorWithRed:(float)74/255 green:(float)137/255 blue:(float)220/255 alpha:1.0] size:CGSizeMake(self.size.width/8, self.size.height)];
+    column7.position = CGPointMake(7*self.size.width/8 - column7.size.width/2, self.size.height/2);
+    [self addChild:column7];
+    [moveGroup addObject:column7];
+    
+    SKSpriteNode *column8 = [SKSpriteNode spriteNodeWithColor:[SKColor clearColor] size:CGSizeMake(self.size.width/8, self.size.height)];
+    column8.position = CGPointMake(8*self.size.width/8 - column8.size.width/2, self.size.height/2);
+    [self addChild:column8];
+    [moveGroup addObject:column8];
+    
 }
 @end
