@@ -7,6 +7,7 @@
 //
 
 #import "MyScene.h"
+#define IS_568_SCREEN (fabs((double)[[UIScreen mainScreen]bounds].size.height - (double)568) < DBL_EPSILON)
 
 @implementation MyScene
 @synthesize paddle,speedOffset,paddleArray,paddleHoldShapeOffset, paddleArrayIndex, bgColor, levelBar, score, scoreLabel, isGameOver,gameOverTextCanBeAdded,gameOverText,levelLabel,rainNode,sparkArrayPaddle, sparkArrayWorld, sparkArrayIndex, bgColorArray, bg, bgBlack, isPause,moveGroup, bgColorIndex;
@@ -15,8 +16,8 @@
 
 -(id)initWithSize:(CGSize)size {
     if (self = [super initWithSize:size]) {
-        //First init
         
+        //First init
         bgColorArray = [NSArray arrayWithObjects:
                         [SKColor colorWithRed:(float)219/255 green:(float)68/255 blue:(float)83/255 alpha:1.0],
                         [SKColor colorWithRed:(float)233/255 green:(float)87/255 blue:(float)63/255 alpha:1.0],
@@ -36,7 +37,7 @@
         score = 0;
         isGameOver = NO;
         isPause = NO;
-        speedOffset = -6;
+        speedOffset = -2;
         paddleArray = [[NSMutableArray alloc] initWithCapacity:3];
         
         sparkArrayIndex = 0;
@@ -44,7 +45,7 @@
         sparkArrayWorld = [[NSMutableArray alloc] init];
         
         
-        self.physicsWorld.gravity = CGVectorMake(0, 0);
+        self.physicsWorld.gravity = CGVectorMake(0, speedOffset);
         self.physicsWorld.contactDelegate = self;
         //        self.backgroundColor = bgColor;
         bg = [[SKSpriteNode alloc] initWithImageNamed:@"bg"];
@@ -71,7 +72,7 @@
         paddle.blendMode = SKBlendModeAdd;
         paddle.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:paddle.size];
         paddle.physicsBody.allowsRotation = NO;
-        paddle.physicsBody.dynamic = true;
+        paddle.physicsBody.dynamic = false;
         paddle.physicsBody.categoryBitMask = paddleCategory;
         paddle.physicsBody.collisionBitMask = worldCategory;
         paddle.physicsBody.contactTestBitMask = dropCategory;
@@ -96,20 +97,6 @@
         scoreLabel.color = [SKColor blackColor];
         scoreLabel.colorBlendFactor = 1;
         [self addChild:scoreLabel];
-        
-        //        [self dropShape];
-        
-        //Level label
-        //        levelLabel = [[SKLabelNode alloc] init];
-        //        levelLabel.text = [NSString stringWithFormat:@"%d", level];
-        //        levelLabel.position = CGPointMake(self.size.width*0.1, self.size.height*0.9);
-        //        levelLabel.color = [SKColor blackColor];
-        //        levelLabel.colorBlendFactor = 1;
-        //        [self addChild:levelLabel];
-        //
-        
-
-        
         
         //Particle rain
         NSString *rainPath =
@@ -160,7 +147,6 @@
         gameOverBg.position = CGPointMake(self.size.width/2, self.size.height/2 + self.size.height);
         gameOverBg.xScale = 0.5;
         gameOverBg.yScale = 0.5;
-//        [self addChild:gameOverBg];
         [gameOverGroup addObject:gameOverBg];
         
         bestScoreLbl = [[SKLabelNode alloc] initWithFontNamed:@"HelveticaNeue-UltraLight"];
@@ -169,7 +155,6 @@
         bestScoreLbl.fontColor = [SKColor blackColor];
         bestScoreLbl.fontSize = 90;
         [bestScoreLbl setScale:0.5];
-//        [self addChild:bestScoreLbl];
         [gameOverGroup addObject:bestScoreLbl];
 
         bestScorePoint = [[SKLabelNode alloc] initWithFontNamed:@"HelveticaNeue-UltraLight"];
@@ -178,7 +163,6 @@
         bestScorePoint.fontColor = [SKColor blackColor];
         bestScorePoint.fontSize = 90;
         [bestScorePoint setScale:0.5];
-//        [self addChild:bestScorePoint];
         [gameOverGroup addObject:bestScorePoint];
 
         yourScoreLbl = [[SKLabelNode alloc] initWithFontNamed:@"HelveticaNeue-UltraLight"];
@@ -187,7 +171,6 @@
         yourScoreLbl.fontColor = [SKColor blackColor];
         yourScoreLbl.fontSize = 120;
         [yourScoreLbl setScale:0.5];
-//        [self addChild:yourScoreLbl];
         [gameOverGroup addObject:yourScoreLbl];
 
         yourScorePoint = [[SKLabelNode alloc] initWithFontNamed:@"HelveticaNeue-UltraLight"];
@@ -196,21 +179,18 @@
         yourScorePoint.fontColor = [SKColor blackColor];
         yourScorePoint.fontSize = 120;
         [yourScorePoint setScale:0.5];
-//        [self addChild:yourScorePoint];
         [gameOverGroup addObject:yourScorePoint];
 
         shareBtn = [[SKSpriteNode alloc] initWithImageNamed:@"share"];
         shareBtn.position = CGPointMake(self.size.width/2, self.size.height*0.4 + self.size.height);
         [shareBtn setScale:0.5];
         shareBtn.name = @"shareBtn";
-//        [self addChild:shareBtn];
         [gameOverGroup addObject:shareBtn];
 
         playBtn  = [[SKSpriteNode alloc] initWithImageNamed:@"play"];
-        playBtn.position = CGPointMake(self.size.width/2, self.size.height*0.25 +self.size.height);
+        playBtn.position = CGPointMake(self.size.width/2, self.size.height*0.3 +self.size.height);
         [playBtn setScale:0.5];
         playBtn.name = @"playBtn";
-//        [self addChild:playBtn];
         [gameOverGroup addObject:playBtn];
 
     }
@@ -240,7 +220,7 @@
             levelBar.size = CGSizeMake(self.size.width/2, levelBar.size.height);
             //        level = 1;
             isGameOver = NO;
-            speedOffset = -5;
+            speedOffset = -2;
             [gameOverText removeFromParent];
             if([node.name isEqualToString:@"playBtn"]){
                 SKAction *moveGameOverBoard = [SKAction runBlock:^{
@@ -263,18 +243,19 @@
         if([node.name isEqualToString:@"pauseBtn"] && !isPause){
             bgBlack.alpha = 0.3;
             isPause = YES;
-            [self runAction:[SKAction runBlock:^{
-                [self runAction:[SKAction waitForDuration:0.1]];
-                //                self.scene.view.paused = YES;
-                self.scene.physicsWorld.speed = 0.0;
-                
-            }]];
+//            [self runAction:[SKAction runBlock:^{
+//                [self runAction:[SKAction waitForDuration:0.1]];
+//                //                self.scene.view.paused = YES;
+//                self.scene.physicsWorld.speed = 0.0;
+//                
+//            }]];
         }
         else if ([node.name isEqualToString:@"pauseBtn"] && isPause){
             isPause = NO;
+            self.view.paused = NO;
             //            self.scene.view.paused = NO;
             bgBlack.alpha = 0.0;
-            self.scene.physicsWorld.speed = 1.0;
+//            self.scene.physicsWorld.speed = 1.0;
             
         }
     }
@@ -303,7 +284,7 @@
         levelBar.size = CGSizeMake(self.size.width*0.2, levelBar.size.height);
         //        level++;
         speedOffset -= 2;
-        
+        self.physicsWorld.gravity = CGVectorMake(0, speedOffset);
         int randomBgColorIndex = arc4random()%(bgColorArray.count);
         while (bgColorIndex == randomBgColorIndex) {
             randomBgColorIndex = arc4random()%(bgColorArray.count);
@@ -324,23 +305,31 @@
         [self gameOver];
     }
     
-    for (int i = 0; i < self.children.count; i++) {
-        if([[self.children[i] name] isEqual: @"drop"]){
-            [self.children[i] runAction:[SKAction moveBy:CGVectorMake(0, speedOffset) duration:0.01]];
-            if([self.children[i] position].y < 0)
-               [self.children[i] removeFromParent];
-        }
-    }
-    //    NSLog(isPause ? @"YES" : @"NO");
-    //    if(!isPause){
-    ////        if(self.physicsWorld.speed <= 1)
-    //            self.physicsWorld.speed += 0.05;
-    //    }
-    //    else if(isPause){
-    ////        if(self.physicsWorld.speed >= 0)
-    //            self.physicsWorld.speed -= 0.05;
-    //    }
+//    for (int i = 0; i < self.children.count; i++) {
+//        if([[self.children[i] name] isEqual: @"drop"]){
+//            [self.children[i] runAction:[SKAction moveBy:CGVectorMake(0, speedOffset) duration:0.01]];
+//
+//        }
+//    }
     
+    //    NSLog(isPause ? @"YES" : @"NO");
+        if(!isPause){
+//            self.view.paused = NO;
+            if(self.physicsWorld.speed < 1)
+                self.physicsWorld.speed += 0.05;
+        }
+        else if(isPause){
+            if(self.physicsWorld.speed > 0)
+                self.physicsWorld.speed -= 0.05;
+            else if (self.physicsWorld.speed <= 0)
+                self.view.paused = YES;
+        }
+    if(paddle.position.x < paddle.size.width/2){
+        paddle.position = CGPointMake(paddle.size.width/2, paddle.position.y);
+    }
+    else if (paddle.position.x > self.size.width -paddle.size.width/2){
+        paddle.position = CGPointMake(self.size.width -paddle.size.width/2, paddle.position.y);
+    }
 }
 
 -(void)didBeginContact:(SKPhysicsContact *)contact{
@@ -432,6 +421,7 @@
         }];
         SKAction *delay = [SKAction waitForDuration:0.2];
         SKAction *disappear = [SKAction runBlock:^{
+            [shape removeFromParent];
         }];
         SKAction *sparkAndDisappear = [SKAction sequence:@[spark, delay, disappear]];
         [self runAction:sparkAndDisappear];
@@ -451,7 +441,7 @@
         drop.position = CGPointMake(self.size.width * dropPositionOffset, self.size.height);
         //        [drop runAction:[SKAction moveToY:-10 duration:(drop.position.y - self.size.width)*speedOffset]];
         [self addChild:drop];
-        [drop runAction:[SKAction rotateByAngle:M_PI duration:1]];
+        [drop runAction:[SKAction rotateByAngle:4*M_PI duration:2]];
     }
 }
 

@@ -7,6 +7,7 @@
 //
 
 #import <SpriteKit/SpriteKit.h>
+#import <AVFoundation/AVFoundation.h>
 #import "Options.h"
 
 @interface StartScene : SKScene
@@ -21,4 +22,5 @@
 @property BOOL isInOption;
 @property SKSpriteNode* aboutBg;
 @property BOOL properlyInView;
+@property AVAudioPlayer *backgroundMusicPlayer;
 @end

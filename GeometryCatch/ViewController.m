@@ -11,10 +11,10 @@
 #import "StartScene.h"
 @implementation ViewController
 
-- (void)viewDidLoad
+- (void)viewWillLayoutSubviews
 {
     
-    [super viewDidLoad];
+    [super viewWillLayoutSubviews];
 
     // Configure the view.
     SKView * skView = (SKView *)self.view;
@@ -27,6 +27,7 @@
     
     // Present the scene.
     [skView presentScene:scene];
+    
 }
 
 - (BOOL)shouldAutorotate
