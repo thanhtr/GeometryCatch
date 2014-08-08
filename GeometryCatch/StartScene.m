@@ -29,7 +29,12 @@
         [self addChild:titleLbl];
         
         menuBtn = [[SKSpriteNode alloc] initWithImageNamed:@"optionbutton"];
-        menuBtn.position = CGPointMake(self.size.width*0.95, self.size.height*0.95);
+        if(IS_568_SCREEN){
+            menuBtn.position = CGPointMake(self.size.width*0.95, self.size.height*0.95);
+        }
+        else {
+            menuBtn.position = CGPointMake(self.size.width*0.95, self.size.height*0.92);
+        }
         menuBtn.name = @"menuBtn";
         [menuBtn setScale:0.5];
         [self addChild:menuBtn];
@@ -37,7 +42,15 @@
         
         SKSpriteNode *bg = [[SKSpriteNode alloc]initWithImageNamed:@"option_bg"];
         bg.position = CGPointMake(3*self.size.width/2, self.size.height/2);
-        [bg setScale:0.5];
+        
+        if(IS_568_SCREEN){
+            [bg setScale:0.5];
+        }
+        else {
+            bg.xScale = 0.5;
+            bg.yScale = 0.42;
+        }
+        
         [self addChild:bg];
         
         options = [[Options alloc] init];
@@ -64,9 +77,16 @@
         [self addChild:creditBtn];
         
         aboutBg = [[SKSpriteNode alloc]initWithImageNamed:@"credit_screen"];
-        aboutBg.position = CGPointMake(5*self.size.width/2, self.size.height/2);
         aboutBg.name = @"aboutBg";
         aboutBg.hidden = YES;
+        
+        if(IS_568_SCREEN){
+            aboutBg.position = CGPointMake(5*self.size.width/2, self.size.height/2);
+        }
+        else {
+            aboutBg.position = CGPointMake(5*self.size.width/2, self.size.height*0.4);
+        }
+        
         [aboutBg setScale:0.5];
         [self addChild:aboutBg];
         

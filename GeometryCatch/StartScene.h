@@ -10,6 +10,8 @@
 #import <AVFoundation/AVFoundation.h>
 #import "Options.h"
 
+#define IS_568_SCREEN (fabs((double)[[UIScreen mainScreen]bounds].size.height - (double)568) < DBL_EPSILON)
+
 @interface StartScene : SKScene
 @property SKSpriteNode *startLbl;
 @property SKSpriteNode *titleLbl;

@@ -7,8 +7,7 @@
 //
 
 #import "MyScene.h"
-#define IS_568_SCREEN (fabs((double)[[UIScreen mainScreen]bounds].size.height - (double)568) < DBL_EPSILON)
-
+#import "StartScene.h"
 @implementation MyScene
 @synthesize paddle,speedOffset,paddleArray,paddleHoldShapeOffset, paddleArrayIndex, bgColor, levelBar, score, scoreLabel, isGameOver,gameOverTextCanBeAdded,gameOverText,levelLabel,rainNode,sparkArrayPaddle, sparkArrayWorld, sparkArrayIndex, bgColorArray, bg, bgBlack, isPause,moveGroup, bgColorIndex;
 //@synthesize level;
@@ -146,7 +145,11 @@
         gameOverBg = [[SKSpriteNode alloc] initWithImageNamed:@"bg"];
         gameOverBg.position = CGPointMake(self.size.width/2, self.size.height/2 + self.size.height);
         gameOverBg.xScale = 0.5;
-        gameOverBg.yScale = 0.5;
+        
+        if(IS_568_SCREEN)
+            gameOverBg.yScale = 0.5;
+        else gameOverBg.yScale = 0.42;
+        
         [gameOverGroup addObject:gameOverBg];
         
         bestScoreLbl = [[SKLabelNode alloc] initWithFontNamed:@"HelveticaNeue-UltraLight"];
@@ -188,7 +191,12 @@
         [gameOverGroup addObject:shareBtn];
 
         playBtn  = [[SKSpriteNode alloc] initWithImageNamed:@"play"];
-        playBtn.position = CGPointMake(self.size.width/2, self.size.height*0.3 +self.size.height);
+        
+        if(IS_568_SCREEN)
+            playBtn.position = CGPointMake(self.size.width/2, self.size.height*0.28 +self.size.height);
+        else
+            playBtn.position = CGPointMake(self.size.width/2, self.size.height*0.25 +self.size.height);
+        
         [playBtn setScale:0.5];
         playBtn.name = @"playBtn";
         [gameOverGroup addObject:playBtn];
@@ -207,7 +215,7 @@
                 [paddle runAction:[SKAction moveToX:location.x duration:0.1]];
             
         }
-        else if(isGameOver){
+        else if(isGameOver && [node.name isEqualToString:@"playBtn"]){
             //Repositioning and reset action
             NSArray *children = self.children;
             for (int i = 0; i < children.count; i++) {
@@ -222,22 +230,21 @@
             isGameOver = NO;
             speedOffset = -2;
             [gameOverText removeFromParent];
-            if([node.name isEqualToString:@"playBtn"]){
-                SKAction *moveGameOverBoard = [SKAction runBlock:^{
-                    for (int i = 0; i < gameOverGroup.count; i++) {
-                        SKAction *slideIn = [SKAction moveByX:0 y:self.size.height duration:0.2];
-                        slideIn.timingMode = SKActionTimingEaseInEaseOut;
-                        [gameOverGroup[i] runAction:slideIn];
-                    }
-                }];
-                SKAction *removeGameOverBoardAndDropShape = [SKAction runBlock:^{
-                    for (int i = 0; i < gameOverGroup.count; i++) {
-                        [gameOverGroup[i] removeFromParent];
-                    }
-                    [self dropShape];
-                }];
-                [self runAction:[SKAction sequence:@[moveGameOverBoard, [SKAction waitForDuration:1], removeGameOverBoardAndDropShape]]];
-            }
+            SKAction *moveGameOverBoard = [SKAction runBlock:^{
+                for (int i = 0; i < gameOverGroup.count; i++) {
+                    SKAction *slideIn = [SKAction moveByX:0 y:self.size.height duration:0.2];
+                    slideIn.timingMode = SKActionTimingEaseInEaseOut;
+                    [gameOverGroup[i] runAction:slideIn];
+                }
+            }];
+            SKAction *removeGameOverBoardAndDropShape = [SKAction runBlock:^{
+                for (int i = 0; i < gameOverGroup.count; i++) {
+                    [gameOverGroup[i] removeFromParent];
+                }
+                [self dropShape];
+            }];
+            [self runAction:[SKAction sequence:@[moveGameOverBoard, [SKAction waitForDuration:1], removeGameOverBoardAndDropShape]]];
+            
         }
         
         if([node.name isEqualToString:@"pauseBtn"] && !isPause){
