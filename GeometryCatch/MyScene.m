@@ -215,36 +215,38 @@
                 [paddle runAction:[SKAction moveToX:location.x duration:0.1]];
             
         }
-        else if(isGameOver && [node.name isEqualToString:@"playBtn"]){
-            //Repositioning and reset action
-            NSArray *children = self.children;
-            for (int i = 0; i < children.count; i++) {
-                if([children[i] isKindOfClass:[Drops class]]){
-                    [children[i] removeFromParent];
+        else if(isGameOver){
+            if([node.name isEqualToString:@"playBtn"]){
+                //Repositioning and reset action
+                NSArray *children = self.children;
+                for (int i = 0; i < children.count; i++) {
+                    if([children[i] isKindOfClass:[Drops class]]){
+                        [children[i] removeFromParent];
+                    }
                 }
+                paddle.position = CGPointMake(self.size.width /2, self.size.height*0.2);
+                score = 0;
+                levelBar.size = CGSizeMake(self.size.width/2, levelBar.size.height);
+                //        level = 1;
+                isGameOver = NO;
+                speedOffset = -2;
+                self.physicsWorld.gravity = CGVectorMake(0, speedOffset);
+                [gameOverText removeFromParent];
+                SKAction *moveGameOverBoard = [SKAction runBlock:^{
+                    for (int i = 0; i < gameOverGroup.count; i++) {
+                        SKAction *slideIn = [SKAction moveByX:0 y:self.size.height duration:0.2];
+                        slideIn.timingMode = SKActionTimingEaseInEaseOut;
+                        [gameOverGroup[i] runAction:slideIn];
+                    }
+                }];
+                SKAction *removeGameOverBoardAndDropShape = [SKAction runBlock:^{
+                    for (int i = 0; i < gameOverGroup.count; i++) {
+                        [gameOverGroup[i] removeFromParent];
+                    }
+                    [self dropShape];
+                }];
+                [self runAction:[SKAction sequence:@[moveGameOverBoard, [SKAction waitForDuration:1], removeGameOverBoardAndDropShape]]];
             }
-            paddle.position = CGPointMake(self.size.width /2, self.size.height*0.2);
-            score = 0;
-            levelBar.size = CGSizeMake(self.size.width/2, levelBar.size.height);
-            //        level = 1;
-            isGameOver = NO;
-            speedOffset = -2;
-            [gameOverText removeFromParent];
-            SKAction *moveGameOverBoard = [SKAction runBlock:^{
-                for (int i = 0; i < gameOverGroup.count; i++) {
-                    SKAction *slideIn = [SKAction moveByX:0 y:self.size.height duration:0.2];
-                    slideIn.timingMode = SKActionTimingEaseInEaseOut;
-                    [gameOverGroup[i] runAction:slideIn];
-                }
-            }];
-            SKAction *removeGameOverBoardAndDropShape = [SKAction runBlock:^{
-                for (int i = 0; i < gameOverGroup.count; i++) {
-                    [gameOverGroup[i] removeFromParent];
-                }
-                [self dropShape];
-            }];
-            [self runAction:[SKAction sequence:@[moveGameOverBoard, [SKAction waitForDuration:1], removeGameOverBoardAndDropShape]]];
-            
         }
         
         if([node.name isEqualToString:@"pauseBtn"] && !isPause){
@@ -547,6 +549,13 @@
         gameOverText.position = CGPointMake(self.size.width/2, self.size.height/2);
         [self addChild:gameOverText];
         yourScorePoint.text = [NSString stringWithFormat:@"%d", score];
+        [self getHighscore];
+        if([self getHighscore] > score)
+            bestScorePoint.text = [NSString stringWithFormat:@"%d", [self getHighscore]];
+        else {
+            bestScorePoint.text = [NSString stringWithFormat:@"%d", score];
+            [self saveHighscore:score];
+        }
         for (int i = 0; i < gameOverGroup.count; i++) {
             [self addChild:gameOverGroup[i]];
             SKAction *slideIn = [SKAction moveByX:0 y:-self.size.height duration:0.5];
@@ -560,7 +569,20 @@
     [sparkArrayPaddle removeAllObjects];
     [paddle removeAllChildren];
 }
+-(int)getHighscore{
+    int highscore;
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if([defaults objectForKey:@"highscore"] != nil){
+        highscore = [defaults integerForKey:@"highscore"];
+    } else highscore = 0;
+    return highscore;
+}
 
+-(void)saveHighscore:(int)points{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setObject:@(points) forKey:@"highscore"];
+    [defaults synchronize];
+}
 -(void)initColoredBackground{
     
     moveGroup = [[NSMutableArray alloc]init];
