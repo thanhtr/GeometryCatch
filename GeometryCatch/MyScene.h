@@ -7,6 +7,8 @@
 //
 
 #import <SpriteKit/SpriteKit.h>
+#import <Social/Social.h>
+#import <Accounts/Accounts.h>
 #import "Drops.h"
 
 static UInt32 worldCategory = 1 << 1;

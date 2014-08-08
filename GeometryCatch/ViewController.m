@@ -11,11 +11,14 @@
 #import "StartScene.h"
 @implementation ViewController
 
-- (void)viewWillLayoutSubviews
+- (void)viewDidLoad
 {
     
-    [super viewWillLayoutSubviews];
-
+    [super viewDidLoad];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(createPost:)
+                                                 name:@"CreatePost"
+                                               object:nil];
     // Configure the view.
     SKView * skView = (SKView *)self.view;
     skView.showsFPS = YES;
@@ -50,4 +53,13 @@
     // Release any cached data, images, etc that aren't in use.
 }
 
+-(void)createPost:(NSNotification *)notification{
+    NSDictionary *postData = [notification userInfo];
+    NSString *postText = (NSString *)[postData objectForKey:@"postText"];    
+    // build your tweet, facebook, etc...
+    SLComposeViewController *mySLComposerSheet = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeFacebook];
+    [mySLComposerSheet setInitialText:postText];
+    [mySLComposerSheet addImage:[UIImage imageNamed:@"Screenshot"]];
+    [self presentViewController:mySLComposerSheet animated:YES completion:nil];
+}
 @end

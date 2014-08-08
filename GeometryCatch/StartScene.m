@@ -41,16 +41,16 @@
         
         
         SKSpriteNode *bg = [[SKSpriteNode alloc]initWithImageNamed:@"option_bg"];
-        bg.position = CGPointMake(3*self.size.width/2, self.size.height/2);
         
         if(IS_568_SCREEN){
-            [bg setScale:0.5];
+            bg.position = CGPointMake(3*self.size.width/2, self.size.height/2);
         }
         else {
-            bg.xScale = 0.5;
-            bg.yScale = 0.42;
+            bg.position = CGPointMake(3*self.size.width/2, self.size.height*0.48);
         }
         
+        [bg setScale:0.5];
+
         [self addChild:bg];
         
         options = [[Options alloc] init];
@@ -59,7 +59,12 @@
         soundBtn.anchorPoint = CGPointMake(0, 0.5);
         soundBtn.name = @"soundBtn";
         [soundBtn setScale:0.5];
-        soundBtn.position = CGPointMake(self.size.width*1.33, self.size.height*0.43);
+        if(IS_568_SCREEN){
+            soundBtn.position = CGPointMake(self.size.width*1.33, self.size.height*0.43);
+        }
+        else {
+            soundBtn.position = CGPointMake(self.size.width*1.33, self.size.height*0.4);
+        }
         [self addChild:soundBtn];
         
         musicBtn = [[SKSpriteNode alloc] initWithImageNamed:[self chooseConfigSprite:options.musicOn baseFileName:@"music"]];
@@ -72,6 +77,12 @@
         creditBtn = [[SKSpriteNode alloc] initWithImageNamed:@"aboutus"];
         creditBtn.anchorPoint = CGPointMake(0, 0.5);
         creditBtn.position = CGPointMake(self.size.width * 1.23, self.size.height*0.22);
+        if(IS_568_SCREEN){
+            creditBtn.position = CGPointMake(self.size.width * 1.23, self.size.height*0.22);
+        }
+        else {
+            creditBtn.position = CGPointMake(self.size.width * 1.23, self.size.height*0.15);
+        }
         creditBtn.name = @"creditBtn";
         [creditBtn setScale:0.5];
         [self addChild:creditBtn];

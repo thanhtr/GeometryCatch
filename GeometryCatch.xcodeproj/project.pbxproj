@@ -25,6 +25,8 @@
 		6A0CBBF1198041BA003382ED /* Drops.m in Sources */ = {isa = PBXBuildFile; fileRef = 6A0CBBF0198041BA003382ED /* Drops.m */; };
 		6A38B18919812B9B00376662 /* Rain.sks in Resources */ = {isa = PBXBuildFile; fileRef = 6A38B18719812B9B00376662 /* Rain.sks */; };
 		6A38B21119815DF000376662 /* Spark.sks in Resources */ = {isa = PBXBuildFile; fileRef = 6A38B20F19815DF000376662 /* Spark.sks */; };
+		6AAB685F1994DA0E008776A7 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6AAB685E1994DA0E008776A7 /* Social.framework */; };
+		6AAB68611994F4AF008776A7 /* Screenshot.png in Resources */ = {isa = PBXBuildFile; fileRef = 6AAB68601994F4AF008776A7 /* Screenshot.png */; };
 		6AACC541198E520C00DE8D7A /* sfx.png in Resources */ = {isa = PBXBuildFile; fileRef = 6AACC539198E520C00DE8D7A /* sfx.png */; };
 		6AACC542198E520C00DE8D7A /* sfx_off.png in Resources */ = {isa = PBXBuildFile; fileRef = 6AACC53A198E520C00DE8D7A /* sfx_off.png */; };
 		6AACC543198E520C00DE8D7A /* music.png in Resources */ = {isa = PBXBuildFile; fileRef = 6AACC53B198E520C00DE8D7A /* music.png */; };
@@ -95,6 +97,8 @@
 		6A0CBBF0198041BA003382ED /* Drops.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Drops.m; sourceTree = "<group>"; };
 		6A38B18719812B9B00376662 /* Rain.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Rain.sks; sourceTree = "<group>"; };
 		6A38B20F19815DF000376662 /* Spark.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; name = Spark.sks; path = ../Spark.sks; sourceTree = "<group>"; };
+		6AAB685E1994DA0E008776A7 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
+		6AAB68601994F4AF008776A7 /* Screenshot.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Screenshot.png; sourceTree = "<group>"; };
 		6AACC539198E520C00DE8D7A /* sfx.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sfx.png; sourceTree = "<group>"; };
 		6AACC53A198E520C00DE8D7A /* sfx_off.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sfx_off.png; sourceTree = "<group>"; };
 		6AACC53B198E520C00DE8D7A /* music.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = music.png; sourceTree = "<group>"; };
@@ -137,6 +141,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6AAB685F1994DA0E008776A7 /* Social.framework in Frameworks */,
 				6A0CBBB61980411A003382ED /* CoreGraphics.framework in Frameworks */,
 				6A0CBBB81980411A003382ED /* UIKit.framework in Frameworks */,
 				6A0CBBBA1980411A003382ED /* SpriteKit.framework in Frameworks */,
@@ -179,6 +184,7 @@
 		6A0CBBB21980411A003382ED /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				6AAB685E1994DA0E008776A7 /* Social.framework */,
 				6A0CBBB31980411A003382ED /* Foundation.framework */,
 				6A0CBBB51980411A003382ED /* CoreGraphics.framework */,
 				6A0CBBB71980411A003382ED /* UIKit.framework */,
@@ -251,6 +257,7 @@
 		6A0CBBF2198041CC003382ED /* Art */ = {
 			isa = PBXGroup;
 			children = (
+				6AAB68601994F4AF008776A7 /* Screenshot.png */,
 				6ADD148A1993787B00D8EAE8 /* share.png */,
 				6ADD148B1993787B00D8EAE8 /* play.png */,
 				6AACC554198F5A6800DE8D7A /* option_bg.png */,
@@ -395,6 +402,7 @@
 				6A0CBBD31980411A003382ED /* Images.xcassets in Resources */,
 				6AB8C19C198A84A300428ACB /* shape_triangle.png in Resources */,
 				6AACC547198E520C00DE8D7A /* title.png in Resources */,
+				6AAB68611994F4AF008776A7 /* Screenshot.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

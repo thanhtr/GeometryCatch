@@ -8,6 +8,7 @@
 
 #import "MyScene.h"
 #import "StartScene.h"
+#import "ViewController.h"
 @implementation MyScene
 @synthesize paddle,speedOffset,paddleArray,paddleHoldShapeOffset, paddleArrayIndex, bgColor, levelBar, score, scoreLabel, isGameOver,gameOverTextCanBeAdded,gameOverText,levelLabel,rainNode,sparkArrayPaddle, sparkArrayWorld, sparkArrayIndex, bgColorArray, bg, bgBlack, isPause,moveGroup, bgColorIndex;
 //@synthesize level;
@@ -148,7 +149,7 @@
         
         if(IS_568_SCREEN)
             gameOverBg.yScale = 0.5;
-        else gameOverBg.yScale = 0.42;
+        else gameOverBg.yScale = 0.45;
         
         [gameOverGroup addObject:gameOverBg];
         
@@ -246,6 +247,11 @@
                     [self dropShape];
                 }];
                 [self runAction:[SKAction sequence:@[moveGameOverBoard, [SKAction waitForDuration:1], removeGameOverBoardAndDropShape]]];
+            }
+            else if([node.name isEqualToString:@"shareBtn"]){
+                NSString *postText = [NSString stringWithFormat: @"I just got %d points in a ATOX run. How about you?", score];
+                NSDictionary *userInfo = [NSDictionary dictionaryWithObject:postText forKey:@"postText"];
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"CreatePost" object:self userInfo:userInfo];
             }
         }
         
