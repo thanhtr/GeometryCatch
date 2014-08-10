@@ -41,8 +41,7 @@ static UInt32 dropCategory = 1 << 3;
 @property SKSpriteNode *bgBlack;
 @property BOOL isPause;
 @property NSMutableArray *moveGroup;
-@property BOOL bgColorIndex;
-
+@property int bgColorIndex;
 @property SKSpriteNode *gameOverBg;
 @property SKLabelNode *bestScoreLbl;
 @property SKLabelNode *bestScorePoint;

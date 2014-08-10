@@ -114,8 +114,6 @@
             [backgroundMusicPlayer play];
         }
         
-        NSLog(@"%fx%f",self.size.width,self.size.height);
-
     }
     return self;
 }

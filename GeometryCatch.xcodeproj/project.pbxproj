@@ -25,6 +25,8 @@
 		6A0CBBF1198041BA003382ED /* Drops.m in Sources */ = {isa = PBXBuildFile; fileRef = 6A0CBBF0198041BA003382ED /* Drops.m */; };
 		6A38B18919812B9B00376662 /* Rain.sks in Resources */ = {isa = PBXBuildFile; fileRef = 6A38B18719812B9B00376662 /* Rain.sks */; };
 		6A38B21119815DF000376662 /* Spark.sks in Resources */ = {isa = PBXBuildFile; fileRef = 6A38B20F19815DF000376662 /* Spark.sks */; };
+		6AA3A43819978B9800D2B829 /* Square.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6AA3A43719978B9800D2B829 /* Square.ttf */; };
+		6AA3A4391997958C00D2B829 /* Square.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6AA3A43719978B9800D2B829 /* Square.ttf */; };
 		6AAB685F1994DA0E008776A7 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6AAB685E1994DA0E008776A7 /* Social.framework */; };
 		6AAB68611994F4AF008776A7 /* Screenshot.png in Resources */ = {isa = PBXBuildFile; fileRef = 6AAB68601994F4AF008776A7 /* Screenshot.png */; };
 		6AACC541198E520C00DE8D7A /* sfx.png in Resources */ = {isa = PBXBuildFile; fileRef = 6AACC539198E520C00DE8D7A /* sfx.png */; };
@@ -97,6 +99,7 @@
 		6A0CBBF0198041BA003382ED /* Drops.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Drops.m; sourceTree = "<group>"; };
 		6A38B18719812B9B00376662 /* Rain.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Rain.sks; sourceTree = "<group>"; };
 		6A38B20F19815DF000376662 /* Spark.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; name = Spark.sks; path = ../Spark.sks; sourceTree = "<group>"; };
+		6AA3A43719978B9800D2B829 /* Square.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Square.ttf; sourceTree = "<group>"; };
 		6AAB685E1994DA0E008776A7 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		6AAB68601994F4AF008776A7 /* Screenshot.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Screenshot.png; sourceTree = "<group>"; };
 		6AACC539198E520C00DE8D7A /* sfx.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sfx.png; sourceTree = "<group>"; };
@@ -197,6 +200,7 @@
 		6A0CBBBB1980411A003382ED /* GeometryCatch */ = {
 			isa = PBXGroup;
 			children = (
+				6AA3A43619978B6600D2B829 /* Fonts */,
 				6ADD148E1993B54D00D8EAE8 /* Sound&Music */,
 				6AC800011992C8A800930C9C /* easing.c */,
 				6AC800021992C8A800930C9C /* easing.h */,
@@ -285,6 +289,14 @@
 				6AB8C193198A84A300428ACB /* triangle_particle.png */,
 			);
 			name = Art;
+			sourceTree = "<group>";
+		};
+		6AA3A43619978B6600D2B829 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				6AA3A43719978B9800D2B829 /* Square.ttf */,
+			);
+			name = Fonts;
 			sourceTree = "<group>";
 		};
 		6ADD148E1993B54D00D8EAE8 /* Sound&Music */ = {
@@ -402,6 +414,7 @@
 				6A0CBBD31980411A003382ED /* Images.xcassets in Resources */,
 				6AB8C19C198A84A300428ACB /* shape_triangle.png in Resources */,
 				6AACC547198E520C00DE8D7A /* title.png in Resources */,
+				6AA3A43819978B9800D2B829 /* Square.ttf in Resources */,
 				6AAB68611994F4AF008776A7 /* Screenshot.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -411,6 +424,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6A0CBBE41980411A003382ED /* InfoPlist.strings in Resources */,
+				6AA3A4391997958C00D2B829 /* Square.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

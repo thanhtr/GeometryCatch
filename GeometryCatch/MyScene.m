@@ -13,10 +13,8 @@
 @synthesize paddle,speedOffset,paddleArray,paddleHoldShapeOffset, paddleArrayIndex, bgColor, levelBar, score, scoreLabel, isGameOver,gameOverTextCanBeAdded,gameOverText,levelLabel,rainNode,sparkArrayPaddle, sparkArrayWorld, sparkArrayIndex, bgColorArray, bg, bgBlack, isPause,moveGroup, bgColorIndex;
 //@synthesize level;
 @synthesize gameOverBg,bestScoreLbl,bestScorePoint,yourScoreLbl,yourScorePoint,shareBtn,playBtn,gameOverGroup;
-
 -(id)initWithSize:(CGSize)size {
     if (self = [super initWithSize:size]) {
-        
         //First init
         bgColorArray = [NSArray arrayWithObjects:
                         [SKColor colorWithRed:(float)219/255 green:(float)68/255 blue:(float)83/255 alpha:1.0],
@@ -64,21 +62,6 @@
         self.physicsBody.categoryBitMask = worldCategory;
         self.physicsBody.collisionBitMask = paddleCategory;
         
-        //Paddle init
-        paddle = [[SKSpriteNode alloc] initWithImageNamed:@"paddle"];
-        [paddle setScale:0.2];
-        paddle.position = CGPointMake(self.size.width /2, self.size.height*0.2);
-        paddle.name = @"paddle";
-        paddle.blendMode = SKBlendModeAdd;
-        paddle.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:paddle.size];
-        paddle.physicsBody.allowsRotation = NO;
-        paddle.physicsBody.dynamic = false;
-        paddle.physicsBody.categoryBitMask = paddleCategory;
-        paddle.physicsBody.collisionBitMask = worldCategory;
-        paddle.physicsBody.contactTestBitMask = dropCategory;
-        paddle.color = [SKColor whiteColor];
-        paddle.colorBlendFactor = 1;
-        [self addChild:paddle];
         
         //Level bar init
         levelBar = [[SKSpriteNode alloc]initWithImageNamed:@"levelBar"];
@@ -89,14 +72,6 @@
         levelBar.color = bgColor;
         levelBar.colorBlendFactor = 0.7;
         [self addChild:levelBar];
-        
-        //Score label
-        scoreLabel = [[SKLabelNode alloc] init];
-        scoreLabel.text = [NSString stringWithFormat:@"%d", score];
-        scoreLabel.position = CGPointMake(self.size.width*0.9, self.size.height*0.9);
-        scoreLabel.color = [SKColor blackColor];
-        scoreLabel.colorBlendFactor = 1;
-        [self addChild:scoreLabel];
         
         //Particle rain
         NSString *rainPath =
@@ -110,23 +85,47 @@
         [rainNode setParticleColorBlendFactor:0.8];
         [self addChild:rainNode];
         
+        //Paddle init
+        paddle = [[SKSpriteNode alloc] initWithImageNamed:@"paddle"];
+        [paddle setScale:0.2];
+        if(IS_568_SCREEN)
+            paddle.position = CGPointMake(self.size.width /2, self.size.height*0.15);
+        else
+            paddle.position = CGPointMake(self.size.width /2, self.size.height*0.18);
+
+        paddle.name = @"paddle";
+        paddle.blendMode = SKBlendModeAdd;
+        paddle.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:paddle.size];
+        paddle.physicsBody.allowsRotation = NO;
+        paddle.physicsBody.dynamic = false;
+        paddle.physicsBody.categoryBitMask = paddleCategory;
+        paddle.physicsBody.collisionBitMask = worldCategory;
+        paddle.physicsBody.contactTestBitMask = dropCategory;
+        paddle.color = [SKColor whiteColor];
+        paddle.colorBlendFactor = 1;
+        [self addChild:paddle];
+        
+        
         //Pause
         SKSpriteNode *pauseBtn = [[SKSpriteNode alloc] initWithImageNamed:@"pauseBtn"];
-        [pauseBtn setScale:0.1];
+        [pauseBtn setScale:0.25];
         pauseBtn.position = CGPointMake(self.size.width*0.05, self.size.height*0.93);
         pauseBtn.name = @"pauseBtn";
         [self addChild:pauseBtn];
-
+        
         //Initial opening animation
         [self initColoredBackground];
         SKAction *move = [SKAction runBlock:^{
             for (int i = 0; i< moveGroup.count; i++) {
                 if(i < bgColorIndex){
-                    [moveGroup[i] runAction:[SKAction moveByX:-self.size.width y:0 duration:1]];
+                    SKAction *slide = [SKAction moveByX:-self.size.width y:0 duration:1];
+                    slide.timingMode = SKActionTimingEaseInEaseOut;
+                    [moveGroup[i] runAction:slide];
                 }
                 else if (i > bgColorIndex){
-                    [moveGroup[i] runAction:[SKAction moveByX:self.size.width y:0 duration:1]];
-                }
+                    SKAction *slide = [SKAction moveByX:self.size.width y:0 duration:1];
+                    slide.timingMode = SKActionTimingEaseInEaseOut;
+                    [moveGroup[i] runAction:slide];                }
                 else if (i == bgColorIndex){
                     [moveGroup[i] runAction:[SKAction colorizeWithColor:[SKColor clearColor] colorBlendFactor:1 duration:0.0]];
                 }
@@ -139,7 +138,19 @@
             [self dropShape];
         }];
         [self runAction:[SKAction sequence:@[move, wait, drop]]];
+        
+        //Score label
+        scoreLabel = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
+        scoreLabel.text = [NSString stringWithFormat:@"%d", score];
+        if(IS_568_SCREEN)
+            scoreLabel.position = CGPointMake(self.size.width*0.5, self.size.height*0.88);
+        else
+            scoreLabel.position = CGPointMake(self.size.width*0.5, self.size.height*0.83);
 
+        scoreLabel.fontColor = [SKColor colorWithRed:1 green:1 blue:1 alpha:0.8];
+        scoreLabel.fontSize = 80;
+        [self addChild:scoreLabel];
+        
         //Game over frame
         gameOverGroup = [[NSMutableArray alloc]init];
         
@@ -160,15 +171,14 @@
         bestScoreLbl.fontSize = 90;
         [bestScoreLbl setScale:0.5];
         [gameOverGroup addObject:bestScoreLbl];
-
+        
         bestScorePoint = [[SKLabelNode alloc] initWithFontNamed:@"HelveticaNeue-UltraLight"];
         bestScorePoint.position = CGPointMake(self.size.width/2, self.size.height*0.5 + self.size.height);
-        bestScorePoint.text = @"25";
         bestScorePoint.fontColor = [SKColor blackColor];
         bestScorePoint.fontSize = 90;
         [bestScorePoint setScale:0.5];
         [gameOverGroup addObject:bestScorePoint];
-
+        
         yourScoreLbl = [[SKLabelNode alloc] initWithFontNamed:@"HelveticaNeue-UltraLight"];
         yourScoreLbl.position = CGPointMake(self.size.width/2, self.size.height*0.8 + self.size.height);
         yourScoreLbl.text = @"Your score";
@@ -176,21 +186,20 @@
         yourScoreLbl.fontSize = 120;
         [yourScoreLbl setScale:0.5];
         [gameOverGroup addObject:yourScoreLbl];
-
+        
         yourScorePoint = [[SKLabelNode alloc] initWithFontNamed:@"HelveticaNeue-UltraLight"];
         yourScorePoint.position = CGPointMake(self.size.width/2, self.size.height*0.7 + self.size.height);
-        yourScorePoint.text = @"12";
         yourScorePoint.fontColor = [SKColor blackColor];
         yourScorePoint.fontSize = 120;
         [yourScorePoint setScale:0.5];
         [gameOverGroup addObject:yourScorePoint];
-
+        
         shareBtn = [[SKSpriteNode alloc] initWithImageNamed:@"share"];
         shareBtn.position = CGPointMake(self.size.width/2, self.size.height*0.4 + self.size.height);
         [shareBtn setScale:0.5];
         shareBtn.name = @"shareBtn";
         [gameOverGroup addObject:shareBtn];
-
+        
         playBtn  = [[SKSpriteNode alloc] initWithImageNamed:@"play"];
         
         if(IS_568_SCREEN)
@@ -201,7 +210,7 @@
         [playBtn setScale:0.5];
         playBtn.name = @"playBtn";
         [gameOverGroup addObject:playBtn];
-
+        
     }
     return self;
 }
@@ -258,19 +267,19 @@
         if([node.name isEqualToString:@"pauseBtn"] && !isPause){
             bgBlack.alpha = 0.3;
             isPause = YES;
-//            [self runAction:[SKAction runBlock:^{
-//                [self runAction:[SKAction waitForDuration:0.1]];
-//                //                self.scene.view.paused = YES;
-//                self.scene.physicsWorld.speed = 0.0;
-//                
-//            }]];
+            //            [self runAction:[SKAction runBlock:^{
+            //                [self runAction:[SKAction waitForDuration:0.1]];
+            //                //                self.scene.view.paused = YES;
+            //                self.scene.physicsWorld.speed = 0.0;
+            //
+            //            }]];
         }
         else if ([node.name isEqualToString:@"pauseBtn"] && isPause){
             isPause = NO;
             self.view.paused = NO;
             //            self.scene.view.paused = NO;
             bgBlack.alpha = 0.0;
-//            self.scene.physicsWorld.speed = 1.0;
+            //            self.scene.physicsWorld.speed = 1.0;
             
         }
     }
@@ -306,7 +315,8 @@
         }
         bgColorIndex = randomBgColorIndex;
         bgColor = bgColorArray[randomBgColorIndex];
-        //        self.backgroundColor = bgColor;
+//        scoreLabel.color = bgColor;
+//        scoreLabel.colorBlendFactor = 0.9;
         [bg runAction:[SKAction colorizeWithColor:bgColor colorBlendFactor:1 duration:0.3]];
         
         levelBar.color = bgColor;
@@ -319,32 +329,25 @@
     if(levelBar.size.width <= 0){
         [self gameOver];
     }
-    
-//    for (int i = 0; i < self.children.count; i++) {
-//        if([[self.children[i] name] isEqual: @"drop"]){
-//            [self.children[i] runAction:[SKAction moveBy:CGVectorMake(0, speedOffset) duration:0.01]];
-//
-//        }
-//    }
-    
-    //    NSLog(isPause ? @"YES" : @"NO");
-        if(!isPause){
-//            self.view.paused = NO;
-            if(self.physicsWorld.speed < 1)
-                self.physicsWorld.speed += 0.05;
-        }
-        else if(isPause){
-            if(self.physicsWorld.speed > 0)
-                self.physicsWorld.speed -= 0.05;
-            else if (self.physicsWorld.speed <= 0)
-                self.view.paused = YES;
-        }
+
+    if(!isPause){
+        //            self.view.paused = NO;
+        if(self.physicsWorld.speed < 1)
+            self.physicsWorld.speed += 0.05;
+    }
+    else if(isPause){
+        if(self.physicsWorld.speed > 0)
+            self.physicsWorld.speed -= 0.05;
+        else if (self.physicsWorld.speed <= 0)
+            self.view.paused = YES;
+    }
     if(paddle.position.x < paddle.size.width/2){
         paddle.position = CGPointMake(paddle.size.width/2, paddle.position.y);
     }
     else if (paddle.position.x > self.size.width -paddle.size.width/2){
         paddle.position = CGPointMake(self.size.width -paddle.size.width/2, paddle.position.y);
     }
+    
 }
 
 -(void)didBeginContact:(SKPhysicsContact *)contact{
@@ -405,7 +408,7 @@
             paddleArrayIndex += 1;
             paddleHoldShapeOffset -= 1;
             
-                   }
+        }
         
         //Or else- this case mean match 3 has been made
         else{
@@ -415,10 +418,10 @@
             paddleHoldShapeOffset = 1;
             levelBar.size = CGSizeMake(levelBar.size.width + self.size.width*0.3, levelBar.size.height);
             score += 1;
-
+            
             SKAction *flash = [SKAction repeatAction:[SKAction sequence:@[[SKAction fadeOutWithDuration:0.05], [SKAction waitForDuration:0.05], [SKAction fadeInWithDuration:0.05]]] count:4];
             [paddle runAction:flash];
-
+            
         }
         
         //Offset for taken shape displaying
@@ -554,7 +557,8 @@
         gameOverText.name = @"gameOverText";
         gameOverText.position = CGPointMake(self.size.width/2, self.size.height/2);
         [self addChild:gameOverText];
-        yourScorePoint.text = [NSString stringWithFormat:@"%d", score];
+        //        yourScorePoint.text = [NSString stringWithFormat:@"%d", score];
+        [self incrementScore:score label:yourScorePoint];
         [self getHighscore];
         if([self getHighscore] > score)
             bestScorePoint.text = [NSString stringWithFormat:@"%d", [self getHighscore]];
@@ -575,6 +579,15 @@
     [sparkArrayPaddle removeAllObjects];
     [paddle removeAllChildren];
 }
+
+-(void)incrementScore:(int)limit label:(SKLabelNode*)label{
+    __block int i = 1;
+    [label runAction:[SKAction repeatAction:[SKAction sequence:@[[SKAction runBlock:^{
+        label.text = [NSString stringWithFormat:@"%d", i];
+        i++;
+    }],[SKAction waitForDuration:0.0000]]] count:limit]];
+}
+
 -(int)getHighscore{
     int highscore;
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
