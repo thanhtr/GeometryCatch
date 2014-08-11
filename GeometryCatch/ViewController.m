@@ -9,6 +9,7 @@
 #import "ViewController.h"
 #import "MyScene.h"
 #import "StartScene.h"
+#import "TutScene.h"
 @implementation ViewController
 
 - (void)viewDidLoad

@@ -12,10 +12,12 @@
 @implementation MyScene
 @synthesize paddle,speedOffset,paddleArray,paddleHoldShapeOffset, paddleArrayIndex, bgColor, levelBar, score, scoreLabel, isGameOver,gameOverTextCanBeAdded,gameOverText,levelLabel,rainNode,sparkArrayPaddle, sparkArrayWorld, sparkArrayIndex, bgColorArray, bg, bgBlack, isPause,moveGroup, bgColorIndex;
 //@synthesize level;
-@synthesize gameOverBg,bestScoreLbl,bestScorePoint,yourScoreLbl,yourScorePoint,shareBtn,playBtn,gameOverGroup;
+@synthesize gameOverBg,bestScoreLbl,bestScorePoint,yourScoreLbl,yourScorePoint,shareBtn,playBtn,gameOverGroup, gameCenterBtn,options;
 -(id)initWithSize:(CGSize)size {
     if (self = [super initWithSize:size]) {
         //First init
+        options = [[Options alloc] init];
+        
         bgColorArray = [NSArray arrayWithObjects:
                         [SKColor colorWithRed:(float)219/255 green:(float)68/255 blue:(float)83/255 alpha:1.0],
                         [SKColor colorWithRed:(float)233/255 green:(float)87/255 blue:(float)63/255 alpha:1.0],
@@ -62,6 +64,30 @@
         self.physicsBody.categoryBitMask = worldCategory;
         self.physicsBody.collisionBitMask = paddleCategory;
         
+        //Initial opening animation
+        [self initColoredBackground];
+        SKAction *move = [SKAction runBlock:^{
+            for (int i = 0; i< moveGroup.count; i++) {
+                if(i < bgColorIndex){
+                    SKAction *slide = [SKAction moveByX:-self.size.width y:0 duration:1];
+                    slide.timingMode = SKActionTimingEaseInEaseOut;
+                    [moveGroup[i] runAction:slide];
+                }
+                else if (i > bgColorIndex){
+                    SKAction *slide = [SKAction moveByX:self.size.width y:0 duration:1];
+                    slide.timingMode = SKActionTimingEaseInEaseOut;
+                    [moveGroup[i] runAction:slide];                }
+                else if (i == bgColorIndex){
+                    [moveGroup[i] runAction:[SKAction colorizeWithColor:[SKColor clearColor] colorBlendFactor:1 duration:0.0]];
+                }
+            }
+        }];
+        SKAction *wait = [SKAction waitForDuration:1.5];
+        SKAction *drop = [SKAction runBlock:^{
+            //Drop shapes
+            [self dropShape];
+        }];
+        [self runAction:[SKAction sequence:@[move, wait, drop]]];
         
         //Level bar init
         levelBar = [[SKSpriteNode alloc]initWithImageNamed:@"levelBar"];
@@ -92,7 +118,7 @@
             paddle.position = CGPointMake(self.size.width /2, self.size.height*0.15);
         else
             paddle.position = CGPointMake(self.size.width /2, self.size.height*0.18);
-
+        
         paddle.name = @"paddle";
         paddle.blendMode = SKBlendModeAdd;
         paddle.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:paddle.size];
@@ -113,31 +139,7 @@
         pauseBtn.name = @"pauseBtn";
         [self addChild:pauseBtn];
         
-        //Initial opening animation
-        [self initColoredBackground];
-        SKAction *move = [SKAction runBlock:^{
-            for (int i = 0; i< moveGroup.count; i++) {
-                if(i < bgColorIndex){
-                    SKAction *slide = [SKAction moveByX:-self.size.width y:0 duration:1];
-                    slide.timingMode = SKActionTimingEaseInEaseOut;
-                    [moveGroup[i] runAction:slide];
-                }
-                else if (i > bgColorIndex){
-                    SKAction *slide = [SKAction moveByX:self.size.width y:0 duration:1];
-                    slide.timingMode = SKActionTimingEaseInEaseOut;
-                    [moveGroup[i] runAction:slide];                }
-                else if (i == bgColorIndex){
-                    [moveGroup[i] runAction:[SKAction colorizeWithColor:[SKColor clearColor] colorBlendFactor:1 duration:0.0]];
-                }
-                
-            }
-        }];
-        SKAction *wait = [SKAction waitForDuration:1.5];
-        SKAction *drop = [SKAction runBlock:^{
-            //Drop shapes
-            [self dropShape];
-        }];
-        [self runAction:[SKAction sequence:@[move, wait, drop]]];
+        
         
         //Score label
         scoreLabel = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
@@ -146,7 +148,7 @@
             scoreLabel.position = CGPointMake(self.size.width*0.5, self.size.height*0.88);
         else
             scoreLabel.position = CGPointMake(self.size.width*0.5, self.size.height*0.83);
-
+        
         scoreLabel.fontColor = [SKColor colorWithRed:1 green:1 blue:1 alpha:0.8];
         scoreLabel.fontSize = 80;
         [self addChild:scoreLabel];
@@ -157,45 +159,89 @@
         gameOverBg = [[SKSpriteNode alloc] initWithImageNamed:@"bg"];
         gameOverBg.position = CGPointMake(self.size.width/2, self.size.height/2 + self.size.height);
         gameOverBg.xScale = 0.5;
-        
         if(IS_568_SCREEN)
             gameOverBg.yScale = 0.5;
         else gameOverBg.yScale = 0.45;
-        
         [gameOverGroup addObject:gameOverBg];
         
-        bestScoreLbl = [[SKLabelNode alloc] initWithFontNamed:@"HelveticaNeue-UltraLight"];
-        bestScoreLbl.position = CGPointMake(self.size.width/2, self.size.height*0.6 + self.size.height);
+        SKLabelNode *bestScoreLblShadow = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
+        if(IS_568_SCREEN)
+            bestScoreLblShadow.position = CGPointMake(self.size.width/2, self.size.height*0.55 + self.size.height -3);
+        else
+            bestScoreLblShadow.position = CGPointMake(self.size.width/2, self.size.height*0.58 + self.size.height -3);
+        
+        bestScoreLblShadow.text = @"Best score";
+        bestScoreLblShadow.fontColor = [SKColor colorWithRed:(float)74/255 green:(float)137/255 blue:(float)220/255 alpha:1.0];
+        bestScoreLblShadow.fontSize = 67.5;
+        [bestScoreLblShadow setScale:0.5];
+        [gameOverGroup addObject:bestScoreLblShadow];
+
+        
+        bestScoreLbl = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
+        if(IS_568_SCREEN)
+            bestScoreLbl.position = CGPointMake(self.size.width/2, self.size.height*0.55 + self.size.height);
+        else
+            bestScoreLbl.position = CGPointMake(self.size.width/2, self.size.height*0.58 + self.size.height);
+
         bestScoreLbl.text = @"Best score";
         bestScoreLbl.fontColor = [SKColor blackColor];
-        bestScoreLbl.fontSize = 90;
+        bestScoreLbl.fontSize = 67.5;
         [bestScoreLbl setScale:0.5];
         [gameOverGroup addObject:bestScoreLbl];
         
-        bestScorePoint = [[SKLabelNode alloc] initWithFontNamed:@"HelveticaNeue-UltraLight"];
-        bestScorePoint.position = CGPointMake(self.size.width/2, self.size.height*0.5 + self.size.height);
-        bestScorePoint.fontColor = [SKColor blackColor];
-        bestScorePoint.fontSize = 90;
+        bestScorePoint = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
+        if(IS_568_SCREEN)
+
+            bestScorePoint.position = CGPointMake(self.size.width/2, self.size.height*0.48 + self.size.height);
+        else
+            bestScorePoint.position = CGPointMake(self.size.width/2, self.size.height*0.5 + self.size.height);
+
+        bestScorePoint.fontColor = [SKColor colorWithRed:(float)74/255 green:(float)137/255 blue:(float)220/255 alpha:1.0];
+        bestScorePoint.fontSize = 67.5;
         [bestScorePoint setScale:0.5];
         [gameOverGroup addObject:bestScorePoint];
         
-        yourScoreLbl = [[SKLabelNode alloc] initWithFontNamed:@"HelveticaNeue-UltraLight"];
-        yourScoreLbl.position = CGPointMake(self.size.width/2, self.size.height*0.8 + self.size.height);
+        SKLabelNode *yourScoreLblShadow = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
+        if(IS_568_SCREEN)
+            yourScoreLblShadow.position = CGPointMake(self.size.width/2, self.size.height*0.7 + self.size.height -3);
+        else
+            yourScoreLblShadow.position = CGPointMake(self.size.width/2, self.size.height*0.75 + self.size.height -3);
+        
+        yourScoreLblShadow.text = @"Your score";
+        yourScoreLblShadow.fontColor = [SKColor colorWithRed:(float)219/255 green:(float)68/255 blue:(float)83/255 alpha:1.0];
+        yourScoreLblShadow.fontSize = 90;
+        [yourScoreLblShadow setScale:0.5];
+        [gameOverGroup addObject:yourScoreLblShadow];
+        
+        yourScoreLbl = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
+        if(IS_568_SCREEN)
+            yourScoreLbl.position = CGPointMake(self.size.width/2, self.size.height*0.7 + self.size.height);
+        else
+            yourScoreLbl.position = CGPointMake(self.size.width/2, self.size.height*0.75 + self.size.height);
+
         yourScoreLbl.text = @"Your score";
         yourScoreLbl.fontColor = [SKColor blackColor];
-        yourScoreLbl.fontSize = 120;
+        yourScoreLbl.fontSize = 90;
         [yourScoreLbl setScale:0.5];
         [gameOverGroup addObject:yourScoreLbl];
         
-        yourScorePoint = [[SKLabelNode alloc] initWithFontNamed:@"HelveticaNeue-UltraLight"];
-        yourScorePoint.position = CGPointMake(self.size.width/2, self.size.height*0.7 + self.size.height);
-        yourScorePoint.fontColor = [SKColor blackColor];
-        yourScorePoint.fontSize = 120;
+        yourScorePoint = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
+        if(IS_568_SCREEN)
+            yourScorePoint.position = CGPointMake(self.size.width/2, self.size.height*0.62 + self.size.height);
+        else
+            yourScorePoint.position = CGPointMake(self.size.width/2, self.size.height*0.65 + self.size.height);
+
+        yourScorePoint.fontColor = [SKColor colorWithRed:(float)219/255 green:(float)68/255 blue:(float)83/255 alpha:1.0];
+        yourScorePoint.fontSize = 90;
         [yourScorePoint setScale:0.5];
         [gameOverGroup addObject:yourScorePoint];
         
         shareBtn = [[SKSpriteNode alloc] initWithImageNamed:@"share"];
-        shareBtn.position = CGPointMake(self.size.width/2, self.size.height*0.4 + self.size.height);
+        if(IS_568_SCREEN)
+            shareBtn.position = CGPointMake(self.size.width/2, self.size.height*0.38 + self.size.height);
+        else
+            shareBtn.position = CGPointMake(self.size.width/2, self.size.height*0.415 + self.size.height);
+
         [shareBtn setScale:0.5];
         shareBtn.name = @"shareBtn";
         [gameOverGroup addObject:shareBtn];
@@ -203,7 +249,7 @@
         playBtn  = [[SKSpriteNode alloc] initWithImageNamed:@"play"];
         
         if(IS_568_SCREEN)
-            playBtn.position = CGPointMake(self.size.width/2, self.size.height*0.28 +self.size.height);
+            playBtn.position = CGPointMake(self.size.width/2, self.size.height*0.24 +self.size.height);
         else
             playBtn.position = CGPointMake(self.size.width/2, self.size.height*0.25 +self.size.height);
         
@@ -211,6 +257,15 @@
         playBtn.name = @"playBtn";
         [gameOverGroup addObject:playBtn];
         
+        gameCenterBtn = [[SKSpriteNode alloc] initWithImageNamed:@"gamecenter_button"];
+        if(IS_568_SCREEN)
+            gameCenterBtn.position = CGPointMake(self.size.width*0.9, self.size.height*0.9 +self.size.height);
+        else
+            gameCenterBtn.position = CGPointMake(self.size.width*0.9, self.size.height*0.9 +self.size.height);
+        [gameCenterBtn setScale:0.5];
+        gameCenterBtn.name = @"gameCenterBtn";
+        [gameOverGroup addObject:gameCenterBtn];
+
     }
     return self;
 }
@@ -228,6 +283,7 @@
         else if(isGameOver){
             if([node.name isEqualToString:@"playBtn"]){
                 //Repositioning and reset action
+                [self addChild:paddle];
                 NSArray *children = self.children;
                 for (int i = 0; i < children.count; i++) {
                     if([children[i] isKindOfClass:[Drops class]]){
@@ -315,8 +371,8 @@
         }
         bgColorIndex = randomBgColorIndex;
         bgColor = bgColorArray[randomBgColorIndex];
-//        scoreLabel.color = bgColor;
-//        scoreLabel.colorBlendFactor = 0.9;
+        //        scoreLabel.color = bgColor;
+        //        scoreLabel.colorBlendFactor = 0.9;
         [bg runAction:[SKAction colorizeWithColor:bgColor colorBlendFactor:1 duration:0.3]];
         
         levelBar.color = bgColor;
@@ -329,7 +385,7 @@
     if(levelBar.size.width <= 0){
         [self gameOver];
     }
-
+    
     if(!isPause){
         //            self.view.paused = NO;
         if(self.physicsWorld.speed < 1)
@@ -421,7 +477,8 @@
             
             SKAction *flash = [SKAction repeatAction:[SKAction sequence:@[[SKAction fadeOutWithDuration:0.05], [SKAction waitForDuration:0.05], [SKAction fadeInWithDuration:0.05]]] count:4];
             [paddle runAction:flash];
-            
+            if(options.soundOn)
+                [self runAction:[SKAction playSoundFileNamed:@"success.wav" waitForCompletion:NO]];
         }
         
         //Offset for taken shape displaying
@@ -549,14 +606,34 @@
             break;
         }
     }
-    
+    [self removeAllActions];
+    [sparkArrayPaddle removeAllObjects];
+    [paddle removeAllChildren];
+    [paddle removeFromParent];
+
     if(gameOverTextCanBeAdded){
         [[myView layer] addAnimation:animation forKey:@"position"];
         gameOverText = [[SKLabelNode alloc] init];
         gameOverText.text = [NSString stringWithFormat:@"GAMEOVER"];
         gameOverText.name = @"gameOverText";
+        gameOverText.hidden = YES;
         gameOverText.position = CGPointMake(self.size.width/2, self.size.height/2);
         [self addChild:gameOverText];
+        
+        if(options.soundOn)
+            [self runAction:[SKAction playSoundFileNamed:@"gameover_final.wav" waitForCompletion:NO]];
+
+        for (int i = 0; i < 3; i++) {
+            NSString *xplosionPath =
+            [[NSBundle mainBundle]
+             pathForResource:@"Explosion" ofType:@"sks"];
+            SKEmitterNode *xplosionNode =
+            [NSKeyedUnarchiver unarchiveObjectWithFile:xplosionPath];
+            xplosionNode.position = paddle.position;
+            [xplosionNode setParticleTexture:[SKTexture textureWithImageNamed:[self chooseParticleShape:i]]];
+            [self addChild:xplosionNode];
+        }
+        
         //        yourScorePoint.text = [NSString stringWithFormat:@"%d", score];
         [self incrementScore:score label:yourScorePoint];
         [self getHighscore];
@@ -570,22 +647,18 @@
             [self addChild:gameOverGroup[i]];
             SKAction *slideIn = [SKAction moveByX:0 y:-self.size.height duration:0.5];
             slideIn.timingMode = SKActionTimingEaseInEaseOut;
-            [gameOverGroup[i] runAction:slideIn];
+            [gameOverGroup[i] runAction:[SKAction sequence:@[[SKAction waitForDuration:1.0], slideIn]]];
         }
         gameOverTextCanBeAdded = NO;
-        
     }
-    [self removeAllActions];
-    [sparkArrayPaddle removeAllObjects];
-    [paddle removeAllChildren];
 }
 
 -(void)incrementScore:(int)limit label:(SKLabelNode*)label{
-    __block int i = 1;
+    __block int i = 0;
     [label runAction:[SKAction repeatAction:[SKAction sequence:@[[SKAction runBlock:^{
         label.text = [NSString stringWithFormat:@"%d", i];
         i++;
-    }],[SKAction waitForDuration:0.0000]]] count:limit]];
+    }],[SKAction waitForDuration:0.0000]]] count:limit+1]];
 }
 
 -(int)getHighscore{
@@ -641,7 +714,7 @@
     [self addChild:column7];
     [moveGroup addObject:column7];
     
-    SKSpriteNode *column8 = [SKSpriteNode spriteNodeWithColor:[SKColor clearColor] size:CGSizeMake(self.size.width/8, self.size.height)];
+    SKSpriteNode *column8 = [SKSpriteNode spriteNodeWithColor:[SKColor colorWithRed:(float)67/255 green:(float)74/255 blue:(float)84/255 alpha:1.0] size:CGSizeMake(self.size.width/8, self.size.height)];
     column8.position = CGPointMake(8*self.size.width/8 - column8.size.width/2, self.size.height/2);
     [self addChild:column8];
     [moveGroup addObject:column8];

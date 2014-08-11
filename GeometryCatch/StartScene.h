@@ -25,4 +25,5 @@
 @property SKSpriteNode* aboutBg;
 @property BOOL properlyInView;
 @property AVAudioPlayer *backgroundMusicPlayer;
+@property AVAudioPlayer *clickSoundPlayer;
 @end

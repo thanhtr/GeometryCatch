@@ -10,6 +10,8 @@
 #import <Social/Social.h>
 #import <Accounts/Accounts.h>
 #import "Drops.h"
+#import "Options.h"
+#import <AVFoundation/AVFoundation.h>
 
 static UInt32 worldCategory = 1 << 1;
 static UInt32 paddleCategory = 1 << 2;
@@ -50,4 +52,6 @@ static UInt32 dropCategory = 1 << 3;
 @property SKSpriteNode *shareBtn;
 @property SKSpriteNode *playBtn;
 @property NSMutableArray *gameOverGroup;
+@property SKSpriteNode *gameCenterBtn;
+@property Options *options;
 @end

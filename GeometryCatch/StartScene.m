@@ -10,7 +10,7 @@
 #import "MyScene.h"
 #import "SKEase.h"
 @implementation StartScene
-@synthesize startLbl, titleLbl,menuBtn,options, soundBtn, musicBtn,creditBtn, moveGroup, isInOption, aboutBg, properlyInView, backgroundMusicPlayer;
+@synthesize startLbl, titleLbl,menuBtn,options, soundBtn, musicBtn,creditBtn, moveGroup, isInOption, aboutBg, properlyInView, backgroundMusicPlayer,clickSoundPlayer;
 
 -(id)initWithSize:(CGSize)size{
     if(self = [super initWithSize:size]){
@@ -18,7 +18,12 @@
         [self initColoredStartScreen];
         
         startLbl = [[SKSpriteNode alloc] initWithImageNamed:@"start"];
-        startLbl.position = CGPointMake(self.size.width/2, self.size.height * 0.45);
+        if(IS_568_SCREEN){
+            startLbl.position = CGPointMake(self.size.width/2 -2, self.size.height * 0.45);
+        }
+        else
+            startLbl.position = CGPointMake(self.size.width/2 -2, self.size.height * 0.42);
+
         [startLbl setScale:0.5];
         startLbl.name = @"startLbl";
         [self addChild:startLbl];
@@ -28,16 +33,6 @@
         [titleLbl setScale:0.5];
         [self addChild:titleLbl];
         
-        menuBtn = [[SKSpriteNode alloc] initWithImageNamed:@"optionbutton"];
-        if(IS_568_SCREEN){
-            menuBtn.position = CGPointMake(self.size.width*0.95, self.size.height*0.95);
-        }
-        else {
-            menuBtn.position = CGPointMake(self.size.width*0.95, self.size.height*0.92);
-        }
-        menuBtn.name = @"menuBtn";
-        [menuBtn setScale:0.5];
-        [self addChild:menuBtn];
         
         
         SKSpriteNode *bg = [[SKSpriteNode alloc]initWithImageNamed:@"option_bg"];
@@ -53,6 +48,19 @@
 
         [self addChild:bg];
         
+        
+        menuBtn = [[SKSpriteNode alloc] initWithImageNamed:@"optionbutton"];
+        if(IS_568_SCREEN){
+            menuBtn.position = CGPointMake(self.size.width*0.95, self.size.height*0.95);
+        }
+        else {
+            menuBtn.position = CGPointMake(self.size.width*0.95, self.size.height*0.92);
+        }
+        
+        menuBtn.name = @"menuBtn";
+        [menuBtn setScale:0.5];
+        [self addChild:menuBtn];
+
         options = [[Options alloc] init];
         
         soundBtn = [[SKSpriteNode alloc] initWithImageNamed:[self chooseConfigSprite:options.soundOn baseFileName:@"sfx"]];
@@ -60,10 +68,10 @@
         soundBtn.name = @"soundBtn";
         [soundBtn setScale:0.5];
         if(IS_568_SCREEN){
-            soundBtn.position = CGPointMake(self.size.width*1.33, self.size.height*0.43);
+            soundBtn.position = CGPointMake(self.size.width*1.11, self.size.height*0.43);
         }
         else {
-            soundBtn.position = CGPointMake(self.size.width*1.33, self.size.height*0.4);
+            soundBtn.position = CGPointMake(self.size.width*1.11, self.size.height*0.4);
         }
         [self addChild:soundBtn];
         
@@ -76,12 +84,11 @@
         
         creditBtn = [[SKSpriteNode alloc] initWithImageNamed:@"aboutus"];
         creditBtn.anchorPoint = CGPointMake(0, 0.5);
-        creditBtn.position = CGPointMake(self.size.width * 1.23, self.size.height*0.22);
         if(IS_568_SCREEN){
-            creditBtn.position = CGPointMake(self.size.width * 1.23, self.size.height*0.22);
+            creditBtn.position = CGPointMake(self.size.width * 1.05, self.size.height*0.22);
         }
         else {
-            creditBtn.position = CGPointMake(self.size.width * 1.23, self.size.height*0.15);
+            creditBtn.position = CGPointMake(self.size.width * 1.05, self.size.height*0.15);
         }
         creditBtn.name = @"creditBtn";
         [creditBtn setScale:0.5];
@@ -90,15 +97,15 @@
         aboutBg = [[SKSpriteNode alloc]initWithImageNamed:@"credit_screen"];
         aboutBg.name = @"aboutBg";
         aboutBg.hidden = YES;
-        
+        aboutBg.position = CGPointMake(5*self.size.width/2, self.size.height/2);
         if(IS_568_SCREEN){
-            aboutBg.position = CGPointMake(5*self.size.width/2, self.size.height/2);
+            [aboutBg setScale:0.5];
         }
         else {
-            aboutBg.position = CGPointMake(5*self.size.width/2, self.size.height*0.4);
+            aboutBg.yScale = 0.45;
+            aboutBg.xScale = 0.5;
         }
         
-        [aboutBg setScale:0.5];
         [self addChild:aboutBg];
         
         isInOption = NO;
@@ -123,17 +130,25 @@
         for (UITouch *touch in touches) {
             CGPoint location = [touch locationInNode:self];
             SKNode *node = [self nodeAtPoint:location];
+            if([node isKindOfClass:[SKSpriteNode class]]){
+                if (options.soundOn) {
+                    [self runAction:[SKAction playSoundFileNamed:@"click_proccess.wav" waitForCompletion:NO]];
+                }
+
+            }
             if([node.name isEqualToString:@"menuBtn"]){
                 properlyInView = NO;
+                int direction;
+                if(!isInOption)
+                    direction = -1;
+                else direction = 1;
+                menuBtn.position = CGPointMake(menuBtn.position.x - direction * self.size.width, menuBtn.position.y);
                 for (int i =0; i< self.children.count; i++) {
                     SKNode *child = self.children[i];
-                    int direction;
-                    if(!isInOption)
-                        direction = -1;
-                    else direction = 1;
-                    SKAction *move =[SKAction moveByX: direction * (self.size.width - self.size.width/8) y:0 duration:0.5];
+                    
+                    SKAction *move =[SKAction moveByX: direction * self.size.width y:0 duration:0.5];
                     move.timingMode = SKActionTimingEaseInEaseOut;
-                    SKAction *elasticMove = [SKEase MoveToWithNode:self.children[i] EaseFunction:CurveTypeBack Mode:EaseOut Time:0.2 ToVector:CGVectorMake(child.position.x + direction * (self.size.width - self.size.width/8),child.position.y)];
+                    SKAction *elasticMove = [SKEase MoveToWithNode:self.children[i] EaseFunction:CurveTypeBack Mode:EaseOut Time:0.2 ToVector:CGVectorMake(child.position.x + direction * (self.size.width),child.position.y)];
                     [self.children[i] runAction:[SKAction sequence:@[elasticMove, [SKAction waitForDuration:0.2], [SKAction runBlock:^{
                         properlyInView = YES;
                     }]]]];
@@ -149,12 +164,12 @@
             else if ([node.name isEqualToString:@"creditBtn"]) {
                 properlyInView = NO;
                 aboutBg.hidden = NO;
-                SKAction *moveLeft =[SKAction moveByX: (-self.size.width - self.size.width/8) y:0 duration:0.5];
+                SKAction *moveLeft =[SKAction moveByX: (-self.size.width) y:0 duration:0.5];
                 moveLeft.timingMode = SKActionTimingEaseInEaseOut;
                 
                 for (int i =0; i< self.children.count; i++) {
                     SKNode *child = self.children[i];
-                    SKAction *elasticMove = [SKEase MoveToWithNode:self.children[i] EaseFunction:CurveTypeElastic Mode:EaseOut Time:0.2 ToVector:CGVectorMake(child.position.x -(self.size.width + self.size.width/8),child.position.y)];
+                    SKAction *elasticMove = [SKEase MoveToWithNode:self.children[i] EaseFunction:CurveTypeElastic Mode:EaseOut Time:0.2 ToVector:CGVectorMake(child.position.x -(self.size.width),child.position.y)];
                     //                [self.children[i] runAction:moveLeft];
                     [self.children[i] runAction:[SKAction sequence:@[elasticMove, [SKAction waitForDuration:0.2], [SKAction runBlock:^{
                         properlyInView = YES;
@@ -180,11 +195,11 @@
             else if ([node.name isEqualToString:@"aboutBg"]) {
                 properlyInView = NO;
                 aboutBg.hidden = YES;
-                SKAction *moveRight =[SKAction moveByX: (self.size.width + self.size.width/8) y:0 duration:0.5];
+                SKAction *moveRight =[SKAction moveByX: (self.size.width) y:0 duration:0.5];
                 moveRight.timingMode = SKActionTimingEaseInEaseOut;
                 for (int i =0; i< self.children.count; i++) {
                     SKNode *child = self.children[i];
-                    SKAction *elasticMove = [SKEase MoveToWithNode:self.children[i] EaseFunction:CurveTypeElastic Mode:EaseOut Time:0.2 ToVector:CGVectorMake(child.position.x - (-self.size.width - self.size.width/8),child.position.y)];
+                    SKAction *elasticMove = [SKEase MoveToWithNode:self.children[i] EaseFunction:CurveTypeElastic Mode:EaseOut Time:0.2 ToVector:CGVectorMake(child.position.x - (-self.size.width),child.position.y)];
                     [self.children[i] runAction:[SKAction sequence:@[elasticMove, [SKAction waitForDuration:0.2], [SKAction runBlock:^{
                         properlyInView = YES;
                     }]]]];
