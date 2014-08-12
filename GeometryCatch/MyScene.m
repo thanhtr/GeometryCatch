@@ -64,32 +64,7 @@
         self.physicsBody.categoryBitMask = worldCategory;
         self.physicsBody.collisionBitMask = paddleCategory;
         
-        //Initial opening animation
-        [self initColoredBackground];
-        SKAction *move = [SKAction runBlock:^{
-            for (int i = 0; i< moveGroup.count; i++) {
-                if(i < bgColorIndex){
-                    SKAction *slide = [SKAction moveByX:-self.size.width y:0 duration:1];
-                    slide.timingMode = SKActionTimingEaseInEaseOut;
-                    [moveGroup[i] runAction:slide];
-                }
-                else if (i > bgColorIndex){
-                    SKAction *slide = [SKAction moveByX:self.size.width y:0 duration:1];
-                    slide.timingMode = SKActionTimingEaseInEaseOut;
-                    [moveGroup[i] runAction:slide];                }
-                else if (i == bgColorIndex){
-                    [moveGroup[i] runAction:[SKAction colorizeWithColor:[SKColor clearColor] colorBlendFactor:1 duration:0.0]];
-                }
-            }
-        }];
-        SKAction *wait = [SKAction waitForDuration:1.5];
-        SKAction *drop = [SKAction runBlock:^{
-            //Drop shapes
-            [self dropShape];
-        }];
-        [self runAction:[SKAction sequence:@[move, wait, drop]]];
-        
-        //Level bar init
+                //Level bar init
         levelBar = [[SKSpriteNode alloc]initWithImageNamed:@"levelBar"];
         levelBar.anchorPoint = CGPointMake(0, 0.5);
         levelBar.position = CGPointMake(0, 0);
@@ -134,7 +109,7 @@
         
         //Pause
         SKSpriteNode *pauseBtn = [[SKSpriteNode alloc] initWithImageNamed:@"pauseBtn"];
-        [pauseBtn setScale:0.25];
+        [pauseBtn setScale:0.5];
         pauseBtn.position = CGPointMake(self.size.width*0.05, self.size.height*0.93);
         pauseBtn.name = @"pauseBtn";
         [self addChild:pauseBtn];
@@ -266,6 +241,34 @@
         gameCenterBtn.name = @"gameCenterBtn";
         [gameOverGroup addObject:gameCenterBtn];
 
+        
+        //Initial opening animation
+        [self initColoredBackground];
+        SKAction *move = [SKAction runBlock:^{
+            for (int i = 0; i< moveGroup.count; i++) {
+                if(i < bgColorIndex){
+                    SKAction *slide = [SKAction moveByX:-self.size.width y:0 duration:1];
+                    slide.timingMode = SKActionTimingEaseInEaseOut;
+                    [moveGroup[i] runAction:slide];
+                }
+                else if (i > bgColorIndex){
+                    SKAction *slide = [SKAction moveByX:self.size.width y:0 duration:1];
+                    slide.timingMode = SKActionTimingEaseInEaseOut;
+                    [moveGroup[i] runAction:slide];                }
+                else if (i == bgColorIndex){
+                    [moveGroup[i] runAction:[SKAction sequence:@[[SKAction colorizeWithColor:[SKColor clearColor] colorBlendFactor:1 duration:0.0], [SKAction waitForDuration:1.0], [SKAction runBlock:^{
+                        [moveGroup[i] removeFromParent];
+                    }]]]];
+                }
+            }
+        }];
+        SKAction *wait = [SKAction waitForDuration:1.5];
+        SKAction *drop = [SKAction runBlock:^{
+            //Drop shapes
+            [self dropShape];
+        }];
+        [self runAction:[SKAction sequence:@[move, wait, drop]]];
+        
     }
     return self;
 }

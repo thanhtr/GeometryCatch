@@ -17,6 +17,11 @@
         
         [self initColoredStartScreen];
         
+        SKSpriteNode *bottomColoredLine = [[SKSpriteNode alloc] initWithImageNamed:@"bottom_screen_background"];
+        bottomColoredLine.position = CGPointMake(self.size.width/2, self.size.height*0.01);
+        [bottomColoredLine setScale:0.5];
+        [self addChild:bottomColoredLine];
+        
         startLbl = [[SKSpriteNode alloc] initWithImageNamed:@"start"];
         if(IS_568_SCREEN){
             startLbl.position = CGPointMake(self.size.width/2 -2, self.size.height * 0.45);
