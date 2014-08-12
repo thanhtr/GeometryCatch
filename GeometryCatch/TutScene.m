@@ -25,11 +25,15 @@
                         nil];
         bgColorIndex = arc4random()%(bgColorArray.count);
         bgColor = bgColorArray[bgColorIndex];
-        
-        paddleHoldShapeOffset = 1;
+        if(IS_IPAD_SCREEN)
+            paddleHoldShapeOffset = 0.5;
+        else
+            paddleHoldShapeOffset = 1;
         paddleArrayIndex = 0;
-        
-        speedOffset = -2;
+        if(IS_IPAD_SCREEN)
+            speedOffset = -4;
+        else
+            speedOffset = -2;
         paddleArray = [[NSMutableArray alloc] initWithCapacity:3];
         self.physicsWorld.gravity = CGVectorMake(0, speedOffset);
         self.physicsWorld.contactDelegate = self;
@@ -38,6 +42,8 @@
         bg.position = CGPointMake(self.size.width/2, self.size.height/2);
         bg.color = bgColor;
         bg.colorBlendFactor = 1;
+        if(IS_IPAD_SCREEN)
+            [bg setScale:1.2];
         [self addChild:bg];
         
         self.physicsBody = [SKPhysicsBody bodyWithEdgeLoopFromRect:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height * 1.1)];
@@ -53,6 +59,8 @@
         [rainNode setParticleColorSequence:nil];
         [rainNode setParticleColor:bgColor];
         [rainNode setParticleColorBlendFactor:0.8];
+        if(IS_IPAD_SCREEN)
+            [rainNode setParticleScale:0.6];
         [self addChild:rainNode];
         
         levelBar = [[SKSpriteNode alloc]initWithImageNamed:@"levelBar"];
@@ -62,6 +70,8 @@
         //        levelBar.yScale = 2.0;
         levelBar.color = bgColor;
         levelBar.colorBlendFactor = 0.7;
+        if(IS_IPAD_SCREEN)
+            [levelBar setScale:1.5];
         [self addChild:levelBar];
         
         
@@ -71,7 +81,10 @@
             paddle.position = CGPointMake(self.size.width /2, self.size.height*0.15);
         else
             paddle.position = CGPointMake(self.size.width /2, self.size.height*0.18);
-        
+        if(IS_IPAD_SCREEN)
+            [paddle setScale:0.5];
+        else
+            [paddle setScale:0.2];
         paddle.name = @"paddle";
         paddle.blendMode = SKBlendModeAdd;
         paddle.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:paddle.size];
@@ -103,7 +116,11 @@
         firstStepOk = NO;
         SKLabelNode *welcomeTextFirstLine = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
         welcomeTextFirstLine.position = CGPointMake(self.size.width/2, self.size.height*0.53);
-        welcomeTextFirstLine.fontSize = 25;
+        if(IS_IPAD_SCREEN)
+            welcomeTextFirstLine.fontSize = 60;
+        else
+            welcomeTextFirstLine.fontSize = 25;
+        
         welcomeTextFirstLine.text = @"WELCOME";
         welcomeTextFirstLine.alpha = 0;
         [self addChild:welcomeTextFirstLine];
@@ -113,7 +130,10 @@
         
         SKLabelNode *welcomeTextSecondLine = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
         welcomeTextSecondLine.position = CGPointMake(self.size.width/2, self.size.height*0.48);
-        welcomeTextSecondLine.fontSize = 25;
+        if(IS_IPAD_SCREEN)
+            welcomeTextSecondLine.fontSize = 60;
+        else
+            welcomeTextSecondLine.fontSize = 25;
         welcomeTextSecondLine.text = @"TO THE FIRST TUTORIAL";
         welcomeTextSecondLine.alpha = 0;
         [self addChild:welcomeTextSecondLine];
@@ -136,7 +156,10 @@
 -(void)firstStep{
     SKLabelNode *firstLine = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
     firstLine.position = CGPointMake(self.size.width/2, self.size.height*0.53);
-    firstLine.fontSize = 25;
+    if(IS_IPAD_SCREEN)
+        firstLine.fontSize = 60;
+    else
+        firstLine.fontSize = 25;
     firstLine.text = @"OR";
     firstLine.alpha = 0;
     [self addChild:firstLine];
@@ -144,7 +167,10 @@
     
     click = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
     click.position = CGPointMake(self.size.width*0.33, self.size.height*0.53);
-    click.fontSize = 25;
+    if(IS_IPAD_SCREEN)
+        click.fontSize = 60;
+    else
+        click.fontSize = 25;
     click.text = @"TOUCH";
     click.alpha = 0;
     [self addChild:click];
@@ -152,7 +178,10 @@
     
     drag = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
     drag.position = CGPointMake(self.size.width*0.65, self.size.height*0.53);
-    drag.fontSize = 25;
+    if(IS_IPAD_SCREEN)
+        drag.fontSize = 60;
+    else
+        drag.fontSize = 25;
     drag.text = @"HOLD";
     drag.alpha = 0;
     [self addChild:drag];
@@ -160,7 +189,10 @@
     
     SKLabelNode *secondLine = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
     secondLine.position = CGPointMake(self.size.width/2, self.size.height*0.48);
-    secondLine.fontSize = 25;
+    if(IS_IPAD_SCREEN)
+        secondLine.fontSize = 60;
+    else
+        secondLine.fontSize = 25;
     secondLine.text = @"TO MOVE THE PADDLE";
     secondLine.alpha = 0;
     [self addChild:secondLine];
@@ -171,18 +203,19 @@
 }
 
 -(void)firstSuccess{
-  
-    
     SKLabelNode *congratText = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
     congratText.position = CGPointMake(self.size.width/2, self.size.height/2);
-    congratText.fontSize = 25;
+    if(IS_IPAD_SCREEN)
+        congratText.fontSize = 60;
+    else
+        congratText.fontSize = 25;
     congratText.text = @"SUCCESS";
     congratText.alpha = 0;
     [self runAction:[SKAction sequence:@[[SKAction waitForDuration:0.5], [SKAction runBlock:^{
         [click removeFromParent];
         [drag removeFromParent];
         [self addChild:congratText];
-
+        
     }]]]];
     SKAction *flash = [SKAction repeatAction:[SKAction sequence:@[[SKAction fadeOutWithDuration:0.05], [SKAction waitForDuration:0.05], [SKAction fadeInWithDuration:0.05]]] count:4];
     [congratText runAction:[SKAction sequence:@[flash,[SKAction waitForDuration:1.5], [SKAction fadeOutWithDuration:0.5], [SKAction runBlock:^{
@@ -192,11 +225,12 @@
 }
 
 -(void)secondStepPhaseOne{
-    
-    
     SKLabelNode *firstLineText = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
     firstLineText.position = CGPointMake(self.size.width/2, self.size.height*0.53);
-    firstLineText.fontSize = 25;
+    if(IS_IPAD_SCREEN)
+        firstLineText.fontSize = 60;
+    else
+        firstLineText.fontSize = 25;
     firstLineText.text = @"THE ENERGY BAR";
     firstLineText.alpha = 0;
     [self addChild:firstLineText];
@@ -204,7 +238,10 @@
     
     SKLabelNode *secondLineText = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
     secondLineText.position = CGPointMake(self.size.width/2, self.size.height*0.48);
-    secondLineText.fontSize = 25;
+    if(IS_IPAD_SCREEN)
+        secondLineText.fontSize = 60;
+    else
+        secondLineText.fontSize = 25;
     secondLineText.text = @"WILL GRADUALLY DECREASE";
     secondLineText.alpha = 0;
     [self addChild:secondLineText];
@@ -220,7 +257,10 @@
 -(void)secondStepPhaseTwo{
     SKLabelNode *firstLineText = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
     firstLineText.position = CGPointMake(self.size.width/2, self.size.height*0.53);
-    firstLineText.fontSize = 25;
+    if(IS_IPAD_SCREEN)
+        firstLineText.fontSize = 60;
+    else
+        firstLineText.fontSize = 25;
     firstLineText.text = @"COLLECT 3 SAME SHAPE";
     firstLineText.alpha = 0;
     [self addChild:firstLineText];
@@ -228,7 +268,10 @@
     
     SKLabelNode *secondLineText = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
     secondLineText.position = CGPointMake(self.size.width/2, self.size.height*0.48);
-    secondLineText.fontSize = 25;
+    if(IS_IPAD_SCREEN)
+        secondLineText.fontSize = 60;
+    else
+        secondLineText.fontSize = 25;
     secondLineText.text = @"TO SCORE AND FILL ENERGY";
     secondLineText.alpha = 0;
     [self addChild:secondLineText];
@@ -241,7 +284,10 @@
 -(void)secondSuccess{
     SKLabelNode *congratText = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
     congratText.position = CGPointMake(self.size.width/2, self.size.height/2);
-    congratText.fontSize = 25;
+    if(IS_IPAD_SCREEN)
+        congratText.fontSize = 60;
+    else
+        congratText.fontSize = 25;
     congratText.text = @"SUCCESS";
     congratText.alpha = 0;
     [self addChild:congratText];
@@ -264,7 +310,10 @@
 -(void)finalWordsPhaseOne{
     SKLabelNode *firstLineText = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
     firstLineText.position = CGPointMake(self.size.width/2, self.size.height*0.53);
-    firstLineText.fontSize = 25;
+    if(IS_IPAD_SCREEN)
+        firstLineText.fontSize = 60;
+    else
+        firstLineText.fontSize = 25;
     firstLineText.text = @"BEWARE! FAIL TO MATCH";
     firstLineText.alpha = 0;
     [self addChild:firstLineText];
@@ -272,7 +321,10 @@
     
     SKLabelNode *secondLineText = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
     secondLineText.position = CGPointMake(self.size.width/2, self.size.height*0.48);
-    secondLineText.fontSize = 25;
+    if(IS_IPAD_SCREEN)
+        secondLineText.fontSize = 60;
+    else
+        secondLineText.fontSize = 25;
     secondLineText.text = @"COSTS YOU MORE ENERGY";
     secondLineText.alpha = 0;
     [self addChild:secondLineText];
@@ -285,7 +337,10 @@
 -(void)finalWordsPhaseTwo{
     SKLabelNode *firstLineText = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
     firstLineText.position = CGPointMake(self.size.width/2, self.size.height*0.53);
-    firstLineText.fontSize = 25;
+    if(IS_IPAD_SCREEN)
+        firstLineText.fontSize = 60;
+    else
+        firstLineText.fontSize = 25;
     firstLineText.text = @"YOU ARE READY";
     firstLineText.alpha = 0;
     [self addChild:firstLineText];
@@ -293,7 +348,10 @@
     
     SKLabelNode *secondLineText = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
     secondLineText.position = CGPointMake(self.size.width/2, self.size.height*0.48);
-    secondLineText.fontSize = 25;
+    if(IS_IPAD_SCREEN)
+        secondLineText.fontSize = 60;
+    else
+        secondLineText.fontSize = 25;
     secondLineText.text = @"GOOD LUCK!!";
     secondLineText.alpha = 0;
     [self addChild:secondLineText];
@@ -310,7 +368,7 @@
                 [moveGroup[i] runAction:slide];
             }
         }
-
+        
     }], [SKAction waitForDuration:1.0], [SKAction runBlock:^{
         for (int i = 0; i< moveGroup.count; i++) {
             if (i == bgColorIndex){
@@ -321,7 +379,7 @@
         MyScene *myScene = [[MyScene alloc] initWithSize:self.size];
         [self.view presentScene:myScene];
     }]]]];
-
+    
 }
 
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
@@ -346,6 +404,13 @@
 }
 
 -(void)update:(NSTimeInterval)currentTime{
+    if(paddle.position.x < paddle.size.width/2){
+        paddle.position = CGPointMake(paddle.size.width/2, paddle.position.y);
+    }
+    else if (paddle.position.x > self.size.width -paddle.size.width/2){
+        paddle.position = CGPointMake(self.size.width -paddle.size.width/2, paddle.position.y);
+    }
+    
     if(firstStepOk)
         [self firstStep];
     if (clickMoveOk) {
@@ -383,6 +448,7 @@
     }
     if(levelBar.size.width <=0)
         levelBar.size = CGSizeMake(self.size.width*0.5, levelBar.size.height);
+    
 }
 
 -(void)didBeginContact:(SKPhysicsContact *)contact{
@@ -397,6 +463,8 @@
     [NSKeyedUnarchiver unarchiveObjectWithFile:sparkPath];
     sparkNode.position = shape.position;
     [sparkNode setParticleTexture:[SKTexture textureWithImageNamed:[self chooseParticleShape:shape.type]]];
+    if(IS_IPAD_SCREEN)
+        [sparkNode setParticleScale:0.3];
     [shape removeFromParent];
     sparkNode.name = @"sparkNode";
     
@@ -420,7 +488,10 @@
             [paddleArray removeAllObjects];
             paddleArrayIndex = 0;
             [paddle removeAllChildren];
-            paddleHoldShapeOffset = 1;
+            if(IS_IPAD_SCREEN)
+                paddleHoldShapeOffset = 0.5;
+            else
+                paddleHoldShapeOffset = 1;
         }
         
         //Or if the paddle array isn't full yet
@@ -431,7 +502,10 @@
             takenShape.color = bgColor;
             takenShape.colorBlendFactor = 1;
             paddleArrayIndex += 1;
-            paddleHoldShapeOffset -= 1;
+            if(IS_IPAD_SCREEN)
+                paddleHoldShapeOffset -= 0.5;
+            else
+                paddleHoldShapeOffset -= 1;
             
         }
         
@@ -440,7 +514,10 @@
             [paddleArray removeAllObjects];
             paddleArrayIndex = 0;
             [paddle removeAllChildren];
-            paddleHoldShapeOffset = 1;
+            if(IS_IPAD_SCREEN)
+                paddleHoldShapeOffset = 0.5;
+            else
+                paddleHoldShapeOffset = 1;
             levelBar.size = CGSizeMake(levelBar.size.width + self.size.width*0.3, levelBar.size.height);
             SKAction *flash = [SKAction repeatAction:[SKAction sequence:@[[SKAction fadeOutWithDuration:0.05], [SKAction waitForDuration:0.05], [SKAction fadeInWithDuration:0.05]]] count:4];
             [paddle runAction:flash];
@@ -448,10 +525,16 @@
         }
         
         //Offset for taken shape displaying
-        if(paddleHoldShapeOffset < -1){
-            paddleHoldShapeOffset = 1;
+        if(IS_IPAD_SCREEN){
+            if(paddleHoldShapeOffset < -0.5){
+                paddleHoldShapeOffset = 0.5;
+            }
         }
-        
+        else{
+            if(paddleHoldShapeOffset < -1){
+                paddleHoldShapeOffset = 1;
+            }
+        }
     }
     
     //If world's edge is hit
@@ -469,6 +552,8 @@
     Drops *drop = [[Drops alloc] init:[self chooseShape:dropType]];
     drop.type = dropType;
     drop.name = @"drop";
+    if(IS_IPAD_SCREEN)
+        [drop setScale:0.8];
     drop.position = CGPointMake(self.size.width * dropPositionOffset, self.size.height);
     //        [drop runAction:[SKAction moveToY:-10 duration:(drop.position.y - self.size.width)*speedOffset]];
     [self addChild:drop];

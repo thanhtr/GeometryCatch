@@ -9,6 +9,7 @@
 #import "StartScene.h"
 #import "MyScene.h"
 #import "SKEase.h"
+#import "TutScene.h"
 @implementation StartScene
 @synthesize startLbl, titleLbl,menuBtn,options, soundBtn, musicBtn,creditBtn, moveGroup, isInOption, aboutBg, properlyInView, backgroundMusicPlayer,clickSoundPlayer;
 
@@ -18,24 +19,45 @@
         [self initColoredStartScreen];
         
         SKSpriteNode *bottomColoredLine = [[SKSpriteNode alloc] initWithImageNamed:@"bottom_screen_background"];
-        bottomColoredLine.position = CGPointMake(self.size.width/2, self.size.height*0.01);
-        [bottomColoredLine setScale:0.5];
+        if(IS_IPAD_SCREEN)
+            bottomColoredLine.position = CGPointMake(self.size.width/2-0.5, self.size.height*0.01);
+        else
+            bottomColoredLine.position = CGPointMake(self.size.width/2 -0.25, self.size.height*0.01);
+
+        if(IS_IPAD_SCREEN)
+            [bottomColoredLine setScale:1.2];
+        else
+            [bottomColoredLine setScale:0.5];
         [self addChild:bottomColoredLine];
         
         startLbl = [[SKSpriteNode alloc] initWithImageNamed:@"start"];
         if(IS_568_SCREEN){
             startLbl.position = CGPointMake(self.size.width/2 -2, self.size.height * 0.45);
         }
+        else if(IS_IPAD_SCREEN)
+            startLbl.position = CGPointMake(self.size.width/2 -5, self.size.height * 0.45);
         else
             startLbl.position = CGPointMake(self.size.width/2 -2, self.size.height * 0.42);
-
-        [startLbl setScale:0.5];
+        
+        if(IS_IPAD_SCREEN)
+            [startLbl setScale:1.2];
+        else
+            [startLbl setScale:0.5];
+        
         startLbl.name = @"startLbl";
         [self addChild:startLbl];
         
         titleLbl = [[SKSpriteNode alloc] initWithImageNamed:@"title"];
-        titleLbl.position = CGPointMake(self.size.width/2, self.size.height*0.6);
-        [titleLbl setScale:0.5];
+        if(IS_IPAD_SCREEN)
+            titleLbl.position = CGPointMake(self.size.width/2, self.size.height*0.65);
+        else
+            titleLbl.position = CGPointMake(self.size.width/2, self.size.height*0.6);
+        
+        if(IS_IPAD_SCREEN)
+            [titleLbl setScale:1.2];
+        else
+            [titleLbl setScale:0.5];
+        
         [self addChild:titleLbl];
         
         
@@ -49,8 +71,13 @@
             bg.position = CGPointMake(3*self.size.width/2, self.size.height*0.48);
         }
         
-        [bg setScale:0.5];
-
+        if(IS_IPAD_SCREEN){
+            bg.xScale = 1.2;
+            bg.yScale = 1.1;
+        }
+        else
+            [bg setScale:0.5];
+        
         [self addChild:bg];
         
         
@@ -63,15 +90,25 @@
         }
         
         menuBtn.name = @"menuBtn";
-        [menuBtn setScale:0.5];
+        
+        if(IS_IPAD_SCREEN)
+            [menuBtn setScale:1.2];
+        else
+            [menuBtn setScale:0.5];
+        
         [self addChild:menuBtn];
-
+        
         options = [[Options alloc] init];
         
         soundBtn = [[SKSpriteNode alloc] initWithImageNamed:[self chooseConfigSprite:options.soundOn baseFileName:@"sfx"]];
         soundBtn.anchorPoint = CGPointMake(0, 0.5);
         soundBtn.name = @"soundBtn";
-        [soundBtn setScale:0.5];
+        
+        if(IS_IPAD_SCREEN)
+            [soundBtn setScale:1.2];
+        else
+            [soundBtn setScale:0.5];
+        
         if(IS_568_SCREEN){
             soundBtn.position = CGPointMake(self.size.width*1.11, self.size.height*0.43);
         }
@@ -84,19 +121,30 @@
         musicBtn.anchorPoint = CGPointMake(0, 0.5);
         musicBtn.position = CGPointMake(self.size.width*1.22, self.size.height*0.63);
         musicBtn.name = @"musicBtn";
-        [musicBtn setScale:0.5];
+        if(IS_IPAD_SCREEN)
+            [musicBtn setScale:1.2];
+        else
+            [musicBtn setScale:0.5];
         [self addChild:musicBtn];
         
         creditBtn = [[SKSpriteNode alloc] initWithImageNamed:@"aboutus"];
         creditBtn.anchorPoint = CGPointMake(0, 0.5);
+        
         if(IS_568_SCREEN){
             creditBtn.position = CGPointMake(self.size.width * 1.05, self.size.height*0.22);
         }
+        else if(IS_IPAD_SCREEN)
+            creditBtn.position = CGPointMake(self.size.width * 1.05, self.size.height*0.14);
         else {
             creditBtn.position = CGPointMake(self.size.width * 1.05, self.size.height*0.15);
         }
+        
         creditBtn.name = @"creditBtn";
-        [creditBtn setScale:0.5];
+        
+        if(IS_IPAD_SCREEN)
+            [creditBtn setScale:1.2];
+        else
+            [creditBtn setScale:0.5];
         [self addChild:creditBtn];
         
         aboutBg = [[SKSpriteNode alloc]initWithImageNamed:@"credit_screen"];
@@ -105,6 +153,10 @@
         aboutBg.position = CGPointMake(5*self.size.width/2, self.size.height/2);
         if(IS_568_SCREEN){
             [aboutBg setScale:0.5];
+        }
+        else if(IS_IPAD_SCREEN){
+            aboutBg.yScale = 1.0;
+            aboutBg.xScale = 1.2;
         }
         else {
             aboutBg.yScale = 0.45;
@@ -139,7 +191,7 @@
                 if (options.soundOn) {
                     [self runAction:[SKAction playSoundFileNamed:@"click_proccess.wav" waitForCompletion:NO]];
                 }
-
+                
             }
             if([node.name isEqualToString:@"menuBtn"]){
                 properlyInView = NO;
@@ -162,8 +214,10 @@
                 
             }
             else if([node.name isEqualToString:@"startLbl"]){
-                MyScene *myScene = [[MyScene alloc]initWithSize:self.size];
-                [self.view presentScene:myScene];
+//                MyScene *myScene = [[MyScene alloc]initWithSize:self.size];
+//                [self.view presentScene:myScene];
+                TutScene *tutScene = [[TutScene alloc]initWithSize:self.size];
+                [self.view presentScene:tutScene];
             }
             
             else if ([node.name isEqualToString:@"creditBtn"]) {

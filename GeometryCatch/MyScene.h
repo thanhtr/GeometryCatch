@@ -34,8 +34,6 @@ static UInt32 dropCategory = 1 << 3;
 @property SKLabelNode *gameOverText;
 @property SKLabelNode *levelLabel;
 @property SKEmitterNode *rainNode;
-@property NSMutableArray *sparkArrayPaddle;
-@property NSMutableArray *sparkArrayWorld;
 @property int sparkArrayIndex;
 @property NSArray *bgColorArray;
 //@property Drops *testShape;

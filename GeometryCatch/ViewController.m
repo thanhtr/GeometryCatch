@@ -12,10 +12,10 @@
 #import "TutScene.h"
 @implementation ViewController
 
-- (void)viewDidLoad
+- (void)viewDidLayoutSubviews
 {
     
-    [super viewDidLoad];
+    [super viewDidLayoutSubviews];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(createPost:)
                                                  name:@"CreatePost"
@@ -26,12 +26,12 @@
     skView.showsNodeCount = YES;
     
     // Create and configure the scene.
-    SKScene * scene = [StartScene sceneWithSize:skView.bounds.size];
+    SKScene * scene = [MyScene sceneWithSize:skView.bounds.size];
     scene.scaleMode = SKSceneScaleModeAspectFill;
     
     // Present the scene.
     [skView presentScene:scene];
-    
+ 
 }
 
 - (BOOL)shouldAutorotate

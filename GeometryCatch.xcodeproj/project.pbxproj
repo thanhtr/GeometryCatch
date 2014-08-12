@@ -215,6 +215,7 @@
 		6A0CBBBB1980411A003382ED /* GeometryCatch */ = {
 			isa = PBXGroup;
 			children = (
+				6AD143CB199A7E4F0059B00D /* iPad */,
 				6AA3A43619978B6600D2B829 /* Fonts */,
 				6ADD148E1993B54D00D8EAE8 /* Sound&Music */,
 				6AC800011992C8A800930C9C /* easing.c */,
@@ -225,9 +226,9 @@
 				6A0CBBF2198041CC003382ED /* Art */,
 				6A0CBBC41980411A003382ED /* AppDelegate.h */,
 				6A0CBBC51980411A003382ED /* AppDelegate.m */,
-				6A0CBBC71980411A003382ED /* Main.storyboard */,
 				6A0CBBCA1980411A003382ED /* ViewController.h */,
 				6A0CBBCB1980411A003382ED /* ViewController.m */,
+				6A0CBBC71980411A003382ED /* Main.storyboard */,
 				6AACC549198E825E00DE8D7A /* StartScene.h */,
 				6AACC54A198E825E00DE8D7A /* StartScene.m */,
 				6A9D083E1998D13F00888896 /* TutScene.h */,
@@ -317,6 +318,13 @@
 				6AA3A43719978B9800D2B829 /* Square.ttf */,
 			);
 			name = Fonts;
+			sourceTree = "<group>";
+		};
+		6AD143CB199A7E4F0059B00D /* iPad */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = iPad;
 			sourceTree = "<group>";
 		};
 		6ADD148E1993B54D00D8EAE8 /* Sound&Music */ = {
@@ -604,6 +612,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SPRITEKIT_TEXTURE_ATLAS_OUTPUT = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -619,6 +628,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SPRITEKIT_TEXTURE_ATLAS_OUTPUT = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
