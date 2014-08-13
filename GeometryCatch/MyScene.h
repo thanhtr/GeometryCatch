@@ -52,4 +52,7 @@ static UInt32 dropCategory = 1 << 3;
 @property NSMutableArray *gameOverGroup;
 @property SKSpriteNode *gameCenterBtn;
 @property Options *options;
+@property SKSpriteNode *pauseBtn;
+@property AVAudioPlayer *bgMusicPlayer;
+@property AVAudioPlayer *gameOverMusicPlayer;
 @end

@@ -7,8 +7,9 @@
 //
 
 #import <SpriteKit/SpriteKit.h>
+#import <AVFoundation/AVFoundation.h>
 #import "Drops.h"
-
+#import "Options.h"
 @interface TutScene : SKScene <SKPhysicsContactDelegate>
 @property SKSpriteNode *paddle;
 @property float speedOffset;
@@ -41,4 +42,6 @@
 @property BOOL partTwoOk;
 @property SKLabelNode *click;
 @property SKLabelNode *drag;
+@property Options *options;
+@property AVAudioPlayer *bgMusicPlayer;
 @end

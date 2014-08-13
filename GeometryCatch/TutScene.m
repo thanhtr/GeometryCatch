@@ -10,9 +10,11 @@
 #import "MyScene.h"
 #import "StartScene.h"
 @implementation TutScene
-@synthesize paddle, speedOffset, paddleArray, paddleArrayIndex, paddleHoldShapeOffset, bgColor, levelBar, rainNode, bgColorArray, bgColorIndex, bg ,moveGroup, firstStepOk, secondStepOk, canMovePaddle, clickMoveOk, dragMoveOk, click, drag, firstSuccessOk, canBurnEnergy, secondStepPhaseOneOk, secondStepPhaseTwoOk, partOneOk, partTwoOk, secondSuccessOk;
+@synthesize paddle, speedOffset, paddleArray, paddleArrayIndex, paddleHoldShapeOffset, bgColor, levelBar, rainNode, bgColorArray, bgColorIndex, bg ,moveGroup, firstStepOk, secondStepOk, canMovePaddle, clickMoveOk, dragMoveOk, click, drag, firstSuccessOk, canBurnEnergy, secondStepPhaseOneOk, secondStepPhaseTwoOk, partOneOk, partTwoOk, secondSuccessOk, options,bgMusicPlayer;
 -(id)initWithSize:(CGSize)size{
     if (self = [super initWithSize:size]) {
+        options = [[Options alloc] init];
+        
         bgColorArray = [NSArray arrayWithObjects:
                         [SKColor colorWithRed:(float)219/255 green:(float)68/255 blue:(float)83/255 alpha:1.0],
                         [SKColor colorWithRed:(float)233/255 green:(float)87/255 blue:(float)63/255 alpha:1.0],
@@ -66,7 +68,7 @@
         levelBar = [[SKSpriteNode alloc]initWithImageNamed:@"levelBar"];
         levelBar.anchorPoint = CGPointMake(0, 0.5);
         levelBar.position = CGPointMake(0, 0);
-        levelBar.size = CGSizeMake(self.size.width*0.7, levelBar.size.height);
+        levelBar.size = CGSizeMake(self.size.width*0.5, levelBar.size.height);
         //        levelBar.yScale = 2.0;
         levelBar.color = bgColor;
         levelBar.colorBlendFactor = 0.7;
@@ -149,6 +151,14 @@
         secondStepPhaseOneOk = NO;
         partOneOk = NO;
         partTwoOk = NO;
+        
+        NSError *error;
+        NSURL * backgroundMusicURL = [[NSBundle mainBundle] URLForResource:@"ingame1" withExtension:@"mp3"];
+        bgMusicPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:backgroundMusicURL error:&error];
+        bgMusicPlayer.numberOfLoops = -1; //-1 = infinite loop
+        [bgMusicPlayer prepareToPlay];
+        if(options.musicOn)
+            [bgMusicPlayer play];
     }
     return self;
 }
@@ -290,9 +300,12 @@
         congratText.fontSize = 25;
     congratText.text = @"SUCCESS";
     congratText.alpha = 0;
+    
     [self addChild:congratText];
     SKAction *flash = [SKAction repeatAction:[SKAction sequence:@[[SKAction fadeOutWithDuration:0.05], [SKAction waitForDuration:0.05], [SKAction fadeInWithDuration:0.05]]] count:4];
     [self removeAllActions];
+    if(options.soundOn)
+        [self runAction:[SKAction playSoundFileNamed:@"success.wav" waitForCompletion:NO]];
     for (int i = 0; i < self.children.count; i++) {
         if([self.children[i] isKindOfClass:[Drops class]]){
             [self.children[i] removeFromParent];
@@ -492,6 +505,9 @@
                 paddleHoldShapeOffset = 0.5;
             else
                 paddleHoldShapeOffset = 1;
+            if(options.soundOn)
+                [self runAction:[SKAction playSoundFileNamed:@"eat_sound.wav" waitForCompletion:NO]];
+            
         }
         
         //Or if the paddle array isn't full yet
@@ -506,11 +522,16 @@
                 paddleHoldShapeOffset -= 0.5;
             else
                 paddleHoldShapeOffset -= 1;
+            if(options.soundOn)
+                [self runAction:[SKAction playSoundFileNamed:@"eat_sound.wav" waitForCompletion:NO]];
+            
+
             
         }
         
         //Or else- this case mean match 3 has been made
         else{
+            
             [paddleArray removeAllObjects];
             paddleArrayIndex = 0;
             [paddle removeAllChildren];
@@ -522,6 +543,7 @@
             SKAction *flash = [SKAction repeatAction:[SKAction sequence:@[[SKAction fadeOutWithDuration:0.05], [SKAction waitForDuration:0.05], [SKAction fadeInWithDuration:0.05]]] count:4];
             [paddle runAction:flash];
             secondSuccessOk = YES;
+           
         }
         
         //Offset for taken shape displaying

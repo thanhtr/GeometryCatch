@@ -187,7 +187,11 @@
         for (UITouch *touch in touches) {
             CGPoint location = [touch locationInNode:self];
             SKNode *node = [self nodeAtPoint:location];
-            if([node isKindOfClass:[SKSpriteNode class]]){
+            if([node.name isEqualToString: @"menuBtn"]
+               || [node.name isEqualToString: @"soundBtn"]
+               || [node.name isEqualToString: @"musicBtn"]
+               || [node.name isEqualToString: @"creditBtn"]
+               || [node.name isEqualToString: @"startLbl"]){
                 if (options.soundOn) {
                     [self runAction:[SKAction playSoundFileNamed:@"click_proccess.wav" waitForCompletion:NO]];
                 }
