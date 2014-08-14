@@ -18,15 +18,7 @@
 @interface StartScene : SKScene
 @property SKSpriteNode *startLbl;
 @property SKSpriteNode *titleLbl;
-@property SKSpriteNode *menuBtn;
-@property SKSpriteNode* musicBtn;
-@property SKSpriteNode* soundBtn;
-@property SKSpriteNode *creditBtn;
 @property Options* options;
 @property NSMutableArray *moveGroup;
-@property BOOL isInOption;
-@property SKSpriteNode* aboutBg;
-@property BOOL properlyInView;
 @property AVAudioPlayer *backgroundMusicPlayer;
-@property AVAudioPlayer *clickSoundPlayer;
 @end

@@ -67,7 +67,7 @@
         
         levelBar = [[SKSpriteNode alloc]initWithImageNamed:@"levelBar"];
         levelBar.anchorPoint = CGPointMake(0, 0.5);
-        levelBar.position = CGPointMake(0, 0);
+        levelBar.position = CGPointMake(0, self.size.height);
         levelBar.size = CGSizeMake(self.size.width*0.5, levelBar.size.height);
         //        levelBar.yScale = 2.0;
         levelBar.color = bgColor;

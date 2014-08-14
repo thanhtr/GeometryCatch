@@ -11,7 +11,7 @@
 #import "SKEase.h"
 #import "TutScene.h"
 @implementation StartScene
-@synthesize startLbl, titleLbl,menuBtn,options, soundBtn, musicBtn,creditBtn, moveGroup, isInOption, aboutBg, properlyInView, backgroundMusicPlayer,clickSoundPlayer;
+@synthesize startLbl, titleLbl,options, moveGroup, backgroundMusicPlayer;
 
 -(id)initWithSize:(CGSize)size{
     if(self = [super initWithSize:size]){
@@ -59,115 +59,7 @@
             [titleLbl setScale:0.5];
         
         [self addChild:titleLbl];
-        
-        
-        
-        SKSpriteNode *bg = [[SKSpriteNode alloc]initWithImageNamed:@"option_bg"];
-        
-        if(IS_568_SCREEN){
-            bg.position = CGPointMake(3*self.size.width/2, self.size.height/2);
-        }
-        else {
-            bg.position = CGPointMake(3*self.size.width/2, self.size.height*0.48);
-        }
-        
-        if(IS_IPAD_SCREEN){
-            bg.xScale = 1.2;
-            bg.yScale = 1.1;
-        }
-        else
-            [bg setScale:0.5];
-        
-        [self addChild:bg];
-        
-        
-        menuBtn = [[SKSpriteNode alloc] initWithImageNamed:@"optionbutton"];
-        if(IS_568_SCREEN){
-            menuBtn.position = CGPointMake(self.size.width*0.95, self.size.height*0.95);
-        }
-        else {
-            menuBtn.position = CGPointMake(self.size.width*0.95, self.size.height*0.92);
-        }
-        
-        menuBtn.name = @"menuBtn";
-        
-        if(IS_IPAD_SCREEN)
-            [menuBtn setScale:1.2];
-        else
-            [menuBtn setScale:0.5];
-        
-        [self addChild:menuBtn];
-        
-        options = [[Options alloc] init];
-        
-        soundBtn = [[SKSpriteNode alloc] initWithImageNamed:[self chooseConfigSprite:options.soundOn baseFileName:@"sfx"]];
-        soundBtn.anchorPoint = CGPointMake(0, 0.5);
-        soundBtn.name = @"soundBtn";
-        
-        if(IS_IPAD_SCREEN)
-            [soundBtn setScale:1.2];
-        else
-            [soundBtn setScale:0.5];
-        
-        if(IS_568_SCREEN){
-            soundBtn.position = CGPointMake(self.size.width*1.11, self.size.height*0.43);
-        }
-        else {
-            soundBtn.position = CGPointMake(self.size.width*1.11, self.size.height*0.4);
-        }
-        [self addChild:soundBtn];
-        
-        musicBtn = [[SKSpriteNode alloc] initWithImageNamed:[self chooseConfigSprite:options.musicOn baseFileName:@"music"]];
-        musicBtn.anchorPoint = CGPointMake(0, 0.5);
-        musicBtn.position = CGPointMake(self.size.width*1.22, self.size.height*0.63);
-        musicBtn.name = @"musicBtn";
-        if(IS_IPAD_SCREEN)
-            [musicBtn setScale:1.2];
-        else
-            [musicBtn setScale:0.5];
-        [self addChild:musicBtn];
-        
-        creditBtn = [[SKSpriteNode alloc] initWithImageNamed:@"aboutus"];
-        creditBtn.anchorPoint = CGPointMake(0, 0.5);
-        
-        if(IS_568_SCREEN){
-            creditBtn.position = CGPointMake(self.size.width * 1.05, self.size.height*0.22);
-        }
-        else if(IS_IPAD_SCREEN)
-            creditBtn.position = CGPointMake(self.size.width * 1.05, self.size.height*0.14);
-        else {
-            creditBtn.position = CGPointMake(self.size.width * 1.05, self.size.height*0.15);
-        }
-        
-        creditBtn.name = @"creditBtn";
-        
-        if(IS_IPAD_SCREEN)
-            [creditBtn setScale:1.2];
-        else
-            [creditBtn setScale:0.5];
-        [self addChild:creditBtn];
-        
-        aboutBg = [[SKSpriteNode alloc]initWithImageNamed:@"credit_screen"];
-        aboutBg.name = @"aboutBg";
-        aboutBg.hidden = YES;
-        aboutBg.position = CGPointMake(5*self.size.width/2, self.size.height/2);
-        if(IS_568_SCREEN){
-            [aboutBg setScale:0.5];
-        }
-        else if(IS_IPAD_SCREEN){
-            aboutBg.yScale = 1.0;
-            aboutBg.xScale = 1.2;
-        }
-        else {
-            aboutBg.yScale = 0.45;
-            aboutBg.xScale = 0.5;
-        }
-        
-        [self addChild:aboutBg];
-        
-        isInOption = NO;
-        properlyInView = YES;
-        
+
         //bg music
         NSError *error;
         NSURL * backgroundMusicURL = [[NSBundle mainBundle] URLForResource:@"Menu_Music" withExtension:@"wav"];
@@ -183,105 +75,19 @@
 }
 
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
-    if(properlyInView) {
         for (UITouch *touch in touches) {
             CGPoint location = [touch locationInNode:self];
             SKNode *node = [self nodeAtPoint:location];
-            if([node.name isEqualToString: @"menuBtn"]
-               || [node.name isEqualToString: @"soundBtn"]
-               || [node.name isEqualToString: @"musicBtn"]
-               || [node.name isEqualToString: @"creditBtn"]
-               || [node.name isEqualToString: @"startLbl"]){
+            if([node.name isEqualToString: @"startLbl"]){
                 if (options.soundOn) {
                     [self runAction:[SKAction playSoundFileNamed:@"click_proccess.wav" waitForCompletion:NO]];
-                }
-                
-            }
-            if([node.name isEqualToString:@"menuBtn"]){
-                properlyInView = NO;
-                int direction;
-                if(!isInOption)
-                    direction = -1;
-                else direction = 1;
-                menuBtn.position = CGPointMake(menuBtn.position.x - direction * self.size.width, menuBtn.position.y);
-                for (int i =0; i< self.children.count; i++) {
-                    SKNode *child = self.children[i];
                     
-                    SKAction *move =[SKAction moveByX: direction * self.size.width y:0 duration:0.5];
-                    move.timingMode = SKActionTimingEaseInEaseOut;
-                    SKAction *elasticMove = [SKEase MoveToWithNode:self.children[i] EaseFunction:CurveTypeBack Mode:EaseOut Time:0.2 ToVector:CGVectorMake(child.position.x + direction * (self.size.width),child.position.y)];
-                    [self.children[i] runAction:[SKAction sequence:@[elasticMove, [SKAction waitForDuration:0.2], [SKAction runBlock:^{
-                        properlyInView = YES;
-                    }]]]];
                 }
-                isInOption = !isInOption;
-                
-            }
-            else if([node.name isEqualToString:@"startLbl"]){
-//                MyScene *myScene = [[MyScene alloc]initWithSize:self.size];
-//                [self.view presentScene:myScene];
                 TutScene *tutScene = [[TutScene alloc]initWithSize:self.size];
                 [self.view presentScene:tutScene];
             }
-            
-            else if ([node.name isEqualToString:@"creditBtn"]) {
-                properlyInView = NO;
-                aboutBg.hidden = NO;
-                SKAction *moveLeft =[SKAction moveByX: (-self.size.width) y:0 duration:0.5];
-                moveLeft.timingMode = SKActionTimingEaseInEaseOut;
-                
-                for (int i =0; i< self.children.count; i++) {
-                    SKNode *child = self.children[i];
-                    SKAction *elasticMove = [SKEase MoveToWithNode:self.children[i] EaseFunction:CurveTypeElastic Mode:EaseOut Time:0.2 ToVector:CGVectorMake(child.position.x -(self.size.width),child.position.y)];
-                    //                [self.children[i] runAction:moveLeft];
-                    [self.children[i] runAction:[SKAction sequence:@[elasticMove, [SKAction waitForDuration:0.2], [SKAction runBlock:^{
-                        properlyInView = YES;
-                    }]]]];
-                }
-            }
-            else if ([node.name isEqualToString:@"musicBtn"]){
-                [options loadConfig];
-                options.musicOn = !options.musicOn;
-                if (options.musicOn) {
-                    [backgroundMusicPlayer play];
-                } else [backgroundMusicPlayer pause];
-                musicBtn.texture = [SKTexture textureWithImageNamed:[self chooseConfigSprite:options.musicOn baseFileName:@"music"]];
-                [options saveConfig];
-                
-            }
-            else if ([node.name isEqualToString:@"soundBtn"]){
-                [options loadConfig];
-                options.soundOn = !options.soundOn;
-                soundBtn.texture = [SKTexture textureWithImageNamed:[self chooseConfigSprite:options.soundOn baseFileName:@"sfx"]];
-                [options saveConfig];
-            }
-            else if ([node.name isEqualToString:@"aboutBg"]) {
-                properlyInView = NO;
-                aboutBg.hidden = YES;
-                SKAction *moveRight =[SKAction moveByX: (self.size.width) y:0 duration:0.5];
-                moveRight.timingMode = SKActionTimingEaseInEaseOut;
-                for (int i =0; i< self.children.count; i++) {
-                    SKNode *child = self.children[i];
-                    SKAction *elasticMove = [SKEase MoveToWithNode:self.children[i] EaseFunction:CurveTypeElastic Mode:EaseOut Time:0.2 ToVector:CGVectorMake(child.position.x - (-self.size.width),child.position.y)];
-                    [self.children[i] runAction:[SKAction sequence:@[elasticMove, [SKAction waitForDuration:0.2], [SKAction runBlock:^{
-                        properlyInView = YES;
-                    }]]]];
-                    //                    [self.children[i] runAction:moveRight];
-                }
-            }
         }
-    }
 }
-
--(NSString*)chooseConfigSprite:(BOOL)value baseFileName:(NSString*)baseFileName{
-    NSString* state = [[NSString alloc] init];
-    if(value)
-        state = [NSString stringWithFormat:@"%@", baseFileName];
-    else
-        state = [NSString stringWithFormat:@"%@_off", baseFileName];
-    return state;
-}
-
 -(void)initColoredStartScreen{
     SKSpriteNode *column1 = [SKSpriteNode spriteNodeWithColor:[SKColor colorWithRed:(float)219/255 green:(float)68/255 blue:(float)83/255 alpha:1.0] size:CGSizeMake(self.size.width/8, self.size.height)];
     column1.position = CGPointMake(self.size.width/8 - column1.size.width/2, self.size.height/2);

@@ -55,4 +55,9 @@ static UInt32 dropCategory = 1 << 3;
 @property SKSpriteNode *pauseBtn;
 @property AVAudioPlayer *bgMusicPlayer;
 @property AVAudioPlayer *gameOverMusicPlayer;
+@property SKSpriteNode* musicBtn;
+@property SKSpriteNode* soundBtn;
+@property SKSpriteNode *creditBtn;
+@property SKSpriteNode *aboutBg;
+@property BOOL properlyInView;
 @end
