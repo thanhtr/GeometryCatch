@@ -60,4 +60,5 @@ static UInt32 dropCategory = 1 << 3;
 @property SKSpriteNode *creditBtn;
 @property SKSpriteNode *aboutBg;
 @property BOOL properlyInView;
+@property NSString* lastButton;
 @end

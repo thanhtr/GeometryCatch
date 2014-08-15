@@ -15,12 +15,12 @@
 @synthesize paddle,speedOffset,paddleArray,paddleHoldShapeOffset, paddleArrayIndex, bgColor, levelBar, score, scoreLabel, isGameOver,gameOverTextCanBeAdded,gameOverText,levelLabel,rainNode, sparkArrayIndex, bgColorArray, bg, bgBlack, isPause,moveGroup, bgColorIndex, pauseBtn;
 //@synthesize level;
 @synthesize gameOverBg,bestScoreLbl,bestScorePoint,yourScoreLbl,yourScorePoint,shareBtn,playBtn,gameOverGroup, gameCenterBtn,options,bgMusicPlayer, gameOverMusicPlayer;
-@synthesize musicBtn,soundBtn,creditBtn,aboutBg, properlyInView;
+@synthesize musicBtn,soundBtn,creditBtn,aboutBg, properlyInView,lastButton;
 -(id)initWithSize:(CGSize)size {
     if (self = [super initWithSize:size]) {
         //First init
         options = [[Options alloc] init];
-        
+        lastButton = [[NSString alloc] init];
         //bg music
         NSError *error;
         NSURL * backgroundMusicURL = [[NSBundle mainBundle] URLForResource:@"ingame1" withExtension:@"mp3"];
@@ -372,7 +372,7 @@
         else {
             creditBtn.position = CGPointMake(self.size.width * 0.1, self.size.height + self.size.height);
             [creditBtn setScale:0.5];
-
+            
         }
         
         creditBtn.name = @"creditBtn";
@@ -438,7 +438,7 @@
                 final = [NSString stringWithFormat:@"%@_normal", baseFileName];
                 
             }
-        else {
+            else {
                 if (isTouched) {
                     final = [NSString stringWithFormat:@"muted_%@_touched",baseFileName];
                 }
@@ -463,11 +463,8 @@
     for (UITouch *touch in touches) {
         CGPoint location = [touch locationInNode:self];
         SKNode *node = [self nodeAtPoint:location];
-        if([node.name isEqualToString: @"playBtn"]
-           || [node.name isEqualToString: @"gameCenterBtn"]){
-            if(options.soundOn)
-                [self runAction:[SKAction playSoundFileNamed:@"click_proccess.wav" waitForCompletion:NO]];
-        }
+        lastButton = node.name;
+        
         if(!isGameOver){
             //Move paddle
             if(![node.name isEqualToString:@"pauseBtn"])
@@ -477,23 +474,36 @@
         else if(isGameOver){
             if([node.name isEqualToString:@"playBtn"]){
                 playBtn.texture = [SKTexture textureWithImageNamed:[self chooseSpriteWithState:NO isTouched:YES baseFileName:@"play" hasPrefix:NO]];
-
+                if(options.soundOn)
+                    [self runAction:[SKAction playSoundFileNamed:@"click_proccess.wav" waitForCompletion:NO]];
+                
             }
             else if([node.name isEqualToString:@"shareBtn"]){
                 if(options.soundOn)
                     [self runAction:[SKAction playSoundFileNamed:@"click_proccess.wav" waitForCompletion:NO]];
                 shareBtn.texture = [SKTexture textureWithImageNamed:[self chooseSpriteWithState:NO isTouched:YES baseFileName:@"share" hasPrefix:NO]];
+                
+                
+            }
+            
+            else if([node.name isEqualToString: @"gameCenterBtn"]){
+                if(options.soundOn)
+                    [self runAction:[SKAction playSoundFileNamed:@"click_proccess.wav" waitForCompletion:NO]];
+                gameCenterBtn.texture = [SKTexture textureWithImageNamed:[self chooseSpriteWithState:NO isTouched:YES baseFileName:@"gamecenter_button" hasPrefix:NO]];
 
             }
+
             else if ([node.name isEqualToString:@"soundBtn"]){
                 soundBtn.texture = [SKTexture textureWithImageNamed:[self chooseSpriteWithState:options.soundOn isTouched:YES baseFileName:@"sound_button" hasPrefix:YES]];
                 if(options.soundOn)
                     [self runAction:[SKAction playSoundFileNamed:@"click_proccess.wav" waitForCompletion:NO]];
+                
             }
             else if ([node.name isEqualToString:@"musicBtn"]){
                 musicBtn.texture = [SKTexture textureWithImageNamed:[self chooseSpriteWithState:options.musicOn isTouched:YES baseFileName:@"music_button" hasPrefix:YES]];
                 if(options.soundOn)
                     [self runAction:[SKAction playSoundFileNamed:@"click_proccess.wav" waitForCompletion:NO]];
+                
                 
             }
             
@@ -501,6 +511,7 @@
                 creditBtn.texture = [SKTexture textureWithImageNamed:[self chooseSpriteWithState:NO isTouched:YES baseFileName:@"credit_button" hasPrefix:NO]];
                 if(options.soundOn)
                     [self runAction:[SKAction playSoundFileNamed:@"click_proccess.wav" waitForCompletion:NO]];
+                
             }
             else if([node.name isEqualToString:@"aboutBg"]){
                 if(properlyInView){
@@ -513,10 +524,10 @@
                     [aboutBg runAction:[SKAction sequence:@[elasticMove, [SKAction waitForDuration:0.2], [SKAction runBlock:^{
                         properlyInView = YES;
                     }]]]];
-
+                    
                 }
             }
-
+            
         }
         
         if([node.name isEqualToString:@"pauseBtn"] && !isPause){
@@ -538,7 +549,7 @@
             //            self.scene.physicsWorld.speed = 1.0;
             
         }
-       
+        
     }
     
 }
@@ -559,92 +570,106 @@
         for (UITouch *touch in touches) {
             CGPoint location = [touch locationInNode:self];
             SKNode *node = [self nodeAtPoint:location];
+            if([node.name isEqualToString:lastButton]){
+                if ([node.name isEqualToString:@"soundBtn"]){
+                    [options loadConfig];
+                    options.soundOn = !options.soundOn;
+                    soundBtn.texture = [SKTexture textureWithImageNamed:[self chooseSpriteWithState:options.soundOn isTouched:NO baseFileName:@"sound_button" hasPrefix:YES]];
+                    [options saveConfig];
+                    
+                }
+                
+                else if ([node.name isEqualToString:@"gameCenterBtn"]){
+                    gameCenterBtn.texture = [SKTexture textureWithImageNamed:[self chooseSpriteWithState:NO isTouched:NO baseFileName:@"gamecenter_button" hasPrefix:NO]];
 
-            if ([node.name isEqualToString:@"soundBtn"]){
-                [options loadConfig];
-                options.soundOn = !options.soundOn;
+                }
+                else if ([node.name isEqualToString:@"musicBtn"]){
+                    [options loadConfig];
+                    options.musicOn = !options.musicOn;
+                    if (options.musicOn) {
+                        [gameOverMusicPlayer play];
+                    } else [gameOverMusicPlayer pause];
+                    musicBtn.texture = [SKTexture textureWithImageNamed:[self chooseSpriteWithState:options.musicOn isTouched:NO baseFileName:@"music_button" hasPrefix:YES]];
+                    [options saveConfig];
+                }
+                else if([node.name isEqualToString:@"shareBtn"]){
+                    shareBtn.texture = [SKTexture textureWithImageNamed:[self chooseSpriteWithState:NO isTouched:NO baseFileName:@"share" hasPrefix:NO]];
+                    NSString *postText = [NSString stringWithFormat: @"I just got %d points in a ATOX run. How about you?", score];
+                    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:postText forKey:@"postText"];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:@"CreatePost" object:self userInfo:userInfo];
+                }
+                else if([node.name isEqualToString:@"playBtn"]){
+                    playBtn.texture = [SKTexture textureWithImageNamed:[self chooseSpriteWithState:NO isTouched:NO baseFileName:@"play" hasPrefix:NO]];
+                    
+                    //Repositioning and reset action
+                    [gameOverMusicPlayer pause];
+                    bgMusicPlayer.rate = 1;
+                    [self addChild:paddle];
+                    [self addChild:pauseBtn];
+                    NSArray *children = self.children;
+                    for (int i = 0; i < children.count; i++) {
+                        if([children[i] isKindOfClass:[Drops class]]){
+                            [children[i] removeFromParent];
+                        }
+                    }
+                    paddle.position = CGPointMake(self.size.width /2, self.size.height*0.2);
+                    score = 0;
+                    levelBar.size = CGSizeMake(self.size.width/2, levelBar.size.height);
+                    //        level = 1;
+                    isGameOver = NO;
+                    if(IS_IPAD_SCREEN)
+                        speedOffset = -4;
+                    else
+                        speedOffset = -2;
+                    self.physicsWorld.gravity = CGVectorMake(0, speedOffset);
+                    [gameOverText removeFromParent];
+                    SKAction *moveGameOverBoard = [SKAction runBlock:^{
+                        for (int i = 0; i < gameOverGroup.count; i++) {
+                            SKAction *slideIn = [SKAction moveByX:0 y:self.size.height duration:0.2];
+                            slideIn.timingMode = SKActionTimingEaseInEaseOut;
+                            [gameOverGroup[i] runAction:slideIn];
+                        }
+                    }];
+                    SKAction *removeGameOverBoardAndDropShape = [SKAction runBlock:^{
+                        for (int i = 0; i < gameOverGroup.count; i++) {
+                            [gameOverGroup[i] removeFromParent];
+                        }
+                        [self dropShape];
+                        if(options.musicOn)
+                            [bgMusicPlayer play];
+                    }];
+                    [self runAction:[SKAction sequence:@[moveGameOverBoard, [SKAction waitForDuration:1], removeGameOverBoardAndDropShape]]];
+                    
+                }
+                
+                else if([node.name isEqualToString:@"creditBtn"]){
+                    if(properlyInView){
+                        creditBtn.texture = [SKTexture textureWithImageNamed:[self chooseSpriteWithState:NO isTouched:NO baseFileName:@"credit_button" hasPrefix:NO]];
+                        
+                        properlyInView = NO;
+                        SKAction *elasticMove = [SKEase MoveToWithNode:aboutBg EaseFunction:CurveTypeBack Mode:EaseOut Time:0.2 ToVector:CGVectorMake(self.size.width/2,aboutBg.position.y)];
+                        SKAction *move =[SKAction moveByX: -self.size.width y:0 duration:0.5];
+                        move.timingMode = SKActionTimingEaseInEaseOut;
+                        [aboutBg runAction:[SKAction sequence:@[elasticMove, [SKAction waitForDuration:0.2], [SKAction runBlock:^{
+                            properlyInView = YES;
+                        }]]]];
+                    }
+                    
+                }
+            }
+            else {
                 soundBtn.texture = [SKTexture textureWithImageNamed:[self chooseSpriteWithState:options.soundOn isTouched:NO baseFileName:@"sound_button" hasPrefix:YES]];
-                [options saveConfig];
-            }
-            else if ([node.name isEqualToString:@"musicBtn"]){
-                [options loadConfig];
-                options.musicOn = !options.musicOn;
-                if (options.musicOn) {
-                    [gameOverMusicPlayer play];
-                } else [gameOverMusicPlayer pause];
                 musicBtn.texture = [SKTexture textureWithImageNamed:[self chooseSpriteWithState:options.musicOn isTouched:NO baseFileName:@"music_button" hasPrefix:YES]];
-                [options saveConfig];
-                
-            }
-            else if([node.name isEqualToString:@"shareBtn"]){
-                if(options.soundOn)
-                    [self runAction:[SKAction playSoundFileNamed:@"click_proccess.wav" waitForCompletion:NO]];
                 shareBtn.texture = [SKTexture textureWithImageNamed:[self chooseSpriteWithState:NO isTouched:NO baseFileName:@"share" hasPrefix:NO]];
-                NSString *postText = [NSString stringWithFormat: @"I just got %d points in a ATOX run. How about you?", score];
-                NSDictionary *userInfo = [NSDictionary dictionaryWithObject:postText forKey:@"postText"];
-                [[NSNotificationCenter defaultCenter] postNotificationName:@"CreatePost" object:self userInfo:userInfo];
-            }
-            else if([node.name isEqualToString:@"playBtn"]){
                 playBtn.texture = [SKTexture textureWithImageNamed:[self chooseSpriteWithState:NO isTouched:NO baseFileName:@"play" hasPrefix:NO]];
-                
-                //Repositioning and reset action
-                [gameOverMusicPlayer pause];
-                bgMusicPlayer.rate = 1;
-                [self addChild:paddle];
-                [self addChild:pauseBtn];
-                NSArray *children = self.children;
-                for (int i = 0; i < children.count; i++) {
-                    if([children[i] isKindOfClass:[Drops class]]){
-                        [children[i] removeFromParent];
-                    }
-                }
-                paddle.position = CGPointMake(self.size.width /2, self.size.height*0.2);
-                score = 0;
-                levelBar.size = CGSizeMake(self.size.width/2, levelBar.size.height);
-                //        level = 1;
-                isGameOver = NO;
-                if(IS_IPAD_SCREEN)
-                    speedOffset = -4;
-                else
-                    speedOffset = -2;
-                self.physicsWorld.gravity = CGVectorMake(0, speedOffset);
-                [gameOverText removeFromParent];
-                SKAction *moveGameOverBoard = [SKAction runBlock:^{
-                    for (int i = 0; i < gameOverGroup.count; i++) {
-                        SKAction *slideIn = [SKAction moveByX:0 y:self.size.height duration:0.2];
-                        slideIn.timingMode = SKActionTimingEaseInEaseOut;
-                        [gameOverGroup[i] runAction:slideIn];
-                    }
-                }];
-                SKAction *removeGameOverBoardAndDropShape = [SKAction runBlock:^{
-                    for (int i = 0; i < gameOverGroup.count; i++) {
-                        [gameOverGroup[i] removeFromParent];
-                    }
-                    [self dropShape];
-                    if(options.musicOn)
-                        [bgMusicPlayer play];
-                }];
-                [self runAction:[SKAction sequence:@[moveGameOverBoard, [SKAction waitForDuration:1], removeGameOverBoardAndDropShape]]];
-            }
-            
-            else if([node.name isEqualToString:@"creditBtn"]){
-                if(properlyInView){
-                    creditBtn.texture = [SKTexture textureWithImageNamed:[self chooseSpriteWithState:NO isTouched:NO baseFileName:@"credit_button" hasPrefix:NO]];
-                    properlyInView = NO;
-                    SKAction *elasticMove = [SKEase MoveToWithNode:aboutBg EaseFunction:CurveTypeBack Mode:EaseOut Time:0.2 ToVector:CGVectorMake(self.size.width/2,aboutBg.position.y)];
-                    SKAction *move =[SKAction moveByX: -self.size.width y:0 duration:0.5];
-                    move.timingMode = SKActionTimingEaseInEaseOut;
-                    [aboutBg runAction:[SKAction sequence:@[elasticMove, [SKAction waitForDuration:0.2], [SKAction runBlock:^{
-                        properlyInView = YES;
-                    }]]]];
+                creditBtn.texture = [SKTexture textureWithImageNamed:[self chooseSpriteWithState:NO isTouched:NO baseFileName:@"credit_button" hasPrefix:NO]];
+                gameCenterBtn.texture = [SKTexture textureWithImageNamed:[self chooseSpriteWithState:NO isTouched:NO baseFileName:@"gamecenter_button" hasPrefix:NO]];
 
-                }
             }
-            
         }
         
     }
-
+    
 }
 
 -(void) touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event{
@@ -812,7 +837,7 @@
                 paddleHoldShapeOffset = 1;
             levelBar.size = CGSizeMake(levelBar.size.width + self.size.width*0.3, levelBar.size.height);
             score += 1;
-
+            
             NSString *matchingPath =
             [[NSBundle mainBundle]
              pathForResource:@"Matching" ofType:@"sks"];
@@ -861,7 +886,7 @@
         drop.type = dropType;
         drop.name = @"drop";
         drop.position = CGPointMake(self.size.width * dropPositionOffset, self.size.height);
-
+        
         if(IS_IPAD_SCREEN)
             [drop setScale:0.8];
         [self addChild:drop];
@@ -957,7 +982,7 @@
             break;
         }
     }
-//    [self removeAllActions];
+    //    [self removeAllActions];
     [paddle removeAllChildren];
     [paddle removeFromParent];
     
