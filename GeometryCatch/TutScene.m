@@ -507,7 +507,8 @@
                 paddleHoldShapeOffset = 1;
             if(options.soundOn)
                 [self runAction:[SKAction playSoundFileNamed:@"eat_sound.wav" waitForCompletion:NO]];
-            
+            SKAction *flash = [SKAction sequence:@[[SKAction fadeOutWithDuration:0.05], [SKAction waitForDuration:0.05], [SKAction fadeInWithDuration:0.05]]];
+            [paddle runAction:flash];
         }
         
         //Or if the paddle array isn't full yet
