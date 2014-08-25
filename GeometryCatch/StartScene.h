@@ -10,6 +10,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import "Options.h"
 
+//define screen size constant
 #define IS_568_SCREEN (fabs((double)[[UIScreen mainScreen]bounds].size.height - (double)568) < DBL_EPSILON)
 
 #define IS_IPAD_SCREEN (fabs((double)[[UIScreen mainScreen]bounds].size.height - (double)1024) < DBL_EPSILON)

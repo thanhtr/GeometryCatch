@@ -490,9 +490,9 @@
                 if(options.soundOn)
                     [self runAction:[SKAction playSoundFileNamed:@"click_proccess.wav" waitForCompletion:NO]];
                 gameCenterBtn.texture = [SKTexture textureWithImageNamed:[self chooseSpriteWithState:NO isTouched:YES baseFileName:@"gamecenter_button" hasPrefix:NO]];
-
+                
             }
-
+            
             else if ([node.name isEqualToString:@"soundBtn"]){
                 soundBtn.texture = [SKTexture textureWithImageNamed:[self chooseSpriteWithState:options.soundOn isTouched:YES baseFileName:@"sound_button" hasPrefix:YES]];
                 if(options.soundOn)
@@ -581,7 +581,7 @@
                 
                 else if ([node.name isEqualToString:@"gameCenterBtn"]){
                     gameCenterBtn.texture = [SKTexture textureWithImageNamed:[self chooseSpriteWithState:NO isTouched:NO baseFileName:@"gamecenter_button" hasPrefix:NO]];
-
+                    
                 }
                 else if ([node.name isEqualToString:@"musicBtn"]){
                     [options loadConfig];
@@ -664,7 +664,7 @@
                 playBtn.texture = [SKTexture textureWithImageNamed:[self chooseSpriteWithState:NO isTouched:NO baseFileName:@"play" hasPrefix:NO]];
                 creditBtn.texture = [SKTexture textureWithImageNamed:[self chooseSpriteWithState:NO isTouched:NO baseFileName:@"credit_button" hasPrefix:NO]];
                 gameCenterBtn.texture = [SKTexture textureWithImageNamed:[self chooseSpriteWithState:NO isTouched:NO baseFileName:@"gamecenter_button" hasPrefix:NO]];
-
+                
             }
         }
         
@@ -672,34 +672,36 @@
     
 }
 
--(void) touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event{
-    
-}
 -(void)update:(CFTimeInterval)currentTime {
     /* Called before each frame is rendered */
     //Level bar reduce over time
-    for (int i = 0; i<self.children.count; i++) {
-        if([[self.children[i] name] isEqualToString:@"drop"]){
-            Drops *drop = self.children[i];
-            
-            SKSpriteNode *trailSprite1 = [SKSpriteNode spriteNodeWithImageNamed:[self chooseShape:drop.type]];
-            trailSprite1.zRotation = drop.zRotation;
-            trailSprite1.blendMode = SKBlendModeAdd;
-            trailSprite1.position = CGPointMake(drop.position.x, drop.position.y -2);
-            trailSprite1.alpha = 0.05;
-            if(!IS_IPAD_SCREEN){
-                [trailSprite1 setScale:0.35];
-            }
-            [self addChild:trailSprite1];
-            
-            [trailSprite1 runAction:[SKAction sequence:@[
-                                                         [SKAction fadeAlphaTo:0 duration:0.1],
-                                                         [SKAction removeFromParent]
-                                                         ]]];
-            
-            
-        }
-    }
+//    if(!isGameOver){
+//        if (self.timeSinceUpdated == 0 || currentTime - self.timeSinceUpdated > 0.5) {
+//            for (int i = 0; i<self.children.count; i++) {
+//                if([[self.children[i] name] isEqualToString:@"drop"]){
+//                    Drops *drop = self.children[i];
+//                    
+//                    SKSpriteNode *trailSprite1 = [SKSpriteNode spriteNodeWithImageNamed:[self chooseShape:drop.type]];
+//                    trailSprite1.zRotation = drop.zRotation;
+//                    trailSprite1.blendMode = SKBlendModeAdd;
+//                    trailSprite1.position = CGPointMake(drop.position.x, drop.position.y -2);
+//                    trailSprite1.alpha = 0.05;
+//                    if(!IS_IPAD_SCREEN){
+//                        [trailSprite1 setScale:0.35];
+//                    }
+//                    [self addChild:trailSprite1];
+//                    
+//                    [trailSprite1 runAction:[SKAction sequence:@[
+//                                                                 [SKAction fadeAlphaTo:0 duration:0.1],
+//                                                                 [SKAction removeFromParent]
+//                                                                 ]]];
+//                    
+//                    
+//                }
+//            }
+//            self.timeSinceUpdated = currentTime;
+//        }
+//    }
     if(IS_IPAD_SCREEN)
         levelBar.size = CGSizeMake(levelBar.size.width - 0.25, levelBar.size.height);
     else
@@ -964,18 +966,15 @@
     gameOverTextCanBeAdded = YES;
     
     NSArray *children = self.children;
-    NSMutableArray *shapesArray = [[NSMutableArray alloc] init];
+    //    NSMutableArray *shapesArray = [[NSMutableArray alloc] init];
     for (int i = 0; i < children.count; i++) {
         if([children[i] isKindOfClass:[Drops class]]){
-            [shapesArray addObject:children[i]];
-        }
-        if([[children[i] name]isEqual:@"sparkNode"]){
-            [children[i] removeFromParent];
+            [children[i] removeAllActions];
         }
     }
-    for (int i = 0; i<shapesArray.count; i++) {
-        [shapesArray[i] removeAllActions];
-    }
+    //    for (int i = 0; i<shapesArray.count; i++) {
+    //        [shapesArray[i] removeAllActions];
+    //    }
     for (int i = 0; i < children.count; i++) {
         if(([[children[i] name]  isEqual: @"gameOverText"])){
             gameOverTextCanBeAdded = NO;

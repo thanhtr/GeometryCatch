@@ -540,9 +540,15 @@
             else
                 paddleHoldShapeOffset = 1;
             levelBar.size = CGSizeMake(levelBar.size.width + self.size.width*0.3, levelBar.size.height);
-            SKAction *flash = [SKAction repeatAction:[SKAction sequence:@[[SKAction fadeOutWithDuration:0.05], [SKAction waitForDuration:0.05], [SKAction fadeInWithDuration:0.05]]] count:4];
-            [paddle runAction:flash];
+            NSString *matchingPath =
+            [[NSBundle mainBundle]
+             pathForResource:@"Matching" ofType:@"sks"];
+            SKEmitterNode *matchingNode =
+            [NSKeyedUnarchiver unarchiveObjectWithFile:matchingPath];
+            [paddle addChild:matchingNode];
             secondSuccessOk = YES;
+            if(options.soundOn)
+                [self runAction:[SKAction playSoundFileNamed:@"success.wav" waitForCompletion:NO]];
            
         }
         

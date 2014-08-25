@@ -16,48 +16,55 @@
 -(id)initWithSize:(CGSize)size{
     if(self = [super initWithSize:size]){
         
+        //create colored columns
         [self initColoredStartScreen];
         
+        //bottom line
         SKSpriteNode *bottomColoredLine = [[SKSpriteNode alloc] initWithImageNamed:@"bottom_screen_background"];
         if(IS_IPAD_SCREEN)
+        {
             bottomColoredLine.position = CGPointMake(self.size.width/2-0.5, self.size.height*0.01);
-        else
-            bottomColoredLine.position = CGPointMake(self.size.width/2 -0.25, self.size.height*0.01);
-
-        if(IS_IPAD_SCREEN)
             [bottomColoredLine setScale:1.2];
+        }
         else
+        {
+            bottomColoredLine.position = CGPointMake(self.size.width/2 -0.25, self.size.height*0.01);
             [bottomColoredLine setScale:0.5];
+
+        }
         [self addChild:bottomColoredLine];
         
+        //start button
         startLbl = [[SKSpriteNode alloc] initWithImageNamed:@"start"];
         if(IS_568_SCREEN){
             startLbl.position = CGPointMake(self.size.width/2 -2, self.size.height * 0.45);
-        }
-        else if(IS_IPAD_SCREEN)
-            startLbl.position = CGPointMake(self.size.width/2 -5, self.size.height * 0.45);
-        else
-            startLbl.position = CGPointMake(self.size.width/2 -2, self.size.height * 0.42);
-        
-        if(IS_IPAD_SCREEN)
-            [startLbl setScale:1.2];
-        else
             [startLbl setScale:0.5];
-        
+
+        }
+        else if(IS_IPAD_SCREEN){
+            startLbl.position = CGPointMake(self.size.width/2 -5, self.size.height * 0.45);
+        [startLbl setScale:1.2];
+        }
+        else
+        {
+            startLbl.position = CGPointMake(self.size.width/2 -2, self.size.height * 0.42);
+            [startLbl setScale:0.5];
+        }
         startLbl.name = @"startLbl";
         [self addChild:startLbl];
         
+        //game title label
         titleLbl = [[SKSpriteNode alloc] initWithImageNamed:@"title"];
         if(IS_IPAD_SCREEN)
+        {
             titleLbl.position = CGPointMake(self.size.width/2, self.size.height*0.65);
-        else
-            titleLbl.position = CGPointMake(self.size.width/2, self.size.height*0.6);
-        
-        if(IS_IPAD_SCREEN)
             [titleLbl setScale:1.2];
+        }
         else
+        {
+            titleLbl.position = CGPointMake(self.size.width/2, self.size.height*0.6);
             [titleLbl setScale:0.5];
-        
+        }
         [self addChild:titleLbl];
 
         //bg music
@@ -78,6 +85,7 @@
         for (UITouch *touch in touches) {
             CGPoint location = [touch locationInNode:self];
             SKNode *node = [self nodeAtPoint:location];
+            //if press start start scene
             if([node.name isEqualToString: @"startLbl"]){
                 if (options.soundOn) {
                     [self runAction:[SKAction playSoundFileNamed:@"click_proccess.wav" waitForCompletion:NO]];
