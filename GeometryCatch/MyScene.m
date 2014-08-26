@@ -675,33 +675,33 @@
 -(void)update:(CFTimeInterval)currentTime {
     /* Called before each frame is rendered */
     //Level bar reduce over time
-//    if(!isGameOver){
-//        if (self.timeSinceUpdated == 0 || currentTime - self.timeSinceUpdated > 0.5) {
-//            for (int i = 0; i<self.children.count; i++) {
-//                if([[self.children[i] name] isEqualToString:@"drop"]){
-//                    Drops *drop = self.children[i];
-//                    
-//                    SKSpriteNode *trailSprite1 = [SKSpriteNode spriteNodeWithImageNamed:[self chooseShape:drop.type]];
-//                    trailSprite1.zRotation = drop.zRotation;
-//                    trailSprite1.blendMode = SKBlendModeAdd;
-//                    trailSprite1.position = CGPointMake(drop.position.x, drop.position.y -2);
-//                    trailSprite1.alpha = 0.05;
-//                    if(!IS_IPAD_SCREEN){
-//                        [trailSprite1 setScale:0.35];
-//                    }
-//                    [self addChild:trailSprite1];
-//                    
-//                    [trailSprite1 runAction:[SKAction sequence:@[
-//                                                                 [SKAction fadeAlphaTo:0 duration:0.1],
-//                                                                 [SKAction removeFromParent]
-//                                                                 ]]];
-//                    
-//                    
-//                }
-//            }
-//            self.timeSinceUpdated = currentTime;
-//        }
-//    }
+    if(!isGameOver){
+        if (self.timeSinceUpdated == 0 || currentTime - self.timeSinceUpdated > 0.1) {
+            for (int i = 0; i<self.children.count; i++) {
+                if([[self.children[i] name] isEqualToString:@"drop"]){
+                    Drops *drop = self.children[i];
+                    
+                    SKSpriteNode *trailSprite1 = [SKSpriteNode spriteNodeWithImageNamed:[self chooseShape:drop.type]];
+                    trailSprite1.zRotation = drop.zRotation;
+                    trailSprite1.blendMode = SKBlendModeAdd;
+                    trailSprite1.position = CGPointMake(drop.position.x, drop.position.y -2);
+                    trailSprite1.alpha = 0.05;
+                    if(!IS_IPAD_SCREEN){
+                        [trailSprite1 setScale:0.35];
+                    }
+                    [self addChild:trailSprite1];
+                    
+                    [trailSprite1 runAction:[SKAction sequence:@[
+                                                                 [SKAction fadeAlphaTo:0 duration:0.1],
+                                                                 [SKAction removeFromParent]
+                                                                 ]]];
+                    
+                    
+                }
+            }
+            self.timeSinceUpdated = currentTime;
+        }
+    }
     if(IS_IPAD_SCREEN)
         levelBar.size = CGSizeMake(levelBar.size.width - 0.25, levelBar.size.height);
     else
