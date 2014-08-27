@@ -62,4 +62,6 @@ static UInt32 dropCategory = 1 << 3;
 @property BOOL properlyInView;
 @property NSString* lastButton;
 @property float timeSinceUpdated;
+@property NSMutableArray *trailingSpriteArray;
+@property int trailingSpriteArrayIndex;
 @end
