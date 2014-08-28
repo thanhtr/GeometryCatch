@@ -15,15 +15,16 @@
 @synthesize paddle,speedOffset,paddleArray,paddleHoldShapeOffset, paddleArrayIndex, bgColor, levelBar, score, scoreLabel, isGameOver,gameOverTextCanBeAdded,gameOverText,levelLabel,rainNode, sparkArrayIndex, bgColorArray, bg, bgBlack, isPause,moveGroup, bgColorIndex, pauseBtn;
 //@synthesize level;
 @synthesize gameOverBg,bestScoreLbl,bestScorePoint,yourScoreLbl,yourScorePoint,shareBtn,playBtn,gameOverGroup, gameCenterBtn,options,bgMusicPlayer, gameOverMusicPlayer;
-@synthesize musicBtn,soundBtn,creditBtn,aboutBg, properlyInView,lastButton,trailingSpriteArray,trailingSpriteArrayIndex;
+@synthesize musicBtn,soundBtn,creditBtn,aboutBg, properlyInView,lastButton,trailingSpriteArray,trailingSpriteArrayIndex,dropArray,dropArrayIndex;
 -(id)initWithSize:(CGSize)size {
     if (self = [super initWithSize:size]) {
         //First init
         options = [[Options alloc] init];
         lastButton = [[NSString alloc] init];
         trailingSpriteArray = [[NSMutableArray alloc] init];
+        dropArray = [[NSMutableArray alloc] init];
         trailingSpriteArrayIndex = 0;
-        
+        dropArrayIndex = 0;
         //bg music
         NSError *error;
         NSURL * backgroundMusicURL = [[NSBundle mainBundle] URLForResource:@"ingame1" withExtension:@"mp3"];
@@ -643,6 +644,7 @@
                     for (int i = 0; i < children.count; i++) {
                         if([children[i] isKindOfClass:[Drops class]]){
                             [children[i] removeFromParent];
+
                         }
                     }
                     paddle.position = CGPointMake(self.size.width /2, self.size.height*0.2);
@@ -721,7 +723,7 @@
                         trailSprite.texture = [SKTexture textureWithImageNamed:[self chooseShape:drop.type]];
                         trailSprite.zRotation = drop.zRotation;
                         trailSprite.position = CGPointMake(drop.position.x, drop.position.y -2);
-                        [self addChild:trailSprite];
+//                        [self addChild:trailSprite];
 
                     }
                     else {
@@ -741,12 +743,16 @@
                     if(trailingSpriteArrayIndex < 29)
                         trailingSpriteArrayIndex ++;
                     else trailingSpriteArrayIndex = 0;
-                    NSLog(@"%d", trailingSpriteArrayIndex);
+//                    [trailSprite runAction:[SKAction sequence:@[
+//                                                                [SKAction fadeAlphaTo:0 duration:0.1],
+//                                                                [SKAction removeFromParent]
+//                                                                ]]];
                     [trailSprite runAction:[SKAction sequence:@[
                                                                 [SKAction fadeAlphaTo:0 duration:0.1],
-                                                                [SKAction removeFromParent]
+                                                                [SKAction runBlock:^{
+                        trailSprite.position = CGPointMake(self.size.width*2, self.size.height);
+                    }]
                                                                 ]]];
-                    
                     
                 }
             }
@@ -825,9 +831,9 @@
     [sparkNode setParticleTexture:[SKTexture textureWithImageNamed:[self chooseParticleShape:shape.type]]];
     if(IS_IPAD_SCREEN)
         [sparkNode setParticleScale:0.3];
-    [shape removeFromParent];
+//    [shape removeFromParent];
     sparkNode.name = @"sparkNode";
-    
+
     //If paddle is hit
     if(contact.bodyA.categoryBitMask == paddleCategory){
         SKAction *moveBack = [SKAction moveBy:CGVectorMake(0, -10.0) duration:0.02];
@@ -841,8 +847,9 @@
             [self addChild:sparkNode];
             
         }];
-        SKAction *delay = [SKAction waitForDuration:0.2];
+        SKAction *delay = [SKAction waitForDuration:0.0];
         SKAction *disappear = [SKAction runBlock:^{
+            shape.position = CGPointMake(self.size.width*2, self.size.height);
         }];
         SKAction *sparkAndDisappear = [SKAction sequence:@[spark, delay, disappear]];
         [self runAction:sparkAndDisappear];
@@ -923,9 +930,11 @@
         SKAction *spark = [SKAction runBlock:^{
             [self addChild:sparkNode];
         }];
-        SKAction *delay = [SKAction waitForDuration:0.2];
+        SKAction *delay = [SKAction waitForDuration:0.0];
         SKAction *disappear = [SKAction runBlock:^{
-            [shape removeFromParent];
+//            [shape removeFromParent];
+            shape.position = CGPointMake(self.size.width*2, self.size.height);
+
         }];
         SKAction *sparkAndDisappear = [SKAction sequence:@[spark, delay, disappear]];
         [self runAction:sparkAndDisappear];
@@ -946,8 +955,12 @@
         
         if(IS_IPAD_SCREEN)
             [drop setScale:0.8];
-        [self addChild:drop];
+        if(dropArray.count < 30)
+            [self addChild:drop];
         [drop runAction:[SKAction rotateByAngle:4*M_PI duration:2]];
+        if (dropArrayIndex < 29) {
+            dropArrayIndex++;
+        } else dropArrayIndex = 0;
     }
 }
 
