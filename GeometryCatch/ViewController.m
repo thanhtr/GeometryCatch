@@ -10,6 +10,7 @@
 #import "MyScene.h"
 #import "StartScene.h"
 #import "TutScene.h"
+
 @implementation ViewController
 
 - (void)viewDidLayoutSubviews
@@ -56,11 +57,18 @@
 
 -(void)createPost:(NSNotification *)notification{
     NSDictionary *postData = [notification userInfo];
-    NSString *postText = (NSString *)[postData objectForKey:@"postText"];    
+    NSString *postText = (NSString *)[postData objectForKey:@"postText"];
+    UIImage *postPicture = (UIImage*)[postData objectForKey:@"postPicture"];
     // build your tweet, facebook, etc...
     SLComposeViewController *mySLComposerSheet = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeFacebook];
     [mySLComposerSheet setInitialText:postText];
-    [mySLComposerSheet addImage:[UIImage imageNamed:@"Screenshot"]];
+    [mySLComposerSheet addImage:postPicture];
     [self presentViewController:mySLComposerSheet animated:YES completion:nil];
+}
+-(void)takeScreenShot{
+    UIGraphicsBeginImageContextWithOptions(self.view.bounds.size, NO, 0.0);
+    [self.view drawViewHierarchyInRect:self.view.bounds afterScreenUpdates:YES];
+    self.screenShot = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
 }
 @end

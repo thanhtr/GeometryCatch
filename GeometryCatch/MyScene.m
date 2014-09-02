@@ -16,383 +16,10 @@
 -(id)initWithSize:(CGSize)size {
     if (self = [super initWithSize:size]) {
         //First init
-        options = [[Options alloc] init];
-        lastButton = [[NSString alloc] init];
-        trailingSpriteArray = [[NSMutableArray alloc] init];
-        dropArray = [[NSMutableArray alloc] init];
-        trailingSpriteArrayIndex = 0;
-        dropArrayIndex = 0;
+        [self createInitElements];
         
-        //bg music
-        NSError *error;
-        NSURL * backgroundMusicURL = [[NSBundle mainBundle] URLForResource:@"ingame1" withExtension:@"mp3"];
-        bgMusicPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:backgroundMusicURL error:&error];
-        bgMusicPlayer.numberOfLoops = -1; //-1 = infinite loop
-        bgMusicPlayer.enableRate = YES;
-        [bgMusicPlayer prepareToPlay];
-        
-        //gameover bg music
-        NSURL * gameOverMusicURL = [[NSBundle mainBundle] URLForResource:@"Menu_Music" withExtension:@"wav"];
-        gameOverMusicPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:gameOverMusicURL error:&error];
-        gameOverMusicPlayer.numberOfLoops = -1; //-1 = infinite loop
-        [gameOverMusicPlayer prepareToPlay];
-        
-        //if music on play bg music
-        if (options.musicOn) {
-            [bgMusicPlayer play];
-        }
-        
-        //color array of bg
-        bgColorArray = [NSArray arrayWithObjects:
-                        [SKColor colorWithRed:(float)219/255 green:(float)68/255 blue:(float)83/255 alpha:1.0],
-                        [SKColor colorWithRed:(float)233/255 green:(float)87/255 blue:(float)63/255 alpha:1.0],
-                        [SKColor colorWithRed:(float)246/255 green:(float)187/255 blue:(float)66/255 alpha:1.0],
-                        [SKColor colorWithRed:(float)140/255 green:(float)193/255 blue:(float)82/255 alpha:1.0],
-                        [SKColor colorWithRed:(float)55/255 green:(float)188/255 blue:(float)155/255 alpha:1.0],
-                        [SKColor colorWithRed:(float)59/255 green:(float)175/255 blue:(float)218/255 alpha:1.0],
-                        [SKColor colorWithRed:(float)74/255 green:(float)137/255 blue:(float)220/255 alpha:1.0],
-                        [SKColor colorWithRed:(float)67/255 green:(float)74/255 blue:(float)84/255 alpha:1.0],
-                        nil];
-        bgColorIndex = arc4random()%(bgColorArray.count);
-        bgColor = bgColorArray[bgColorIndex];
-        
-        //offset and index for controlling paddle's caught shapes
-        if(IS_IPAD_SCREEN){
-            paddleHoldShapeOffset = 0.5;
-            speedOffset = -4;
-        }
-        else{
-            paddleHoldShapeOffset = 1;
-            speedOffset = -2;
-        }
-        paddleArrayIndex = 0;
-        
-        score = 0;
-        isGameOver = NO;
-        isPause = NO;
-        properlyInView = YES;
-        
-        paddleArray = [[NSMutableArray alloc] initWithCapacity:3];
-        
-        sparkArrayIndex = 0;
-        
-        //world physic properties
-        self.physicsWorld.gravity = CGVectorMake(0, speedOffset);
-        self.physicsWorld.contactDelegate = self;
-        self.physicsBody = [SKPhysicsBody bodyWithEdgeLoopFromRect:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height * 1.1)];
-        self.physicsBody.categoryBitMask = worldCategory;
-        self.physicsBody.collisionBitMask = paddleCategory;
-        
-        //bg
-        bg = [[SKSpriteNode alloc] initWithImageNamed:@"bg"];
-        bg.position = CGPointMake(self.size.width/2, self.size.height/2);
-        bg.color = bgColor;
-        if(IS_IPAD_SCREEN)
-            [bg setScale:1.2];
-        bg.colorBlendFactor = 1;
-        [self addChild:bg];
-        
-        //fake bg used when paused
-        bgBlack = [[SKSpriteNode alloc] initWithImageNamed:@"bgBlack"];
-        bgBlack.position = CGPointMake(self.size.width/2, self.size.height/2);
-        bgBlack.alpha = 0.0;
-        if(IS_IPAD_SCREEN)
-            [bgBlack setScale:1.2];
-        [self addChild:bgBlack];
-        
-        //Level bar init
-        levelBar = [[SKSpriteNode alloc]initWithImageNamed:@"levelBar"];
-        levelBar.anchorPoint = CGPointMake(0, 0.5);
-        levelBar.position = CGPointMake(0, self.size.height);
-        levelBar.size = CGSizeMake(self.size.width*0.5, levelBar.size.height);
-        //        levelBar.yScale = 2.0;
-        levelBar.color = bgColor;
-        levelBar.colorBlendFactor = 0.7;
-        if(IS_IPAD_SCREEN)
-            [levelBar setScale:1.5];
-        [self addChild:levelBar];
-        
-        //Particle rain
-        NSString *rainPath =
-        [[NSBundle mainBundle]
-         pathForResource:@"Rain" ofType:@"sks"];
-        rainNode =
-        [NSKeyedUnarchiver unarchiveObjectWithFile:rainPath];
-        rainNode.position = CGPointMake(self.size.width/2, self.size.height);
-        [rainNode setParticleColorSequence:nil];
-        [rainNode setParticleColor:bgColor];
-        [rainNode setParticleColorBlendFactor:0.8];
-        if(IS_IPAD_SCREEN)
-            [rainNode setParticleScale:0.6];
-        [self addChild:rainNode];
-        
-        //Paddle init
-        paddle = [[SKSpriteNode alloc] initWithImageNamed:@"paddle"];
-        if(IS_IPAD_SCREEN)
-            [paddle setScale:0.5];
-        else
-            [paddle setScale:0.2];
-        if(IS_568_SCREEN)
-            paddle.position = CGPointMake(self.size.width /2, self.size.height*0.15);
-        else
-            paddle.position = CGPointMake(self.size.width /2, self.size.height*0.18);
-        paddle.name = @"paddle";
-        paddle.blendMode = SKBlendModeAdd;
-        paddle.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:paddle.size];
-        paddle.physicsBody.allowsRotation = NO;
-        paddle.physicsBody.dynamic = false;
-        paddle.physicsBody.categoryBitMask = paddleCategory;
-        paddle.physicsBody.collisionBitMask = worldCategory;
-        paddle.physicsBody.contactTestBitMask = dropCategory;
-        paddle.color = [SKColor whiteColor];
-        paddle.colorBlendFactor = 1;
-        [self addChild:paddle];
-        
-        //Pause button
-        pauseBtn = [[SKSpriteNode alloc] initWithImageNamed:@"pauseBtn"];
-        if(IS_IPAD_SCREEN)
-            [pauseBtn setScale:1.0];
-        else
-            [pauseBtn setScale:0.5];
-        pauseBtn.position = CGPointMake(self.size.width*0.05, self.size.height*0.93);
-        pauseBtn.name = @"pauseBtn";
-        [self addChild:pauseBtn];
-        
-        //Score label
-        scoreLabel = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
-        scoreLabel.text = [NSString stringWithFormat:@"%d", score];
-        if(IS_568_SCREEN)
-            scoreLabel.position = CGPointMake(self.size.width*0.5, self.size.height*0.85);
-        else
-            scoreLabel.position = CGPointMake(self.size.width*0.5, self.size.height*0.83);
-        scoreLabel.fontColor = [SKColor colorWithRed:1 green:1 blue:1 alpha:0.8];
-        if(IS_IPAD_SCREEN)
-            scoreLabel.fontSize = 120;
-        else
-            scoreLabel.fontSize = 80;
-        [self addChild:scoreLabel];
-        
-        //Game over frame
-        gameOverGroup = [[NSMutableArray alloc]init];
-        
-        //bg
-        gameOverBg = [[SKSpriteNode alloc] initWithImageNamed:@"bg"];
-        gameOverBg.position = CGPointMake(self.size.width/2, self.size.height/2 + self.size.height);
-        if(IS_IPAD_SCREEN)
-            gameOverBg.xScale = 1.2;
-        else
-            gameOverBg.xScale = 0.5;
-        if(IS_568_SCREEN)
-            gameOverBg.yScale = 0.5;
-        else if(IS_IPAD_SCREEN)
-            gameOverBg.yScale = 0.901;
-        else
-            gameOverBg.yScale = 0.4229;
-        [gameOverGroup addObject:gameOverBg];
-        
-        //shadow of "best score"
-        SKLabelNode *bestScoreLblShadow = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
-        if(IS_568_SCREEN)
-            bestScoreLblShadow.position = CGPointMake(self.size.width/2, self.size.height*0.55 + self.size.height -3);
-        else
-            bestScoreLblShadow.position = CGPointMake(self.size.width/2, self.size.height*0.58 + self.size.height -3);
-        
-        bestScoreLblShadow.text = @"Best score";
-        bestScoreLblShadow.fontColor = [SKColor colorWithRed:(float)74/255 green:(float)137/255 blue:(float)220/255 alpha:1.0];
-        bestScoreLblShadow.fontSize = 67.5;
-        if(IS_IPAD_SCREEN)
-            [bestScoreLblShadow setScale:1.2];
-        else
-            [bestScoreLblShadow setScale:0.5];
-        
-        [gameOverGroup addObject:bestScoreLblShadow];
-        
-        //"best score"
-        bestScoreLbl = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
-        if(IS_568_SCREEN)
-            bestScoreLbl.position = CGPointMake(self.size.width/2, self.size.height*0.55 + self.size.height);
-        else
-            bestScoreLbl.position = CGPointMake(self.size.width/2, self.size.height*0.58 + self.size.height);
-        
-        bestScoreLbl.text = @"Best score";
-        bestScoreLbl.fontColor = [SKColor blackColor];
-        bestScoreLbl.fontSize = 67.5;
-        if (IS_IPAD_SCREEN) {
-            [bestScoreLbl setScale:1.2];
-        }
-        else
-            [bestScoreLbl setScale:0.5];
-        [gameOverGroup addObject:bestScoreLbl];
-        
-        //best score (points)
-        bestScorePoint = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
-        if(IS_568_SCREEN)
-            
-            bestScorePoint.position = CGPointMake(self.size.width/2, self.size.height*0.48 + self.size.height);
-        else
-            bestScorePoint.position = CGPointMake(self.size.width/2, self.size.height*0.5 + self.size.height);
-        
-        bestScorePoint.fontColor = [SKColor colorWithRed:(float)74/255 green:(float)137/255 blue:(float)220/255 alpha:1.0];
-        bestScorePoint.fontSize = 67.5;
-        if (IS_IPAD_SCREEN) {
-            [bestScorePoint setScale:1.2];
-        }
-        else
-            [bestScorePoint setScale:0.5];
-        [gameOverGroup addObject:bestScorePoint];
-        
-        //"your score" shadow
-        SKLabelNode *yourScoreLblShadow = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
-        if(IS_568_SCREEN)
-            yourScoreLblShadow.position = CGPointMake(self.size.width/2, self.size.height*0.7 + self.size.height -3);
-        else
-            yourScoreLblShadow.position = CGPointMake(self.size.width/2, self.size.height*0.75 + self.size.height -3);
-        
-        yourScoreLblShadow.text = @"Your score";
-        yourScoreLblShadow.fontColor = [SKColor colorWithRed:(float)219/255 green:(float)68/255 blue:(float)83/255 alpha:1.0];
-        yourScoreLblShadow.fontSize = 90;
-        if (IS_IPAD_SCREEN) {
-            [yourScoreLblShadow setScale:1.2];
-        }
-        else
-            [yourScoreLblShadow setScale:0.5];
-        [gameOverGroup addObject:yourScoreLblShadow];
-        
-        //"your score"
-        yourScoreLbl = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
-        if(IS_568_SCREEN)
-            yourScoreLbl.position = CGPointMake(self.size.width/2, self.size.height*0.7 + self.size.height);
-        else
-            yourScoreLbl.position = CGPointMake(self.size.width/2, self.size.height*0.75 + self.size.height);
-        
-        yourScoreLbl.text = @"Your score";
-        yourScoreLbl.fontColor = [SKColor blackColor];
-        yourScoreLbl.fontSize = 90;
-        if (IS_IPAD_SCREEN) {
-            [yourScoreLbl setScale:1.2];
-        }
-        else
-            [yourScoreLbl setScale:0.5];
-        [gameOverGroup addObject:yourScoreLbl];
-        
-        //current score (points)
-        yourScorePoint = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
-        if(IS_568_SCREEN)
-            yourScorePoint.position = CGPointMake(self.size.width/2, self.size.height*0.62 + self.size.height);
-        else
-            yourScorePoint.position = CGPointMake(self.size.width/2, self.size.height*0.65 + self.size.height);
-        
-        yourScorePoint.fontColor = [SKColor colorWithRed:(float)219/255 green:(float)68/255 blue:(float)83/255 alpha:1.0];
-        yourScorePoint.fontSize = 90;
-        if (IS_IPAD_SCREEN) {
-            [yourScorePoint setScale:1.2];
-        }
-        else
-            [yourScorePoint setScale:0.5];
-        [gameOverGroup addObject:yourScorePoint];
-        
-        //share button
-        shareBtn = [[SKSpriteNode alloc] initWithImageNamed:@"share_normal"];
-        if(IS_568_SCREEN)
-            shareBtn.position = CGPointMake(self.size.width/2, self.size.height*0.38 + self.size.height);
-        else
-            shareBtn.position = CGPointMake(self.size.width/2, self.size.height*0.415 + self.size.height);
-        if (IS_IPAD_SCREEN) {
-            [shareBtn setScale:1.2];
-        }
-        else
-            [shareBtn setScale:0.5];
-        shareBtn.name = @"shareBtn";
-        [gameOverGroup addObject:shareBtn];
-        
-        //play button
-        playBtn  = [[SKSpriteNode alloc] initWithImageNamed:@"play_normal"];
-        if(IS_568_SCREEN)
-            playBtn.position = CGPointMake(self.size.width/2, self.size.height*0.24 +self.size.height);
-        else
-            playBtn.position = CGPointMake(self.size.width/2, self.size.height*0.25 +self.size.height);
-        if (IS_IPAD_SCREEN) {
-            playBtn.xScale = 1.2;
-            playBtn.yScale = 1;
-        }
-        else
-            [playBtn setScale:0.5];
-        playBtn.name = @"playBtn";
-        [gameOverGroup addObject:playBtn];
-        
-        //game center button
-        gameCenterBtn = [[SKSpriteNode alloc] initWithImageNamed:[self chooseSpriteWithState:NO isTouched:NO baseFileName:@"gamecenter_button" hasPrefix:NO]];
-        gameCenterBtn.anchorPoint = CGPointMake(0.5, 1);
-        if (IS_IPAD_SCREEN) {
-            [gameCenterBtn setScale:1.2];
-            gameCenterBtn.position = CGPointMake(self.size.width*0.3, self.size.height +self.size.height);
-        }
-        else {
-            [gameCenterBtn setScale:0.5];
-            gameCenterBtn.position = CGPointMake(self.size.width*0.3, self.size.height +self.size.height);
-        }
-        gameCenterBtn.name = @"gameCenterBtn";
-        [gameOverGroup addObject:gameCenterBtn];
-        
-        //sound button
-        soundBtn = [[SKSpriteNode alloc] initWithImageNamed:[self chooseSpriteWithState:options.soundOn isTouched:NO baseFileName:@"sound_button" hasPrefix:YES]];
-        soundBtn.anchorPoint = CGPointMake(0.5, 1);
-        soundBtn.name = @"soundBtn";
-        if(IS_IPAD_SCREEN){
-            [soundBtn setScale:1.2];
-            soundBtn.position = CGPointMake(self.size.width*0.75, self.size.height +self.size.height);
-        }
-        else {
-            [soundBtn setScale:0.5];
-            soundBtn.position = CGPointMake(self.size.width*0.75, self.size.height+self.size.height);
-        }
-        [gameOverGroup addObject:soundBtn];
-        
-        //music button
-        musicBtn = [[SKSpriteNode alloc] initWithImageNamed:[self chooseSpriteWithState:options.musicOn isTouched:NO baseFileName:@"music_button" hasPrefix:YES]];
-        musicBtn.anchorPoint = CGPointMake(0.5, 1);
-        musicBtn.name = @"musicBtn";
-        if(IS_IPAD_SCREEN){
-            [musicBtn setScale:1.2];
-            musicBtn.position = CGPointMake(self.size.width*0.9, self.size.height+self.size.height);
-        }
-        else{
-            [musicBtn setScale:0.5];
-            musicBtn.position = CGPointMake(self.size.width*0.9, self.size.height+self.size.height);
-        }
-        [gameOverGroup addObject:musicBtn];
-        
-        //credit button
-        creditBtn = [[SKSpriteNode alloc] initWithImageNamed:[self chooseSpriteWithState:NO isTouched:NO baseFileName:@"credit_button" hasPrefix:NO]];
-        creditBtn.anchorPoint = CGPointMake(0.5, 1);
-        if(IS_IPAD_SCREEN){
-            creditBtn.position = CGPointMake(self.size.width * 0.1, self.size.height + self.size.height);
-            [creditBtn setScale:1.2];
-        }
-        else {
-            creditBtn.position = CGPointMake(self.size.width * 0.1, self.size.height + self.size.height);
-            [creditBtn setScale:0.5];
-        }
-        creditBtn.name = @"creditBtn";
-        [gameOverGroup addObject:creditBtn];
-        
-        //credit board
-        aboutBg = [[SKSpriteNode alloc]initWithImageNamed:@"credit_screen"];
-        aboutBg.name = @"aboutBg";
-        aboutBg.position = CGPointMake(3*self.size.width/2, self.size.height/2);
-        aboutBg.zPosition = 1;
-        if(IS_568_SCREEN){
-            [aboutBg setScale:0.5];
-        }
-        else if(IS_IPAD_SCREEN){
-            aboutBg.yScale = 1.0;
-            aboutBg.xScale = 1.2;
-        }
-        else {
-            aboutBg.yScale = 0.45;
-            aboutBg.xScale = 0.5;
-        }
-        [self addChild:aboutBg];
+        //Gameover elements
+        [self createGameOverBoardElements];
         
         //Initial opening animation
         [self initColoredBackground];
@@ -423,7 +50,386 @@
     }
     return self;
 }
-
+-(void)createInitElements{
+    options = [[Options alloc] init];
+    lastButton = [[NSString alloc] init];
+    trailingSpriteArray = [[NSMutableArray alloc] init];
+    dropArray = [[NSMutableArray alloc] init];
+    trailingSpriteArrayIndex = 0;
+    dropArrayIndex = 0;
+    
+    //bg music
+    NSError *error;
+    NSURL * backgroundMusicURL = [[NSBundle mainBundle] URLForResource:@"ingame1" withExtension:@"mp3"];
+    bgMusicPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:backgroundMusicURL error:&error];
+    bgMusicPlayer.numberOfLoops = -1; //-1 = infinite loop
+    bgMusicPlayer.enableRate = YES;
+    [bgMusicPlayer prepareToPlay];
+    
+    //gameover bg music
+    NSURL * gameOverMusicURL = [[NSBundle mainBundle] URLForResource:@"Menu_Music" withExtension:@"wav"];
+    gameOverMusicPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:gameOverMusicURL error:&error];
+    gameOverMusicPlayer.numberOfLoops = -1; //-1 = infinite loop
+    [gameOverMusicPlayer prepareToPlay];
+    
+    //if music on play bg music
+    if (options.musicOn) {
+        [bgMusicPlayer play];
+    }
+    
+    //color array of bg
+    bgColorArray = [NSArray arrayWithObjects:
+                    [SKColor colorWithRed:(float)219/255 green:(float)68/255 blue:(float)83/255 alpha:1.0],
+                    [SKColor colorWithRed:(float)233/255 green:(float)87/255 blue:(float)63/255 alpha:1.0],
+                    [SKColor colorWithRed:(float)246/255 green:(float)187/255 blue:(float)66/255 alpha:1.0],
+                    [SKColor colorWithRed:(float)140/255 green:(float)193/255 blue:(float)82/255 alpha:1.0],
+                    [SKColor colorWithRed:(float)55/255 green:(float)188/255 blue:(float)155/255 alpha:1.0],
+                    [SKColor colorWithRed:(float)59/255 green:(float)175/255 blue:(float)218/255 alpha:1.0],
+                    [SKColor colorWithRed:(float)74/255 green:(float)137/255 blue:(float)220/255 alpha:1.0],
+                    [SKColor colorWithRed:(float)67/255 green:(float)74/255 blue:(float)84/255 alpha:1.0],
+                    nil];
+    bgColorIndex = arc4random()%(bgColorArray.count);
+    bgColor = bgColorArray[bgColorIndex];
+    
+    //offset and index for controlling paddle's caught shapes
+    if(IS_IPAD_SCREEN){
+        paddleHoldShapeOffset = 0.5;
+        speedOffset = -4;
+    }
+    else{
+        paddleHoldShapeOffset = 1;
+        speedOffset = -2;
+    }
+    paddleArrayIndex = 0;
+    
+    score = 0;
+    isGameOver = NO;
+    isPause = NO;
+    properlyInView = YES;
+    
+    paddleArray = [[NSMutableArray alloc] initWithCapacity:3];
+    
+    sparkArrayIndex = 0;
+    
+    //world physic properties
+    self.physicsWorld.gravity = CGVectorMake(0, speedOffset);
+    self.physicsWorld.contactDelegate = self;
+    self.physicsBody = [SKPhysicsBody bodyWithEdgeLoopFromRect:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height * 1.1)];
+    self.physicsBody.categoryBitMask = worldCategory;
+    self.physicsBody.collisionBitMask = paddleCategory;
+    
+    //bg
+    bg = [[SKSpriteNode alloc] initWithImageNamed:@"bg"];
+    bg.position = CGPointMake(self.size.width/2, self.size.height/2);
+    bg.color = bgColor;
+    if(IS_IPAD_SCREEN)
+        [bg setScale:1.2];
+    bg.colorBlendFactor = 1;
+    [self addChild:bg];
+    
+    //fake bg used when paused
+    bgBlack = [[SKSpriteNode alloc] initWithImageNamed:@"bgBlack"];
+    bgBlack.position = CGPointMake(self.size.width/2, self.size.height/2);
+    bgBlack.alpha = 0.0;
+    if(IS_IPAD_SCREEN)
+        [bgBlack setScale:1.2];
+    [self addChild:bgBlack];
+    
+    //Level bar init
+    levelBar = [[SKSpriteNode alloc]initWithImageNamed:@"levelBar"];
+    levelBar.anchorPoint = CGPointMake(0, 0.5);
+    levelBar.position = CGPointMake(0, self.size.height);
+    levelBar.size = CGSizeMake(self.size.width*0.5, levelBar.size.height);
+    //        levelBar.yScale = 2.0;
+    levelBar.color = bgColor;
+    levelBar.colorBlendFactor = 0.7;
+    if(IS_IPAD_SCREEN)
+        [levelBar setScale:1.5];
+    [self addChild:levelBar];
+    
+    //Particle rain
+    NSString *rainPath =
+    [[NSBundle mainBundle]
+     pathForResource:@"Rain" ofType:@"sks"];
+    rainNode =
+    [NSKeyedUnarchiver unarchiveObjectWithFile:rainPath];
+    rainNode.position = CGPointMake(self.size.width/2, self.size.height);
+    [rainNode setParticleColorSequence:nil];
+    [rainNode setParticleColor:bgColor];
+    [rainNode setParticleColorBlendFactor:0.8];
+    if(IS_IPAD_SCREEN)
+        [rainNode setParticleScale:0.6];
+    [self addChild:rainNode];
+    
+    //Paddle init
+    paddle = [[SKSpriteNode alloc] initWithImageNamed:@"paddle"];
+    if(IS_IPAD_SCREEN)
+        [paddle setScale:0.5];
+    else
+        [paddle setScale:0.2];
+    if(IS_568_SCREEN)
+        paddle.position = CGPointMake(self.size.width /2, self.size.height*0.15);
+    else
+        paddle.position = CGPointMake(self.size.width /2, self.size.height*0.18);
+    paddle.name = @"paddle";
+    paddle.blendMode = SKBlendModeAdd;
+    paddle.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:paddle.size];
+    paddle.physicsBody.allowsRotation = NO;
+    paddle.physicsBody.dynamic = false;
+    paddle.physicsBody.categoryBitMask = paddleCategory;
+    paddle.physicsBody.collisionBitMask = worldCategory;
+    paddle.physicsBody.contactTestBitMask = dropCategory;
+    paddle.color = [SKColor whiteColor];
+    paddle.colorBlendFactor = 1;
+    [self addChild:paddle];
+    
+    //Pause button
+    pauseBtn = [[SKSpriteNode alloc] initWithImageNamed:@"pauseBtn"];
+    if(IS_IPAD_SCREEN)
+        [pauseBtn setScale:1.0];
+    else
+        [pauseBtn setScale:0.5];
+    pauseBtn.position = CGPointMake(self.size.width*0.05, self.size.height*0.93);
+    pauseBtn.name = @"pauseBtn";
+    [self addChild:pauseBtn];
+    
+    //Score label
+    scoreLabel = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
+    scoreLabel.text = [NSString stringWithFormat:@"%d", score];
+    if(IS_568_SCREEN)
+        scoreLabel.position = CGPointMake(self.size.width*0.5, self.size.height*0.85);
+    else
+        scoreLabel.position = CGPointMake(self.size.width*0.5, self.size.height*0.83);
+    scoreLabel.fontColor = [SKColor colorWithRed:1 green:1 blue:1 alpha:0.8];
+    if(IS_IPAD_SCREEN)
+        scoreLabel.fontSize = 120;
+    else
+        scoreLabel.fontSize = 80;
+    [self addChild:scoreLabel];
+}
+-(void)createGameOverBoardElements{
+    //Game over frame
+    gameOverGroup = [[NSMutableArray alloc]init];
+    
+    //bg
+    gameOverBg = [[SKSpriteNode alloc] initWithImageNamed:@"bg"];
+    gameOverBg.position = CGPointMake(self.size.width/2, self.size.height/2 + self.size.height);
+    if(IS_IPAD_SCREEN)
+        gameOverBg.xScale = 1.2;
+    else
+        gameOverBg.xScale = 0.5;
+    if(IS_568_SCREEN)
+        gameOverBg.yScale = 0.5;
+    else if(IS_IPAD_SCREEN)
+        gameOverBg.yScale = 0.901;
+    else
+        gameOverBg.yScale = 0.4229;
+    [gameOverGroup addObject:gameOverBg];
+    
+    //shadow of "best score"
+    SKLabelNode *bestScoreLblShadow = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
+    if(IS_568_SCREEN)
+        bestScoreLblShadow.position = CGPointMake(self.size.width/2, self.size.height*0.55 + self.size.height -3);
+    else
+        bestScoreLblShadow.position = CGPointMake(self.size.width/2, self.size.height*0.58 + self.size.height -3);
+    
+    bestScoreLblShadow.text = @"Best score";
+    bestScoreLblShadow.fontColor = [SKColor colorWithRed:(float)74/255 green:(float)137/255 blue:(float)220/255 alpha:1.0];
+    bestScoreLblShadow.fontSize = 67.5;
+    if(IS_IPAD_SCREEN)
+        [bestScoreLblShadow setScale:1.2];
+    else
+        [bestScoreLblShadow setScale:0.5];
+    
+    [gameOverGroup addObject:bestScoreLblShadow];
+    
+    //"best score"
+    bestScoreLbl = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
+    if(IS_568_SCREEN)
+        bestScoreLbl.position = CGPointMake(self.size.width/2, self.size.height*0.55 + self.size.height);
+    else
+        bestScoreLbl.position = CGPointMake(self.size.width/2, self.size.height*0.58 + self.size.height);
+    
+    bestScoreLbl.text = @"Best score";
+    bestScoreLbl.fontColor = [SKColor blackColor];
+    bestScoreLbl.fontSize = 67.5;
+    if (IS_IPAD_SCREEN) {
+        [bestScoreLbl setScale:1.2];
+    }
+    else
+        [bestScoreLbl setScale:0.5];
+    [gameOverGroup addObject:bestScoreLbl];
+    
+    //best score (points)
+    bestScorePoint = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
+    if(IS_568_SCREEN)
+        
+        bestScorePoint.position = CGPointMake(self.size.width/2, self.size.height*0.48 + self.size.height);
+    else
+        bestScorePoint.position = CGPointMake(self.size.width/2, self.size.height*0.5 + self.size.height);
+    
+    bestScorePoint.fontColor = [SKColor colorWithRed:(float)74/255 green:(float)137/255 blue:(float)220/255 alpha:1.0];
+    bestScorePoint.fontSize = 67.5;
+    if (IS_IPAD_SCREEN) {
+        [bestScorePoint setScale:1.2];
+    }
+    else
+        [bestScorePoint setScale:0.5];
+    [gameOverGroup addObject:bestScorePoint];
+    
+    //"your score" shadow
+    SKLabelNode *yourScoreLblShadow = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
+    if(IS_568_SCREEN)
+        yourScoreLblShadow.position = CGPointMake(self.size.width/2, self.size.height*0.7 + self.size.height -3);
+    else
+        yourScoreLblShadow.position = CGPointMake(self.size.width/2, self.size.height*0.75 + self.size.height -3);
+    
+    yourScoreLblShadow.text = @"Your score";
+    yourScoreLblShadow.fontColor = [SKColor colorWithRed:(float)219/255 green:(float)68/255 blue:(float)83/255 alpha:1.0];
+    yourScoreLblShadow.fontSize = 90;
+    if (IS_IPAD_SCREEN) {
+        [yourScoreLblShadow setScale:1.2];
+    }
+    else
+        [yourScoreLblShadow setScale:0.5];
+    [gameOverGroup addObject:yourScoreLblShadow];
+    
+    //"your score"
+    yourScoreLbl = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
+    if(IS_568_SCREEN)
+        yourScoreLbl.position = CGPointMake(self.size.width/2, self.size.height*0.7 + self.size.height);
+    else
+        yourScoreLbl.position = CGPointMake(self.size.width/2, self.size.height*0.75 + self.size.height);
+    
+    yourScoreLbl.text = @"Your score";
+    yourScoreLbl.fontColor = [SKColor blackColor];
+    yourScoreLbl.fontSize = 90;
+    if (IS_IPAD_SCREEN) {
+        [yourScoreLbl setScale:1.2];
+    }
+    else
+        [yourScoreLbl setScale:0.5];
+    [gameOverGroup addObject:yourScoreLbl];
+    
+    //current score (points)
+    yourScorePoint = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
+    if(IS_568_SCREEN)
+        yourScorePoint.position = CGPointMake(self.size.width/2, self.size.height*0.62 + self.size.height);
+    else
+        yourScorePoint.position = CGPointMake(self.size.width/2, self.size.height*0.65 + self.size.height);
+    
+    yourScorePoint.fontColor = [SKColor colorWithRed:(float)219/255 green:(float)68/255 blue:(float)83/255 alpha:1.0];
+    yourScorePoint.fontSize = 90;
+    if (IS_IPAD_SCREEN) {
+        [yourScorePoint setScale:1.2];
+    }
+    else
+        [yourScorePoint setScale:0.5];
+    [gameOverGroup addObject:yourScorePoint];
+    
+    //share button
+    shareBtn = [[SKSpriteNode alloc] initWithImageNamed:@"share_normal"];
+    if(IS_568_SCREEN)
+        shareBtn.position = CGPointMake(self.size.width/2, self.size.height*0.38 + self.size.height);
+    else
+        shareBtn.position = CGPointMake(self.size.width/2, self.size.height*0.415 + self.size.height);
+    if (IS_IPAD_SCREEN) {
+        [shareBtn setScale:1.2];
+    }
+    else
+        [shareBtn setScale:0.5];
+    shareBtn.name = @"shareBtn";
+    [gameOverGroup addObject:shareBtn];
+    
+    //play button
+    playBtn  = [[SKSpriteNode alloc] initWithImageNamed:@"play_normal"];
+    if(IS_568_SCREEN)
+        playBtn.position = CGPointMake(self.size.width/2, self.size.height*0.24 +self.size.height);
+    else
+        playBtn.position = CGPointMake(self.size.width/2, self.size.height*0.25 +self.size.height);
+    if (IS_IPAD_SCREEN) {
+        playBtn.xScale = 1.2;
+        playBtn.yScale = 1;
+    }
+    else
+        [playBtn setScale:0.5];
+    playBtn.name = @"playBtn";
+    [gameOverGroup addObject:playBtn];
+    
+    //game center button
+    gameCenterBtn = [[SKSpriteNode alloc] initWithImageNamed:[self chooseSpriteWithState:NO isTouched:NO baseFileName:@"gamecenter_button" hasPrefix:NO]];
+    gameCenterBtn.anchorPoint = CGPointMake(0.5, 1);
+    if (IS_IPAD_SCREEN) {
+        [gameCenterBtn setScale:1.2];
+        gameCenterBtn.position = CGPointMake(self.size.width*0.3, self.size.height +self.size.height);
+    }
+    else {
+        [gameCenterBtn setScale:0.5];
+        gameCenterBtn.position = CGPointMake(self.size.width*0.3, self.size.height +self.size.height);
+    }
+    gameCenterBtn.name = @"gameCenterBtn";
+    [gameOverGroup addObject:gameCenterBtn];
+    
+    //sound button
+    soundBtn = [[SKSpriteNode alloc] initWithImageNamed:[self chooseSpriteWithState:options.soundOn isTouched:NO baseFileName:@"sound_button" hasPrefix:YES]];
+    soundBtn.anchorPoint = CGPointMake(0.5, 1);
+    soundBtn.name = @"soundBtn";
+    if(IS_IPAD_SCREEN){
+        [soundBtn setScale:1.2];
+        soundBtn.position = CGPointMake(self.size.width*0.75, self.size.height +self.size.height);
+    }
+    else {
+        [soundBtn setScale:0.5];
+        soundBtn.position = CGPointMake(self.size.width*0.75, self.size.height+self.size.height);
+    }
+    [gameOverGroup addObject:soundBtn];
+    
+    //music button
+    musicBtn = [[SKSpriteNode alloc] initWithImageNamed:[self chooseSpriteWithState:options.musicOn isTouched:NO baseFileName:@"music_button" hasPrefix:YES]];
+    musicBtn.anchorPoint = CGPointMake(0.5, 1);
+    musicBtn.name = @"musicBtn";
+    if(IS_IPAD_SCREEN){
+        [musicBtn setScale:1.2];
+        musicBtn.position = CGPointMake(self.size.width*0.9, self.size.height+self.size.height);
+    }
+    else{
+        [musicBtn setScale:0.5];
+        musicBtn.position = CGPointMake(self.size.width*0.9, self.size.height+self.size.height);
+    }
+    [gameOverGroup addObject:musicBtn];
+    
+    //credit button
+    creditBtn = [[SKSpriteNode alloc] initWithImageNamed:[self chooseSpriteWithState:NO isTouched:NO baseFileName:@"credit_button" hasPrefix:NO]];
+    creditBtn.anchorPoint = CGPointMake(0.5, 1);
+    if(IS_IPAD_SCREEN){
+        creditBtn.position = CGPointMake(self.size.width * 0.1, self.size.height + self.size.height);
+        [creditBtn setScale:1.2];
+    }
+    else {
+        creditBtn.position = CGPointMake(self.size.width * 0.1, self.size.height + self.size.height);
+        [creditBtn setScale:0.5];
+    }
+    creditBtn.name = @"creditBtn";
+    [gameOverGroup addObject:creditBtn];
+    
+    //credit board
+    aboutBg = [[SKSpriteNode alloc]initWithImageNamed:@"credit_screen"];
+    aboutBg.name = @"aboutBg";
+    aboutBg.position = CGPointMake(3*self.size.width/2, self.size.height/2);
+    aboutBg.zPosition = 1;
+    if(IS_568_SCREEN){
+        [aboutBg setScale:0.5];
+    }
+    else if(IS_IPAD_SCREEN){
+        aboutBg.yScale = 1.0;
+        aboutBg.xScale = 1.2;
+    }
+    else {
+        aboutBg.yScale = 0.45;
+        aboutBg.xScale = 0.5;
+    }
+    [self addChild:aboutBg];
+}
 //func to choose sprites for buttons
 -(NSString*)chooseSpriteWithState:(BOOL)isOn isTouched:(BOOL)isTouched baseFileName:(NSString*)baseFileName hasPrefix:(BOOL)hasPrefix{
     NSString* final = [[NSString alloc] init];
@@ -587,7 +593,11 @@
                 else if([node.name isEqualToString:@"shareBtn"]){
                     shareBtn.texture = [SKTexture textureWithImageNamed:[self chooseSpriteWithState:NO isTouched:NO baseFileName:@"share" hasPrefix:NO]];
                     NSString *postText = [NSString stringWithFormat: @"I just got %d points in a ATOX run. How about you?", score];
-                    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:postText forKey:@"postText"];
+                    UIGraphicsBeginImageContextWithOptions(self.view.bounds.size, NO, 0.0);
+                    [self.view drawViewHierarchyInRect:self.view.bounds afterScreenUpdates:YES];
+                    UIImage *postPicture = UIGraphicsGetImageFromCurrentImageContext();
+                    UIGraphicsEndImageContext();
+                    NSDictionary *userInfo = [NSDictionary dictionaryWithObjects:@[postText, postPicture] forKeys:@[@"postText", @"postPicture"]];
                     [[NSNotificationCenter defaultCenter] postNotificationName:@"CreatePost" object:self userInfo:userInfo];
                 }
                 //release play: change sprite and reset game
@@ -660,51 +670,51 @@
     }
 }
 
+-(void)createTrailingSprites{
+    for (int i = 0; i<self.children.count; i++) {
+        if([[self.children[i] name] isEqualToString:@"drop"]){
+            Drops *drop = self.children[i];
+            SKSpriteNode *trailSprite;
+            if (trailingSpriteArray.count >= 30) {
+                trailSprite = trailingSpriteArray[trailingSpriteArrayIndex];
+                trailSprite.texture = [SKTexture textureWithImageNamed:[self chooseShape:drop.type]];
+                trailSprite.zRotation = drop.zRotation;
+                trailSprite.position = CGPointMake(drop.position.x, drop.position.y -2);
+                //                        [self addChild:trailSprite];
+            }
+            else {
+                trailSprite = [SKSpriteNode spriteNodeWithImageNamed:[self chooseShape:drop.type]];
+                trailSprite.texture = [SKTexture textureWithImageNamed:[self chooseShape:drop.type]];
+                trailSprite.zRotation = drop.zRotation;
+                trailSprite.blendMode = SKBlendModeAdd;
+                trailSprite.position = CGPointMake(drop.position.x, drop.position.y -2);
+                trailSprite.alpha = 0.05;
+                if(!IS_IPAD_SCREEN){
+                    [trailSprite setScale:0.35];
+                }
+                [trailingSpriteArray addObject:trailSprite];
+                [self addChild:trailSprite];
+            }
+            if(trailingSpriteArrayIndex < 29)
+                trailingSpriteArrayIndex ++;
+            else trailingSpriteArrayIndex = 0;
+            [trailSprite runAction:[SKAction sequence:@[
+                                                        [SKAction fadeAlphaTo:0 duration:0.1],
+                                                        [SKAction runBlock:^{
+                trailSprite.position = CGPointMake(self.size.width*2, self.size.height);
+            }]
+                                                        ]]];
+        }
+    }
+}
+
 -(void)update:(CFTimeInterval)currentTime {
     /* Called before each frame is rendered */
     
     //create trailing sprite of drops
     if(!isGameOver){
         if (self.timeSinceUpdated == 0 || currentTime - self.timeSinceUpdated > 0.1) {
-            for (int i = 0; i<self.children.count; i++) {
-                if([[self.children[i] name] isEqualToString:@"drop"]){
-                    Drops *drop = self.children[i];
-                    SKSpriteNode *trailSprite;
-                    if (trailingSpriteArray.count >= 30) {
-                        trailSprite = trailingSpriteArray[trailingSpriteArrayIndex];
-                        trailSprite.texture = [SKTexture textureWithImageNamed:[self chooseShape:drop.type]];
-                        trailSprite.zRotation = drop.zRotation;
-                        trailSprite.position = CGPointMake(drop.position.x, drop.position.y -2);
-                        //                        [self addChild:trailSprite];
-                    }
-                    else {
-                        trailSprite = [SKSpriteNode spriteNodeWithImageNamed:[self chooseShape:drop.type]];
-                        trailSprite.texture = [SKTexture textureWithImageNamed:[self chooseShape:drop.type]];
-                        trailSprite.zRotation = drop.zRotation;
-                        trailSprite.blendMode = SKBlendModeAdd;
-                        trailSprite.position = CGPointMake(drop.position.x, drop.position.y -2);
-                        trailSprite.alpha = 0.05;
-                        if(!IS_IPAD_SCREEN){
-                            [trailSprite setScale:0.35];
-                        }
-                        [trailingSpriteArray addObject:trailSprite];
-                        [self addChild:trailSprite];
-                    }
-                    if(trailingSpriteArrayIndex < 29)
-                        trailingSpriteArrayIndex ++;
-                    else trailingSpriteArrayIndex = 0;
-                    //                    [trailSprite runAction:[SKAction sequence:@[
-                    //                                                                [SKAction fadeAlphaTo:0 duration:0.1],
-                    //                                                                [SKAction removeFromParent]
-                    //                                                                ]]];
-                    [trailSprite runAction:[SKAction sequence:@[
-                                                                [SKAction fadeAlphaTo:0 duration:0.1],
-                                                                [SKAction runBlock:^{
-                        trailSprite.position = CGPointMake(self.size.width*2, self.size.height);
-                    }]
-                                                                ]]];
-                }
-            }
+            [self createTrailingSprites];
             self.timeSinceUpdated = currentTime;
         }
     }
@@ -778,7 +788,10 @@
         [sparkNode setParticleScale:0.3];
     //    [shape removeFromParent];
     sparkNode.name = @"sparkNode";
-    
+    [self addChild:sparkNode];
+    [self runAction:[SKAction runBlock:^{
+        shape.position = CGPointMake(self.size.width*2, self.size.height);
+    }]];
     //If paddle is hit
     if(contact.bodyA.categoryBitMask == paddleCategory){
         SKAction *moveBack = [SKAction moveBy:CGVectorMake(0, -10.0) duration:0.02];
@@ -786,18 +799,7 @@
         SKAction *wait = [SKAction waitForDuration:0.02];
         SKAction *paddleImpact = [SKAction sequence:@[moveBack, wait, moveForth]];
         [paddle runAction:paddleImpact];
-        
-        //Add particle and delayed-remove
-        SKAction *spark = [SKAction runBlock:^{
-            [self addChild:sparkNode];
-            
-        }];
-        SKAction *disappear = [SKAction runBlock:^{
-            shape.position = CGPointMake(self.size.width*2, self.size.height);
-        }];
-        SKAction *sparkAndDisappear = [SKAction sequence:@[spark, disappear]];
-        [self runAction:sparkAndDisappear];
-        
+     
         //Add taken shapes to paddle
         [paddleArray addObject:[NSNumber numberWithInt:shape.type]];
         
@@ -868,21 +870,7 @@
             }
         }
     }
-    
-    //If world's edge is hit
-    else if(contact.bodyA.categoryBitMask == worldCategory){
-        SKAction *spark = [SKAction runBlock:^{
-            [self addChild:sparkNode];
-        }];
-        SKAction *disappear = [SKAction runBlock:^{
-            //            [shape removeFromParent];
-            shape.position = CGPointMake(self.size.width*2, self.size.height);
-        }];
-        SKAction *sparkAndDisappear = [SKAction sequence:@[spark, disappear]];
-        [self runAction:sparkAndDisappear];
-        
-    }
-    
+ 
 }
 
 //Random shape and position of drops
