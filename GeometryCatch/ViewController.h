@@ -12,7 +12,5 @@
 #import <Accounts/Accounts.h>
 
 @interface ViewController : UIViewController
-@property UIImage *screenShot;
 -(void)createPost:(NSNotification *)notification;
--(void)takeScreenShot;
 @end

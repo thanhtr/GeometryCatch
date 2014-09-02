@@ -65,10 +65,5 @@
     [mySLComposerSheet addImage:postPicture];
     [self presentViewController:mySLComposerSheet animated:YES completion:nil];
 }
--(void)takeScreenShot{
-    UIGraphicsBeginImageContextWithOptions(self.view.bounds.size, NO, 0.0);
-    [self.view drawViewHierarchyInRect:self.view.bounds afterScreenUpdates:YES];
-    self.screenShot = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-}
+
 @end
