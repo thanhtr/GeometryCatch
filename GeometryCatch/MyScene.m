@@ -23,6 +23,35 @@
         
         //Initial opening animation
         [self initColoredBackground];
+        
+        for (int i = 0; i< 30; i++) {
+            int dropType = arc4random()%3;
+            float dropPositionOffset = (float)((arc4random()%8 + 1)*0.1);
+            Drops *drop;
+            
+            if(IS_IPAD_SCREEN)
+                [drop setScale:0.8];
+            drop = [[Drops alloc] init:[self chooseShape:dropType]];
+            drop.type = dropType;
+            drop.name = @"drop";
+            drop.position = CGPointMake(self.size.width * dropPositionOffset, self.size.height);
+            [dropArray addObject:drop];
+            //                [self addChild:drop];
+            
+            SKSpriteNode *trailSprite = [SKSpriteNode spriteNodeWithImageNamed:[self chooseShape:drop.type]];
+            trailSprite.zRotation = drop.zRotation;
+            trailSprite.blendMode = SKBlendModeAdd;
+            trailSprite.position = CGPointMake(drop.position.x, drop.position.y + 20);
+            trailSprite.alpha = 0.05;
+            if(!IS_IPAD_SCREEN){
+                [trailSprite setScale:0.35];
+            }
+            [trailingSpriteArray addObject:trailSprite];
+//            [self addChild:trailSprite];
+
+            
+        }
+        
         SKAction *move = [SKAction runBlock:^{
             for (int i = 0; i< moveGroup.count; i++) {
                 if(i < bgColorIndex){
@@ -41,6 +70,7 @@
                 }
             }
         }];
+        
         SKAction *wait = [SKAction waitForDuration:1.5];
         SKAction *drop = [SKAction runBlock:^{
             //Drop shapes
@@ -609,12 +639,12 @@
                     bgMusicPlayer.rate = 1;
                     [self addChild:paddle];
                     [self addChild:pauseBtn];
-//                    NSArray *children = self.children;
-//                    for (int i = 0; i < children.count; i++) {
-//                        if([children[i] isKindOfClass:[Drops class]]){
-//                            [children[i] removeFromParent];
-//                        }
-//                    }
+                    //                    NSArray *children = self.children;
+                    //                    for (int i = 0; i < children.count; i++) {
+                    //                        if([children[i] isKindOfClass:[Drops class]]){
+                    //                            [children[i] removeFromParent];
+                    //                        }
+                    //                    }
                     paddle.position = CGPointMake(self.size.width /2, self.size.height*0.2);
                     score = 0;
                     levelBar.size = CGSizeMake(self.size.width/2, levelBar.size.height);
@@ -633,9 +663,6 @@
                         }
                     }];
                     SKAction *removeGameOverBoardAndDropShape = [SKAction runBlock:^{
-                        for (int i = 0; i < gameOverGroup.count; i++) {
-                            [gameOverGroup[i] removeFromParent];
-                        }
                         [self dropShape];
                         if(options.musicOn)
                             [bgMusicPlayer play];
@@ -675,35 +702,24 @@
         if([[self.children[i] name] isEqualToString:@"drop"]){
             Drops *drop = self.children[i];
             SKSpriteNode *trailSprite;
-            if (trailingSpriteArray.count >= 30) {
-                trailSprite = trailingSpriteArray[trailingSpriteArrayIndex];
+            trailSprite = trailingSpriteArray[trailingSpriteArrayIndex];
+            if (trailSprite.parent == self) {
                 trailSprite.texture = [SKTexture textureWithImageNamed:[self chooseShape:drop.type]];
                 trailSprite.zRotation = drop.zRotation;
                 trailSprite.position = CGPointMake(drop.position.x, drop.position.y -2);
+                trailSprite.alpha = 0.1;
                 //                        [self addChild:trailSprite];
+                
             }
             else {
-                trailSprite = [SKSpriteNode spriteNodeWithImageNamed:[self chooseShape:drop.type]];
-                trailSprite.texture = [SKTexture textureWithImageNamed:[self chooseShape:drop.type]];
-                trailSprite.zRotation = drop.zRotation;
-                trailSprite.blendMode = SKBlendModeAdd;
-                trailSprite.position = CGPointMake(drop.position.x, drop.position.y -2);
-                trailSprite.alpha = 0.05;
-                if(!IS_IPAD_SCREEN){
-                    [trailSprite setScale:0.35];
-                }
-                [trailingSpriteArray addObject:trailSprite];
+                
                 [self addChild:trailSprite];
+                
             }
             if(trailingSpriteArrayIndex < 29)
                 trailingSpriteArrayIndex ++;
             else trailingSpriteArrayIndex = 0;
-            [trailSprite runAction:[SKAction sequence:@[
-                                                        [SKAction fadeAlphaTo:0 duration:0.1],
-                                                        [SKAction runBlock:^{
-                trailSprite.position = CGPointMake(self.size.width*2, self.size.height);
-            }]
-                                                        ]]];
+            [trailSprite runAction:[SKAction fadeAlphaTo:0 duration:0.1]];
         }
     }
 }
@@ -713,7 +729,7 @@
     
     //create trailing sprite of drops
     if(!isGameOver){
-        if (self.timeSinceUpdated == 0 || currentTime - self.timeSinceUpdated > 0.1) {
+        if (self.timeSinceUpdated == 0 || currentTime - self.timeSinceUpdated > 0.01) {
             [self createTrailingSprites];
             self.timeSinceUpdated = currentTime;
         }
@@ -799,7 +815,7 @@
         SKAction *wait = [SKAction waitForDuration:0.02];
         SKAction *paddleImpact = [SKAction sequence:@[moveBack, wait, moveForth]];
         [paddle runAction:paddleImpact];
-     
+        
         //Add taken shapes to paddle
         [paddleArray addObject:[NSNumber numberWithInt:shape.type]];
         
@@ -870,7 +886,7 @@
             }
         }
     }
- 
+    
 }
 
 //Random shape and position of drops
@@ -878,20 +894,24 @@
     if(!isGameOver){
         int dropType = arc4random()%3;
         float dropPositionOffset = (float)((arc4random()%8 + 1)*0.1);
-        Drops *drop = [[Drops alloc] init:[self chooseShape:dropType]];
-        drop.type = dropType;
-        drop.name = @"drop";
-        drop.position = CGPointMake(self.size.width * dropPositionOffset, self.size.height);
-        
-        if(IS_IPAD_SCREEN)
-            [drop setScale:0.8];
-        if(dropArray.count < 30)
+        Drops *drop;
+        drop = dropArray[dropArrayIndex];
+        if(drop.parent == self){
+            if(IS_IPAD_SCREEN)
+                [drop setScale:0.8];
+            drop.texture = [SKTexture textureWithImageNamed:[self chooseShape:dropType]];
+            drop.type = dropType;
+            drop.position = CGPointMake(self.size.width * dropPositionOffset, self.size.height);
+            drop.physicsBody.velocity = CGVectorMake(0, 0);
+        }
+        else
             [self addChild:drop];
         [drop runAction:[SKAction rotateByAngle:4*M_PI duration:2]];
         if (dropArrayIndex < 29) {
             dropArrayIndex++;
         }
         else dropArrayIndex = 0;
+        NSLog(@"%d", dropArray.count);
     }
 }
 
@@ -965,13 +985,7 @@
     
     gameOverTextCanBeAdded = YES;
     NSArray *children = self.children;
-    //remove actions of drops
-    for (int i = 0; i < children.count; i++) {
-        if([children[i] isKindOfClass:[Drops class]]){
-            [children[i] removeAllActions];
-        }
-    }
-    for (int i = 0; i < children.count; i++) {
+        for (int i = 0; i < children.count; i++) {
         if(([[children[i] name]  isEqual: @"gameOverText"])){
             gameOverTextCanBeAdded = NO;
             break;
@@ -1016,13 +1030,25 @@
             [self saveHighscore:score];
         }
         for (int i = 0; i < gameOverGroup.count; i++) {
-            [self addChild:gameOverGroup[i]];
+            if([gameOverGroup[i] parent] == nil)
+                [self addChild:gameOverGroup[i]];
             SKAction *slideIn = [SKAction moveByX:0 y:-self.size.height duration:0.5];
             slideIn.timingMode = SKActionTimingEaseInEaseOut;
             [gameOverGroup[i] runAction:[SKAction sequence:@[[SKAction waitForDuration:1.0], slideIn]]];
             [self runAction:[SKAction sequence:@[[SKAction waitForDuration:1], [SKAction runBlock:^{
                 if(options.musicOn)
                     [gameOverMusicPlayer play];
+                
+                //remove actions of drops
+                for (int i = 0; i < children.count; i++) {
+                    SKNode *drop = children[i];
+                    if([drop isKindOfClass:[Drops class]]){
+                        [drop removeAllActions];
+                        drop.position = CGPointMake(self.size.width*2, self.size.height);
+                    }
+                }
+                
+
             }]]]];
         }
         gameOverTextCanBeAdded = NO;
