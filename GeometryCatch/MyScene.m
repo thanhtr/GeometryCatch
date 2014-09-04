@@ -59,17 +59,17 @@
             [dropArray addObject:drop];
             //                [self addChild:drop];
             
-            SKSpriteNode *trailSprite = [SKSpriteNode spriteNodeWithImageNamed:[self chooseShape:drop.type]];
-            trailSprite.zRotation = drop.zRotation;
-            trailSprite.blendMode = SKBlendModeAdd;
-            trailSprite.position = CGPointMake(drop.position.x, drop.position.y + 20);
-            trailSprite.alpha = 0.05;
-            if(!IS_IPAD_SCREEN){
-                [trailSprite setScale:0.35];
-            }
-            [trailingSpriteArray addObject:trailSprite];
-            //            [self addChild:trailSprite];
-            
+            //            SKSpriteNode *trailSprite = [SKSpriteNode spriteNodeWithImageNamed:[self chooseShape:drop.type]];
+            //            trailSprite.zRotation = drop.zRotation;
+            //            trailSprite.blendMode = SKBlendModeAdd;
+            //            trailSprite.position = CGPointMake(drop.position.x, drop.position.y - 2);
+            //            trailSprite.alpha = 0.05;
+            //            if(!IS_IPAD_SCREEN){
+            //                [trailSprite setScale:0.35];
+            //            }
+            //            [trailingSpriteArray addObject:trailSprite];
+            //            //            [self addChild:trailSprite];
+            //
         }
         
         SKAction *move = [SKAction runBlock:^{
@@ -719,28 +719,37 @@
 
 -(void)createTrailingSprites{
     for (int i = 0; i<self.children.count; i++) {
-        if([[self.children[i] name] isEqualToString:@"drop"]){
-            Drops *drop = self.children[i];
+        SKNode* child = self.children[i];
+        if([child.name isEqualToString:@"drop"] && child.position.x < self.size.width){
+            Drops *drop = (Drops*)child;
             SKSpriteNode *trailSprite;
-            trailSprite = trailingSpriteArray[trailingSpriteArrayIndex];
-            if (trailSprite.parent == self) {
-                // Ko can set lai texture nhu vay.
-                //                trailSprite.texture = [SKTexture textureWithImageNamed:[self chooseShape:drop.type]];
+            if (trailingSpriteArray.count >= 30) {
+                trailSprite = trailingSpriteArray[trailingSpriteArrayIndex];
+                trailSprite.texture = [SKTexture textureWithImageNamed:[self chooseShape:drop.type]];
                 trailSprite.zRotation = drop.zRotation;
                 trailSprite.position = CGPointMake(drop.position.x, drop.position.y -2);
-                trailSprite.alpha = 0.1;
-                //                        [self addChild:trailSprite];
-                
+                trailSprite.alpha = 0.05;
+                [trailSprite runAction:[SKAction fadeAlphaTo:0 duration:0.1]];
+
             }
             else {
-                
+                trailSprite = [SKSpriteNode spriteNodeWithImageNamed:[self chooseShape:drop.type]];
+                trailSprite.texture = [SKTexture textureWithImageNamed:[self chooseShape:drop.type]];
+                trailSprite.zRotation = drop.zRotation;
+                trailSprite.blendMode = SKBlendModeAdd;
+                trailSprite.position = CGPointMake(drop.position.x, drop.position.y -2);
+                trailSprite.alpha = 0.05;
+                if(!IS_IPAD_SCREEN){
+                    [trailSprite setScale:0.35];
+                }
+                [trailingSpriteArray addObject:trailSprite];
                 [self addChild:trailSprite];
+                [trailSprite runAction:[SKAction fadeAlphaTo:0 duration:0.1]];
                 
             }
             if(trailingSpriteArrayIndex < 29)
                 trailingSpriteArrayIndex ++;
             else trailingSpriteArrayIndex = 0;
-            [trailSprite runAction:[SKAction fadeAlphaTo:0 duration:0.1]];
         }
     }
 }
@@ -754,8 +763,7 @@
             [self createTrailingSprites];
             self.timeSinceUpdated = currentTime;
         }
-    }
-    //level bar reduced over time
+    }        //level bar reduced over time
     if(IS_IPAD_SCREEN)
         levelBar.size = CGSizeMake(levelBar.size.width - 0.25, levelBar.size.height);
     else

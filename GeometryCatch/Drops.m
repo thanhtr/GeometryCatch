@@ -8,6 +8,7 @@
 
 #import "Drops.h"
 #import "MyScene.h"
+#include "StartScene.h"
 @implementation Drops
 -(id)init:(NSString *)name{
     self = [super initWithImageNamed:name];
@@ -20,5 +21,6 @@
     self.physicsBody.categoryBitMask = dropCategory;
     self.physicsBody.contactTestBitMask = paddleCategory | worldCategory;
     return self;
+       
 }
 @end
