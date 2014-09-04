@@ -11,8 +11,13 @@
 #import "ViewController.h"
 #import "SKEase.h"
 
+@interface MyScene()
+@property NSMutableArray *sparkEmitter;
+@end
+
 @implementation MyScene
 @synthesize paddle,speedOffset,paddleArray,paddleHoldShapeOffset, paddleArrayIndex, bgColor, levelBar, score, scoreLabel, isGameOver,gameOverTextCanBeAdded,gameOverText,levelLabel,rainNode, sparkArrayIndex, bgColorArray, bg, bgBlack, isPause,moveGroup, bgColorIndex, pauseBtn, gameOverBg,bestScoreLbl,bestScorePoint,yourScoreLbl,yourScorePoint,shareBtn,playBtn,gameOverGroup, gameCenterBtn,options,bgMusicPlayer, gameOverMusicPlayer,musicBtn,soundBtn,creditBtn,aboutBg, properlyInView,lastButton,trailingSpriteArray,trailingSpriteArrayIndex,dropArray,dropArrayIndex;
+
 -(id)initWithSize:(CGSize)size {
     if (self = [super initWithSize:size]) {
         //First init
@@ -23,18 +28,34 @@
         
         //Initial opening animation
         [self initColoredBackground];
-        
+        self.sparkEmitter = [[NSMutableArray alloc] init];
+        for (int i = 0; i< 3; i++){
+            NSString *sparkPath =
+            [[NSBundle mainBundle]
+             pathForResource:@"Spark" ofType:@"sks"];
+            SKEmitterNode *sparkNode =
+            [NSKeyedUnarchiver unarchiveObjectWithFile:sparkPath];
+            [sparkNode setParticleTexture:[SKTexture textureWithImageNamed:[self chooseParticleShape:i]]];
+            if(IS_IPAD_SCREEN)
+                [sparkNode setParticleScale:0.3];
+            //    [shape removeFromParent];
+            sparkNode.name = @"sparkNode";
+            [self.sparkEmitter insertObject:sparkNode atIndex:i];
+            
+        }
         for (int i = 0; i< 30; i++) {
             int dropType = arc4random()%3;
             float dropPositionOffset = (float)((arc4random()%8 + 1)*0.1);
             Drops *drop;
             
+            drop = [[Drops alloc] init:[self chooseShape:dropType]];
             if(IS_IPAD_SCREEN)
                 [drop setScale:0.8];
-            drop = [[Drops alloc] init:[self chooseShape:dropType]];
+            
             drop.type = dropType;
             drop.name = @"drop";
             drop.position = CGPointMake(self.size.width * dropPositionOffset, self.size.height);
+            
             [dropArray addObject:drop];
             //                [self addChild:drop];
             
@@ -47,8 +68,7 @@
                 [trailSprite setScale:0.35];
             }
             [trailingSpriteArray addObject:trailSprite];
-//            [self addChild:trailSprite];
-
+            //            [self addChild:trailSprite];
             
         }
         
@@ -704,7 +724,8 @@
             SKSpriteNode *trailSprite;
             trailSprite = trailingSpriteArray[trailingSpriteArrayIndex];
             if (trailSprite.parent == self) {
-                trailSprite.texture = [SKTexture textureWithImageNamed:[self chooseShape:drop.type]];
+                // Ko can set lai texture nhu vay.
+                //                trailSprite.texture = [SKTexture textureWithImageNamed:[self chooseShape:drop.type]];
                 trailSprite.zRotation = drop.zRotation;
                 trailSprite.position = CGPointMake(drop.position.x, drop.position.y -2);
                 trailSprite.alpha = 0.1;
@@ -792,19 +813,27 @@
 -(void)didBeginContact:(SKPhysicsContact *)contact{
     SKSpriteNode * takenShape;
     Drops *shape = (Drops*)contact.bodyB.node;
+    
+    //Nguyen nhan chinh gay cham la o cho nay. anh nen object pool ca cai emitternode.
     //Spark particle init
-    NSString *sparkPath =
-    [[NSBundle mainBundle]
-     pathForResource:@"Spark" ofType:@"sks"];
-    SKEmitterNode *sparkNode =
-    [NSKeyedUnarchiver unarchiveObjectWithFile:sparkPath];
+    //    NSString *sparkPath =
+    //    [[NSBundle mainBundle]
+    //     pathForResource:@"Spark" ofType:@"sks"];
+    //    SKEmitterNode *sparkNode =
+    //    [NSKeyedUnarchiver unarchiveObjectWithFile:sparkPath];
+    //    sparkNode.position = shape.position;
+    //    [sparkNode setParticleTexture:[SKTexture textureWithImageNamed:[self chooseParticleShape:shape.type]]];
+    //    if(IS_IPAD_SCREEN)
+    //        [sparkNode setParticleScale:0.3];
+    //    //    [shape removeFromParent];
+    //    sparkNode.name = @"sparkNode";
+    //    [self addChild:sparkNode];
+    SKEmitterNode *sparkNode = self.sparkEmitter[shape.type];
     sparkNode.position = shape.position;
-    [sparkNode setParticleTexture:[SKTexture textureWithImageNamed:[self chooseParticleShape:shape.type]]];
-    if(IS_IPAD_SCREEN)
-        [sparkNode setParticleScale:0.3];
-    //    [shape removeFromParent];
-    sparkNode.name = @"sparkNode";
-    [self addChild:sparkNode];
+    if (!sparkNode.parent){
+        [self addChild:sparkNode];
+    }
+    [sparkNode resetSimulation];
     [self runAction:[SKAction runBlock:^{
         shape.position = CGPointMake(self.size.width*2, self.size.height);
     }]];
@@ -892,15 +921,14 @@
 //Random shape and position of drops
 -(void)randomShapeAndPosition{
     if(!isGameOver){
-        int dropType = arc4random()%3;
+        //        int dropType = arc4random()%3;
         float dropPositionOffset = (float)((arc4random()%8 + 1)*0.1);
         Drops *drop;
         drop = dropArray[dropArrayIndex];
         if(drop.parent == self){
-            if(IS_IPAD_SCREEN)
-                [drop setScale:0.8];
-            drop.texture = [SKTexture textureWithImageNamed:[self chooseShape:dropType]];
-            drop.type = dropType;
+            //      Neu la object pool thi anh ko can phai set lai texture nhu nay.
+            //            drop.texture = [SKTexture textureWithImageNamed:[self chooseShape:dropType]];
+            //            drop.type = dropType;
             drop.position = CGPointMake(self.size.width * dropPositionOffset, self.size.height);
             drop.physicsBody.velocity = CGVectorMake(0, 0);
         }
@@ -911,7 +939,6 @@
             dropArrayIndex++;
         }
         else dropArrayIndex = 0;
-        NSLog(@"%d", dropArray.count);
     }
 }
 
@@ -985,7 +1012,7 @@
     
     gameOverTextCanBeAdded = YES;
     NSArray *children = self.children;
-        for (int i = 0; i < children.count; i++) {
+    for (int i = 0; i < children.count; i++) {
         if(([[children[i] name]  isEqual: @"gameOverText"])){
             gameOverTextCanBeAdded = NO;
             break;
@@ -1048,7 +1075,7 @@
                     }
                 }
                 
-
+                
             }]]]];
         }
         gameOverTextCanBeAdded = NO;
