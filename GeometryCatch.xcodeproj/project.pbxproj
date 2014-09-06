@@ -47,6 +47,7 @@
 		6A9D084E19995F1B00888896 /* success.wav in Resources */ = {isa = PBXBuildFile; fileRef = 6A9D084B19995F1B00888896 /* success.wav */; };
 		6A9D084F19995F1B00888896 /* gameover_final.wav in Resources */ = {isa = PBXBuildFile; fileRef = 6A9D084C19995F1B00888896 /* gameover_final.wav */; };
 		6A9D085019995F1B00888896 /* click_proccess.wav in Resources */ = {isa = PBXBuildFile; fileRef = 6A9D084D19995F1B00888896 /* click_proccess.wav */; };
+		6AA349AB19BB358500FBB805 /* GameOverScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 6AA349AA19BB358500FBB805 /* GameOverScene.m */; };
 		6AA37749199BA21C0057BFED /* unpause.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6AA37745199BA21C0057BFED /* unpause.mp3 */; };
 		6AA3774A199BA21C0057BFED /* pausegame.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6AA37746199BA21C0057BFED /* pausegame.mp3 */; };
 		6AA3774B199BA21C0057BFED /* ingame1.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6AA37747199BA21C0057BFED /* ingame1.mp3 */; };
@@ -148,6 +149,8 @@
 		6A9D084B19995F1B00888896 /* success.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = success.wav; sourceTree = "<group>"; };
 		6A9D084C19995F1B00888896 /* gameover_final.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = gameover_final.wav; sourceTree = "<group>"; };
 		6A9D084D19995F1B00888896 /* click_proccess.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = click_proccess.wav; sourceTree = "<group>"; };
+		6AA349A919BB358500FBB805 /* GameOverScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameOverScene.h; sourceTree = "<group>"; };
+		6AA349AA19BB358500FBB805 /* GameOverScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameOverScene.m; sourceTree = "<group>"; };
 		6AA37745199BA21C0057BFED /* unpause.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = unpause.mp3; sourceTree = "<group>"; };
 		6AA37746199BA21C0057BFED /* pausegame.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = pausegame.mp3; sourceTree = "<group>"; };
 		6AA37747199BA21C0057BFED /* ingame1.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = ingame1.mp3; sourceTree = "<group>"; };
@@ -382,6 +385,8 @@
 				6A9D083F1998D13F00888896 /* TutScene.m */,
 				6A0CBBCD1980411A003382ED /* MyScene.h */,
 				6A0CBBCE1980411A003382ED /* MyScene.m */,
+				6AA349A919BB358500FBB805 /* GameOverScene.h */,
+				6AA349AA19BB358500FBB805 /* GameOverScene.m */,
 			);
 			name = Scenes;
 			sourceTree = "<group>";
@@ -574,6 +579,7 @@
 			files = (
 				6A9D08401998D13F00888896 /* TutScene.m in Sources */,
 				6AC800061992C8A800930C9C /* easing.c in Sources */,
+				6AA349AB19BB358500FBB805 /* GameOverScene.m in Sources */,
 				6A0CBBCF1980411A003382ED /* MyScene.m in Sources */,
 				6AACC54B198E825E00DE8D7A /* StartScene.m in Sources */,
 				6A0CBBCC1980411A003382ED /* ViewController.m in Sources */,

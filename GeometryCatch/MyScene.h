@@ -16,6 +16,7 @@
 static UInt32 worldCategory = 1 << 1;
 static UInt32 paddleCategory = 1 << 2;
 static UInt32 dropCategory = 1 << 3;
+static int score;
 
 @interface MyScene : SKScene <SKPhysicsContactDelegate>
 @property SKSpriteNode *paddle;
@@ -32,7 +33,6 @@ static UInt32 dropCategory = 1 << 3;
 @property SKSpriteNode *aboutBg;
 @property SKSpriteNode *pauseBtn;
 @property SKLabelNode *gameOverText;
-@property SKLabelNode *levelLabel;
 @property SKLabelNode *bestScoreLbl;
 @property SKLabelNode *bestScorePoint;
 @property SKLabelNode *yourScoreLbl;
@@ -52,7 +52,7 @@ static UInt32 dropCategory = 1 << 3;
 @property float speedOffset;
 @property float paddleHoldShapeOffset;
 @property int paddleArrayIndex;
-@property int score;
+//@property int score;
 @property int sparkArrayIndex;
 @property int bgColorIndex;
 @property int trailingSpriteArrayIndex;
@@ -63,4 +63,5 @@ static UInt32 dropCategory = 1 << 3;
 @property BOOL properlyInView;
 @property SKColor *bgColor;
 @property Options *options;
++(int)getScore;
 @end

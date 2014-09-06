@@ -10,6 +10,7 @@
 #import "MyScene.h"
 #import "StartScene.h"
 #import "TutScene.h"
+#import "GameOverScene.h"
 
 @implementation ViewController
 
