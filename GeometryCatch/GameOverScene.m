@@ -20,12 +20,13 @@
         score = [MyScene getScore];
         //bg music
         NSError *error;
-        NSURL * backgroundMusicURL = [[NSBundle mainBundle] URLForResource:@"Menu_Music" withExtension:@"mp3"];
+        NSURL * backgroundMusicURL = [[NSBundle mainBundle] URLForResource:@"Menu_Music" withExtension:@"wav"];
         bgMusicPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:backgroundMusicURL error:&error];
         bgMusicPlayer.numberOfLoops = -1; //-1 = infinite loop
         bgMusicPlayer.enableRate = YES;
         [bgMusicPlayer prepareToPlay];
-        
+        if(options.musicOn)
+            [bgMusicPlayer play];
         
         //shadow of "best score"
         SKLabelNode *bestScoreLblShadow = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];

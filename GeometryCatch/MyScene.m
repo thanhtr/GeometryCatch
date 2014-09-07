@@ -260,6 +260,7 @@
         
         //pause
         if([node.name isEqualToString:@"pauseBtn"] && !isPause){
+            [self removeActionForKey:@"dropShape"];
             bgBlack.alpha = 0.3;
             isPause = YES;
             if(options.soundOn)
@@ -275,6 +276,7 @@
             if(options.musicOn)
                 [bgMusicPlayer play];
             bgBlack.alpha = 0.0;
+            [self dropShape];
         }
     }
 }
