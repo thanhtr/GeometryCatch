@@ -10,6 +10,7 @@
 #import "StartScene.h"
 #import "SKEase.h"
 #import "MyScene.h"
+
 @implementation GameOverScene
 @synthesize shareBtn,creditBtn,playBtn,soundBtn,gameCenterBtn,bestScorePoint,bestScoreLbl,aboutBg,pauseBtn,yourScoreLbl,yourScorePoint,musicBtn, options, properlyInView, lastButton, bgMusicPlayer,score;
 -(id)initWithSize:(CGSize)size{
@@ -383,10 +384,6 @@
             }
             //release play: change sprite and reset game
             else if([node.name isEqualToString:@"playBtn"]){
-                if (options.soundOn) {
-                    [self runAction:[SKAction playSoundFileNamed:@"click_proccess.wav" waitForCompletion:NO]];
-                    
-                }
                 MyScene *myScene = [[MyScene alloc]initWithSize:self.size];
                 SKTransition *reveal = [SKTransition moveInWithDirection:SKTransitionDirectionDown duration:0.5];
                 [self.view presentScene:myScene transition:reveal];

@@ -17,11 +17,13 @@
 @end
 
 @implementation MyScene
-@synthesize paddle,speedOffset,paddleArray,paddleHoldShapeOffset, paddleArrayIndex, bgColor, levelBar, scoreLabel, isGameOver,gameOverTextCanBeAdded,gameOverText,rainNode, sparkArrayIndex, bgColorArray, bg, bgBlack, isPause,moveGroup, bgColorIndex, pauseBtn, gameOverBg,bestScoreLbl,bestScorePoint,yourScoreLbl,yourScorePoint,shareBtn,playBtn,gameOverGroup, gameCenterBtn,options,bgMusicPlayer, gameOverMusicPlayer,musicBtn,soundBtn,creditBtn,aboutBg, properlyInView,lastButton,trailingSpriteArray,trailingSpriteArrayIndex,dropArray,dropArrayIndex;
+@synthesize paddle,speedOffset,paddleArray,paddleHoldShapeOffset, paddleArrayIndex, bgColor, levelBar, scoreLabel, isGameOver,gameOverTextCanBeAdded,gameOverText,rainNode, sparkArrayIndex, bgColorArray, bg, bgBlack, isPause,moveGroup, bgColorIndex, pauseBtn, gameOverBg,bestScoreLbl,bestScorePoint,yourScoreLbl,yourScorePoint,shareBtn,playBtn,gameOverGroup, gameCenterBtn,options,bgMusicPlayer,musicBtn,soundBtn,creditBtn,aboutBg, properlyInView,lastButton,trailingSpriteArray,trailingSpriteArrayIndex,dropArray,dropArrayIndex;
 //@synthesize score;
 
 -(id)initWithSize:(CGSize)size {
     if (self = [super initWithSize:size]) {
+        NSLog(canLoadColoredColumn ? @"YES" : @"NO");
+        
         //First init
         [self createInitElements];
         
@@ -29,7 +31,8 @@
         //        [self createGameOverBoardElements];
         
         //Initial opening animation
-        [self initColoredBackground];
+        if(canLoadColoredColumn)
+            [self initColoredBackground];
         self.sparkEmitter = [[NSMutableArray alloc] init];
         for (int i = 0; i< 3; i++){
             NSString *sparkPath =
@@ -62,20 +65,22 @@
         }
         
         SKAction *move = [SKAction runBlock:^{
-            for (int i = 0; i< moveGroup.count; i++) {
-                if(i < bgColorIndex){
-                    SKAction *slide = [SKAction moveByX:-self.size.width y:0 duration:1];
-                    slide.timingMode = SKActionTimingEaseInEaseOut;
-                    [moveGroup[i] runAction:slide];
-                }
-                else if (i > bgColorIndex){
-                    SKAction *slide = [SKAction moveByX:self.size.width y:0 duration:1];
-                    slide.timingMode = SKActionTimingEaseInEaseOut;
-                    [moveGroup[i] runAction:slide];                }
-                else if (i == bgColorIndex){
-                    [moveGroup[i] runAction:[SKAction sequence:@[[SKAction colorizeWithColor:[SKColor clearColor] colorBlendFactor:1 duration:0.0], [SKAction waitForDuration:1.0], [SKAction runBlock:^{
-                        [moveGroup[i] removeFromParent];
-                    }]]]];
+            if(canLoadColoredColumn){
+                for (int i = 0; i< moveGroup.count; i++) {
+                    if(i < bgColorIndex){
+                        SKAction *slide = [SKAction moveByX:-self.size.width y:0 duration:1];
+                        slide.timingMode = SKActionTimingEaseInEaseOut;
+                        [moveGroup[i] runAction:slide];
+                    }
+                    else if (i > bgColorIndex){
+                        SKAction *slide = [SKAction moveByX:self.size.width y:0 duration:1];
+                        slide.timingMode = SKActionTimingEaseInEaseOut;
+                        [moveGroup[i] runAction:slide];                }
+                    else if (i == bgColorIndex){
+                        [moveGroup[i] runAction:[SKAction sequence:@[[SKAction colorizeWithColor:[SKColor clearColor] colorBlendFactor:1 duration:0.0], [SKAction waitForDuration:1.0], [SKAction runBlock:^{
+                            [moveGroup[i] removeFromParent];
+                        }]]]];
+                    }
                 }
             }
         }];
@@ -84,8 +89,10 @@
         SKAction *drop = [SKAction runBlock:^{
             //Drop shapes
             [self dropShape];
+            canLoadColoredColumn = NO;
         }];
         [self runAction:[SKAction sequence:@[move, wait, drop]]];
+        
     }
     return self;
 }
@@ -105,13 +112,7 @@
     bgMusicPlayer.enableRate = YES;
     [bgMusicPlayer prepareToPlay];
     
-    //gameover bg music
-    NSURL * gameOverMusicURL = [[NSBundle mainBundle] URLForResource:@"Menu_Music" withExtension:@"wav"];
-    gameOverMusicPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:gameOverMusicURL error:&error];
-    gameOverMusicPlayer.numberOfLoops = -1; //-1 = infinite loop
-    [gameOverMusicPlayer prepareToPlay];
-    
-    //if music on play bg music
+       //if music on play bg music
     if (options.musicOn) {
         [bgMusicPlayer play];
     }
@@ -618,9 +619,6 @@
         }
         
         [self runAction:[SKAction sequence:@[[SKAction waitForDuration:1], [SKAction runBlock:^{
-            if(options.musicOn)
-                [gameOverMusicPlayer play];
-            
             //remove actions of drops
             for (int i = 0; i < children.count; i++) {
                 SKNode *drop = children[i];

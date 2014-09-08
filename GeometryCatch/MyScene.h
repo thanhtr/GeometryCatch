@@ -46,7 +46,6 @@ static int score;
 @property NSMutableArray *trailingSpriteArray;
 @property NSMutableArray *dropArray;
 @property AVAudioPlayer *bgMusicPlayer;
-@property AVAudioPlayer *gameOverMusicPlayer;
 @property NSString* lastButton;
 @property float timeSinceUpdated;
 @property float speedOffset;

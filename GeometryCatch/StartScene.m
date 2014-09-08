@@ -16,9 +16,9 @@
 -(id)initWithSize:(CGSize)size{
     if(self = [super initWithSize:size]){
         
+        options = [[Options alloc] init];
         //create colored columns
         [self initColoredStartScreen];
-        
         //bottom line
         SKSpriteNode *bottomColoredLine = [[SKSpriteNode alloc] initWithImageNamed:@"bottom_screen_background"];
         if(IS_IPAD_SCREEN)
@@ -91,7 +91,7 @@
                     [self runAction:[SKAction playSoundFileNamed:@"click_proccess.wav" waitForCompletion:NO]];
                     
                 }
-                TutScene *tutScene = [[TutScene alloc]initWithSize:self.size];
+                MyScene *tutScene = [[MyScene alloc]initWithSize:self.size];
                 [self.view presentScene:tutScene];
             }
         }
