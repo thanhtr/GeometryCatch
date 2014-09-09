@@ -8,6 +8,7 @@
 
 #import "AppDelegate.h"
 #import <RevMobAds/RevMobAds.h>
+#import "ViewController.h"
 
 @implementation AppDelegate
 

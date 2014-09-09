@@ -15,9 +15,9 @@
 @implementation GameOverScene
 @synthesize shareBtn,creditBtn,playBtn,soundBtn,gameCenterBtn,bestScorePoint,bestScoreLbl,aboutBg,pauseBtn,yourScoreLbl,yourScorePoint,musicBtn, options, properlyInView, lastButton, bgMusicPlayer,score;
 
+
 -(id)initWithSize:(CGSize)size{
     if (self = [super initWithSize:size]){
-        [[RevMobAds session] showFullscreen];
         self.backgroundColor = [SKColor whiteColor];
         options = [[Options alloc] init];
         properlyInView = YES;
@@ -245,6 +245,8 @@
             bestScorePoint.text = [NSString stringWithFormat:@"%d", score];
             [self saveHighscore:score];
         }
+        [[RevMobAds session] showFullscreen];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"showAds" object:self];
 
     }
     return self;
@@ -389,6 +391,7 @@
             else if([node.name isEqualToString:@"playBtn"]){
                 MyScene *myScene = [[MyScene alloc]initWithSize:self.size];
                 SKTransition *reveal = [SKTransition moveInWithDirection:SKTransitionDirectionDown duration:0.5];
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"hideAds" object:self];
                 [self.view presentScene:myScene transition:reveal];
             }
             //release credit: change sprite and slide credit board in
