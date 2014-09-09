@@ -10,11 +10,14 @@
 #import "StartScene.h"
 #import "SKEase.h"
 #import "MyScene.h"
+#import <RevMobAds/RevMobAds.h>
 
 @implementation GameOverScene
 @synthesize shareBtn,creditBtn,playBtn,soundBtn,gameCenterBtn,bestScorePoint,bestScoreLbl,aboutBg,pauseBtn,yourScoreLbl,yourScorePoint,musicBtn, options, properlyInView, lastButton, bgMusicPlayer,score;
+
 -(id)initWithSize:(CGSize)size{
     if (self = [super initWithSize:size]){
+        [[RevMobAds session] showFullscreen];
         self.backgroundColor = [SKColor whiteColor];
         options = [[Options alloc] init];
         properlyInView = YES;
