@@ -216,7 +216,10 @@
         [self addChild:creditBtn];
         
         //credit board
-        aboutBg = [[SKSpriteNode alloc]initWithImageNamed:@"credit_screen"];
+        if(IS_IPAD_SCREEN)
+            aboutBg = [[SKSpriteNode alloc]initWithImageNamed:@"credit_ipad"];
+        else
+            aboutBg = [[SKSpriteNode alloc]initWithImageNamed:@"credit"];
         aboutBg.name = @"aboutBg";
         aboutBg.position = CGPointMake(3*self.size.width/2, self.size.height/2);
         aboutBg.zPosition = 1;
@@ -224,8 +227,7 @@
             [aboutBg setScale:0.5];
         }
         else if(IS_IPAD_SCREEN){
-            aboutBg.yScale = 1.0;
-            aboutBg.xScale = 1.2;
+            [aboutBg setScale:0.5];
         }
         else {
             aboutBg.yScale = 0.45;
