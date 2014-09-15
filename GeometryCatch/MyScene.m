@@ -337,16 +337,17 @@
             [self createTrailingSprites];
             self.timeSinceUpdated = currentTime;
         }
-    }        //level bar reduced over time
+    }
+    //level bar reduced over time
     if(IS_IPAD_SCREEN)
-        levelBar.size = CGSizeMake(levelBar.size.width - 0.25, levelBar.size.height);
+        levelBar.size = CGSizeMake(levelBar.size.width - 0.5, levelBar.size.height);
     else
-        levelBar.size = CGSizeMake(levelBar.size.width - 0.1, levelBar.size.height);
+        levelBar.size = CGSizeMake(levelBar.size.width - 0.2, levelBar.size.height);
     scoreLabel.text = [NSString stringWithFormat:@"%d",score];
     
     // if level bar > screen next level, if level bar < 0 gameover
     if(levelBar.size.width >= self.size.width){
-        levelBar.size = CGSizeMake(self.size.width*0.2, levelBar.size.height);
+        levelBar.size = CGSizeMake(self.size.width*0.4, levelBar.size.height);
         bgMusicPlayer.rate += 0.2;
         //        level++;
         if(IS_IPAD_SCREEN)
