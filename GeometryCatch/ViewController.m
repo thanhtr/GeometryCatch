@@ -66,6 +66,17 @@
     [mySLComposerSheet setInitialText:postText];
     [mySLComposerSheet addImage:postPicture];
     [self presentViewController:mySLComposerSheet animated:YES completion:nil];
+    
+}
+
+-(void)pause:(NSNotification *)notification{
+    SKView * skView = (SKView *)self.view;
+    skView.paused = YES;
+}
+
+-(void)resume:(NSNotification *)notification{
+    SKView * skView = (SKView *)self.view;
+    skView.paused = NO;
 }
 
 -(void)showBanner:(NSNotification *)notification{
@@ -251,6 +262,14 @@
                                                  name:@"CreatePost"
                                                object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(pause:)
+                                                 name:@"Pause"
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(resume:)
+                                                 name:@"Resume"
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(showBanner:)
                                                  name:@"showAds"
                                                object:nil];
@@ -264,7 +283,7 @@
     [super viewWillDisappear:animated];
     [self dismissAdView];
     [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:@"createPost" object:nil];
+                                                    name:@"CreatePost" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:@"showAds" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self

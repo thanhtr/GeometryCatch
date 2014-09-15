@@ -10,12 +10,17 @@
 #import "MyScene.h"
 #import "SKEase.h"
 #import "TutScene.h"
-@implementation StartScene
+@implementation StartScene{
+    BOOL firstTime;
+}
 @synthesize startLbl, titleLbl,options, moveGroup, backgroundMusicPlayer;
 
 -(id)initWithSize:(CGSize)size{
     if(self = [super initWithSize:size]){
-        
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        if([defaults objectForKey:@"firstTime"] != nil){
+            firstTime = [defaults boolForKey:@"firstTime"];
+        } else firstTime = YES;
         options = [[Options alloc] init];
         //create colored columns
         [self initColoredStartScreen];
@@ -91,8 +96,18 @@
                     [self runAction:[SKAction playSoundFileNamed:@"click_proccess.wav" waitForCompletion:NO]];
                     
                 }
-                MyScene *tutScene = [[MyScene alloc]initWithSize:self.size];
-                [self.view presentScene:tutScene];
+                if (firstTime) {
+                    TutScene *tutScene = [[TutScene alloc]initWithSize:self.size];
+                    [self.view presentScene:tutScene];
+                    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+                    [defaults setObject:@(NO) forKey:@"firstTime"];
+
+                }
+                else {
+                    MyScene *myScene = [[MyScene alloc]initWithSize:self.size];
+                    [self.view presentScene:myScene];
+                }
+          
             }
         }
 }

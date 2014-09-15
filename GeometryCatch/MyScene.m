@@ -22,7 +22,6 @@
 
 -(id)initWithSize:(CGSize)size {
     if (self = [super initWithSize:size]) {
-        NSLog(canLoadColoredColumn ? @"YES" : @"NO");
         
         //First init
         [self createInitElements];
@@ -665,6 +664,7 @@
 +(int)getScore{
     return score;
 }
+
 //create colored background opening at the beginning
 -(void)initColoredBackground{
     
