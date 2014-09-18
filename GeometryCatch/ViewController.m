@@ -12,13 +12,17 @@
 #import "TutScene.h"
 #import "GameOverScene.h"
 #import "GADBannerView.h"
+#import <GameKit/GameKit.h>
 
-@interface ViewController()
+@interface ViewController()<GKGameCenterControllerDelegate>
 @property (strong, nonatomic) IBOutlet GADBannerView  *bannerView;
 @end
 
 @implementation ViewController
 
+-(void)viewDidLoad{
+    [super viewDidLoad];
+}
 
 - (void)viewDidLayoutSubviews
 {
@@ -34,7 +38,7 @@
     
     // Present the scene.
     [skView presentScene:scene];
- 
+    
 }
 
 - (BOOL)shouldAutorotate
@@ -57,6 +61,51 @@
     // Release any cached data, images, etc that aren't in use.
 }
 
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    [self createAdmobAds];
+    [self hideBannerView];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(createPost:)
+                                                 name:@"CreatePost"
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(getScore:)
+                                                 name:@"GetScore"
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(pause:)
+                                                 name:@"Pause"
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(resume:)
+                                                 name:@"Resume"
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(showBanner:)
+                                                 name:@"showAds"
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(hideBanner:)
+                                                 name:@"hideAds"
+                                               object:nil];
+}
+
+-(void)viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:animated];
+    [self dismissAdView];
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:@"CreatePost" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:@"showAds" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:@"hideAds" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"GetScore" object:nil];
+}
+
+#pragma mark - Notification method
 -(void)createPost:(NSNotification *)notification{
     NSDictionary *postData = [notification userInfo];
     NSString *postText = (NSString *)[postData objectForKey:@"postText"];
@@ -67,6 +116,21 @@
     [mySLComposerSheet addImage:postPicture];
     [self presentViewController:mySLComposerSheet animated:YES completion:nil];
     
+}
+
+-(void)getScore:(NSNotification *)notification{
+    NSDictionary *postData = [notification userInfo];
+    NSNumber *number = (NSNumber *)[postData objectForKey:@"score"];
+    if ([GKLocalPlayer localPlayer].authenticated){
+        [self insertCurrentTimeIntoLeaderboard:@"ATOXScore1" withScore:[number intValue]];
+        [self showLeaderboard:@"ATOXScore1"];
+    } else{
+        [self authenticateLocalUser];
+        if ([GKLocalPlayer localPlayer].authenticated){
+            [self insertCurrentTimeIntoLeaderboard:@"ATOXScore1" withScore:[number intValue]];
+            [self showLeaderboard:@"ATOXScore1"];
+        }
+    }
 }
 
 -(void)pause:(NSNotification *)notification{
@@ -87,6 +151,8 @@
     [self hideBannerView];
 }
 
+
+#pragma mark - Admob method
 -(void)createAdmobAds
 {
     mBannerType = BANNER_TYPE;
@@ -252,44 +318,47 @@
     
 }
 
--(void)viewWillAppear:(BOOL)animated{
-    [super viewWillAppear:animated];
-    [self createAdmobAds];
-    [self hideBannerView];
+#pragma mark - LeaderBoard method
 
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(createPost:)
-                                                 name:@"CreatePost"
-                                               object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(pause:)
-                                                 name:@"Pause"
-                                               object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(resume:)
-                                                 name:@"Resume"
-                                               object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(showBanner:)
-                                                 name:@"showAds"
-                                               object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(hideBanner:)
-                                                 name:@"hideAds"
-                                               object:nil];
+- (void)authenticateLocalUser {
+    GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
+    if (!localPlayer.authenticated) {
+        localPlayer.authenticateHandler = ^(UIViewController *viewController, NSError *error){
+            if (viewController != nil) {
+                [self presentViewController:viewController animated:YES completion:nil];
+            } else if (error){
+                NSLog(@"%@",[error localizedDescription]);
+            } 
+        };
+    }
 }
 
--(void)viewWillDisappear:(BOOL)animated{
-    [super viewWillDisappear:animated];
-    [self dismissAdView];
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:@"CreatePost" object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:@"showAds" object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:@"hideAds" object:nil];
+- (void)showLeaderboard:(NSString *)leaderboard
+{
+    GKGameCenterViewController *gameCenterController = [[GKGameCenterViewController alloc] init];
+    if (gameCenterController != nil) {
+        gameCenterController.gameCenterDelegate = self;
+        gameCenterController.viewState = GKGameCenterViewControllerStateLeaderboards;
+        gameCenterController.leaderboardIdentifier=leaderboard;
+        [self presentViewController:gameCenterController animated:YES completion:nil];
+    }
 }
 
+- (void)insertCurrentTimeIntoLeaderboard:(NSString*)leaderboard withScore:(int64_t)mScore
+{
+    //    NSDate *today = [NSDate date];
+    GKScore * submitScore = [[GKScore alloc] initWithLeaderboardIdentifier:leaderboard];
+    submitScore.value = mScore;
+    [GKScore reportScores:@[submitScore] withCompletionHandler:^(NSError *error) {
+        if (error != nil) {
+            NSLog(@"%@", [error localizedDescription]);
+        }
+    }];
+    
+}
 
-
+#pragma mark - Game Center Delegate
+-(void)gameCenterViewControllerDidFinish:(GKGameCenterViewController *)gameCenterViewController{
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
 @end

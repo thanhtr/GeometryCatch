@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "6A0CBBAF1980411A003382ED"
-               BuildableName = "GeometryCatch.app"
+               BuildableName = "ATOX.app"
                BlueprintName = "GeometryCatch"
                ReferencedContainer = "container:GeometryCatch.xcodeproj">
             </BuildableReference>
@@ -43,7 +43,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "6A0CBBAF1980411A003382ED"
-            BuildableName = "GeometryCatch.app"
+            BuildableName = "ATOX.app"
             BlueprintName = "GeometryCatch"
             ReferencedContainer = "container:GeometryCatch.xcodeproj">
          </BuildableReference>
@@ -62,7 +62,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "6A0CBBAF1980411A003382ED"
-            BuildableName = "GeometryCatch.app"
+            BuildableName = "ATOX.app"
             BlueprintName = "GeometryCatch"
             ReferencedContainer = "container:GeometryCatch.xcodeproj">
          </BuildableReference>
@@ -80,7 +80,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "6A0CBBAF1980411A003382ED"
-            BuildableName = "GeometryCatch.app"
+            BuildableName = "ATOX.app"
             BlueprintName = "GeometryCatch"
             ReferencedContainer = "container:GeometryCatch.xcodeproj">
          </BuildableReference>

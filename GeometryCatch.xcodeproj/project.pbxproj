@@ -91,6 +91,7 @@
 		6ADD148C1993787B00D8EAE8 /* share_normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 6ADD148A1993787B00D8EAE8 /* share_normal.png */; };
 		6ADD148D1993787B00D8EAE8 /* play_normal.png in Resources */ = {isa = PBXBuildFile; fileRef = 6ADD148B1993787B00D8EAE8 /* play_normal.png */; };
 		6ADD14901993B64D00D8EAE8 /* Menu_Music.wav in Resources */ = {isa = PBXBuildFile; fileRef = 6ADD148F1993B64D00D8EAE8 /* Menu_Music.wav */; };
+		D73A929419CA4A8C00A4BF77 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D73A929319CA4A8C00A4BF77 /* GameKit.framework */; };
 		D7A4CEE619BF6CD6008B93A8 /* libGoogleAdMobAds.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D7A4CEE519BF6CD6008B93A8 /* libGoogleAdMobAds.a */; };
 		D7A4CEE819BF6CEA008B93A8 /* RevMobAds.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7A4CEE719BF6CEA008B93A8 /* RevMobAds.framework */; };
 		D7A4CEEA19BF743C008B93A8 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7A4CEE919BF743C008B93A8 /* StoreKit.framework */; };
@@ -111,7 +112,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		6A0CBBB01980411A003382ED /* GeometryCatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GeometryCatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6A0CBBB01980411A003382ED /* ATOX.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ATOX.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6A0CBBB31980411A003382ED /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		6A0CBBB51980411A003382ED /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		6A0CBBB71980411A003382ED /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -208,6 +209,7 @@
 		6ADD148A1993787B00D8EAE8 /* share_normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = share_normal.png; sourceTree = "<group>"; };
 		6ADD148B1993787B00D8EAE8 /* play_normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = play_normal.png; sourceTree = "<group>"; };
 		6ADD148F1993B64D00D8EAE8 /* Menu_Music.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Menu_Music.wav; sourceTree = "<group>"; };
+		D73A929319CA4A8C00A4BF77 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
 		D7A4CED919BF6CD6008B93A8 /* GADAdMobExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GADAdMobExtras.h; sourceTree = "<group>"; };
 		D7A4CEDA19BF6CD6008B93A8 /* GADAdNetworkExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GADAdNetworkExtras.h; sourceTree = "<group>"; };
 		D7A4CEDB19BF6CD6008B93A8 /* GADAdSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GADAdSize.h; sourceTree = "<group>"; };
@@ -238,6 +240,7 @@
 				D7A4CEF019BF7459008B93A8 /* SystemConfiguration.framework in Frameworks */,
 				D7A4CEEE19BF7449008B93A8 /* MessageUI.framework in Frameworks */,
 				D7A4CEEC19BF7442008B93A8 /* MediaPlayer.framework in Frameworks */,
+				D73A929419CA4A8C00A4BF77 /* GameKit.framework in Frameworks */,
 				D7A4CEEA19BF743C008B93A8 /* StoreKit.framework in Frameworks */,
 				6AAB685F1994DA0E008776A7 /* Social.framework in Frameworks */,
 				D7A4CEE819BF6CEA008B93A8 /* RevMobAds.framework in Frameworks */,
@@ -275,7 +278,7 @@
 		6A0CBBB11980411A003382ED /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				6A0CBBB01980411A003382ED /* GeometryCatch.app */,
+				6A0CBBB01980411A003382ED /* ATOX.app */,
 				6A0CBBD81980411A003382ED /* GeometryCatchTests.xctest */,
 			);
 			name = Products;
@@ -284,6 +287,7 @@
 		6A0CBBB21980411A003382ED /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D73A929319CA4A8C00A4BF77 /* GameKit.framework */,
 				D7A4CEF119BF746D008B93A8 /* AdSupport.framework */,
 				D7A4CEEF19BF7459008B93A8 /* SystemConfiguration.framework */,
 				D7A4CEED19BF7449008B93A8 /* MessageUI.framework */,
@@ -513,7 +517,7 @@
 			);
 			name = GeometryCatch;
 			productName = GeometryCatch;
-			productReference = 6A0CBBB01980411A003382ED /* GeometryCatch.app */;
+			productReference = 6A0CBBB01980411A003382ED /* ATOX.app */;
 			productType = "com.apple.product-type.application";
 		};
 		6A0CBBD71980411A003382ED /* GeometryCatchTests */ = {
@@ -543,6 +547,14 @@
 				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = c63;
 				TargetAttributes = {
+					6A0CBBAF1980411A003382ED = {
+						DevelopmentTeam = LL5D93XZ8C;
+						SystemCapabilities = {
+							com.apple.GameCenter = {
+								enabled = 1;
+							};
+						};
+					};
 					6A0CBBD71980411A003382ED = {
 						TestTargetID = 6A0CBBAF1980411A003382ED;
 					};
@@ -788,6 +800,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/GeometryCatch",
@@ -801,7 +815,8 @@
 					"$(PROJECT_DIR)/GeometryCatch",
 				);
 				"OTHER_LDFLAGS[arch=*]" = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = ATOX;
+				PROVISIONING_PROFILE = "";
 				SPRITEKIT_TEXTURE_ATLAS_OUTPUT = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
@@ -813,6 +828,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/GeometryCatch",
@@ -826,7 +843,8 @@
 					"$(PROJECT_DIR)/GeometryCatch",
 				);
 				"OTHER_LDFLAGS[arch=*]" = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = ATOX;
+				PROVISIONING_PROFILE = "";
 				SPRITEKIT_TEXTURE_ATLAS_OUTPUT = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;

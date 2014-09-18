@@ -362,11 +362,12 @@
                 soundBtn.texture = [SKTexture textureWithImageNamed:[self chooseSpriteWithState:options.soundOn isTouched:NO baseFileName:@"sound_button" hasPrefix:YES]];
                 [options saveConfig];
             }
+
             //release game center: load game center
-            //not yet implemented
             else if ([node.name isEqualToString:@"gameCenterBtn"]){
                 gameCenterBtn.texture = [SKTexture textureWithImageNamed:[self chooseSpriteWithState:NO isTouched:NO baseFileName:@"gamecenter_button" hasPrefix:NO]];
-                
+                NSDictionary *userInfo = [NSDictionary dictionaryWithObjects:@[[NSNumber numberWithInt:score]] forKeys:@[@"score"]];
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"GetScore" object:self userInfo:userInfo];
             }
             //release music: change sprite and turn on/off music
             else if ([node.name isEqualToString:@"musicBtn"]){
@@ -432,12 +433,12 @@
 }
 //retrieve high score from device
 -(int)getHighscore{
-    int highscore;
+    long highscore;
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     if([defaults objectForKey:@"highscore"] != nil){
         highscore = [defaults integerForKey:@"highscore"];
     } else highscore = 0;
-    return highscore;
+    return (int)highscore;
 }
 //save high score to device
 -(void)saveHighscore:(int)points{

@@ -491,14 +491,13 @@
 //Random shape and position of drops
 -(void)randomShapeAndPosition{
     if(!isGameOver){
-        //        int dropType = arc4random()%3;
+        int dropType = arc4random()%3;
         float dropPositionOffset = (float)((arc4random()%8 + 1)*0.1);
         Drops *drop;
         drop = dropArray[dropArrayIndex];
         if(drop.parent == self){
-            //      Neu la object pool thi anh ko can phai set lai texture nhu nay.
-            //            drop.texture = [SKTexture textureWithImageNamed:[self chooseShape:dropType]];
-            //            drop.type = dropType;
+            drop.texture = [SKTexture textureWithImageNamed:[self chooseShape:dropType]];
+            drop.type = dropType;
             drop.position = CGPointMake(self.size.width * dropPositionOffset, self.size.height);
             drop.physicsBody.velocity = CGVectorMake(0, 0);
         }
@@ -646,12 +645,12 @@
 }
 //retrieve high score from device
 -(int)getHighscore{
-    int highscore;
+    long highscore;
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     if([defaults objectForKey:@"highscore"] != nil){
         highscore = [defaults integerForKey:@"highscore"];
     } else highscore = 0;
-    return highscore;
+    return (int)highscore;
 }
 -(int)getInstanceScore{
     return score;
