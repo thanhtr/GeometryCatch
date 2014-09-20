@@ -22,6 +22,7 @@
 
 -(void)viewDidLoad{
     [super viewDidLoad];
+    [self authenticateLocalUser];
 }
 
 - (void)viewDidLayoutSubviews
@@ -29,8 +30,8 @@
     [super viewDidLayoutSubviews];
     // Configure the view.
     SKView * skView = (SKView *)self.view;
-    skView.showsFPS = YES;
-    skView.showsNodeCount = YES;
+//    skView.showsFPS = YES;
+//    skView.showsNodeCount = YES;
     
     // Create and configure the scene.
     SKScene * scene = [StartScene sceneWithSize:skView.bounds.size];

@@ -20,6 +20,18 @@
 @synthesize paddle,speedOffset,paddleArray,paddleHoldShapeOffset, paddleArrayIndex, bgColor, levelBar, scoreLabel, isGameOver,gameOverTextCanBeAdded,gameOverText,rainNode, sparkArrayIndex, bgColorArray, bg, bgBlack, isPause,moveGroup, bgColorIndex, pauseBtn, gameOverBg,bestScoreLbl,bestScorePoint,yourScoreLbl,yourScorePoint,shareBtn,playBtn,gameOverGroup, gameCenterBtn,options,bgMusicPlayer,musicBtn,soundBtn,creditBtn,aboutBg, properlyInView,lastButton,trailingSpriteArray,trailingSpriteArrayIndex,dropArray,dropArrayIndex;
 //@synthesize score;
 
+#define NUMOFBLOCK 30
+
+- (void)shuffle
+{
+    for (NSUInteger i = 0; i < NUMOFBLOCK; ++i) {
+        NSInteger remainingCount = NUMOFBLOCK - i;
+        NSInteger exchangeIndex = i + arc4random_uniform(remainingCount);
+        [self.dropArray exchangeObjectAtIndex:i withObjectAtIndex:exchangeIndex];
+    }
+}
+
+
 -(id)initWithSize:(CGSize)size {
     if (self = [super initWithSize:size]) {
         
@@ -47,8 +59,8 @@
             [self.sparkEmitter insertObject:sparkNode atIndex:i];
             
         }
-        for (int i = 0; i< 30; i++) {
-            int dropType = arc4random()%3;
+        for (int i = 0; i< NUMOFBLOCK; i++) {
+            int dropType = i%3;
             float dropPositionOffset = (float)((arc4random()%8 + 1)*0.1);
             Drops *drop;
             
@@ -62,7 +74,7 @@
             
             [dropArray addObject:drop];
         }
-        
+        [self shuffle];
         SKAction *move = [SKAction runBlock:^{
             if(canLoadColoredColumn){
                 for (int i = 0; i< moveGroup.count; i++) {
@@ -133,11 +145,11 @@
     //offset and index for controlling paddle's caught shapes
     if(IS_IPAD_SCREEN){
         paddleHoldShapeOffset = 0.5;
-        speedOffset = -4;
+        speedOffset = -6;
     }
     else{
         paddleHoldShapeOffset = 1;
-        speedOffset = -2;
+        speedOffset = -3;
     }
     paddleArrayIndex = 0;
     
@@ -297,7 +309,7 @@
         if([child.name isEqualToString:@"drop"] && child.position.x < self.size.width){
             Drops *drop = (Drops*)child;
             SKSpriteNode *trailSprite;
-            if (trailingSpriteArray.count >= 30) {
+            if (trailingSpriteArray.count >= NUMOFBLOCK) {
                 trailSprite = trailingSpriteArray[trailingSpriteArrayIndex];
                 trailSprite.texture = [SKTexture textureWithImageNamed:[self chooseShape:drop.type]];
                 trailSprite.zRotation = drop.zRotation;
@@ -321,7 +333,7 @@
                 [trailSprite runAction:[SKAction fadeAlphaTo:0 duration:0.1]];
                 
             }
-            if(trailingSpriteArrayIndex < 29)
+            if(trailingSpriteArrayIndex < NUMOFBLOCK-1)
                 trailingSpriteArrayIndex ++;
             else trailingSpriteArrayIndex = 0;
         }
@@ -351,9 +363,9 @@
         bgMusicPlayer.rate += 0.2;
         //        level++;
         if(IS_IPAD_SCREEN)
-            speedOffset -= 4;
+            speedOffset -= 6;
         else
-            speedOffset -= 2;
+            speedOffset -= 3;
         self.physicsWorld.gravity = CGVectorMake(0, speedOffset);
         int randomBgColorIndex = arc4random()%(bgColorArray.count);
         while (bgColorIndex == randomBgColorIndex) {
@@ -504,7 +516,7 @@
         else
             [self addChild:drop];
         [drop runAction:[SKAction rotateByAngle:4*M_PI duration:2]];
-        if (dropArrayIndex < 29) {
+        if (dropArrayIndex < NUMOFBLOCK-1) {
             dropArrayIndex++;
         }
         else dropArrayIndex = 0;
