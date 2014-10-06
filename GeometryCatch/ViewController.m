@@ -22,7 +22,6 @@
 
 -(void)viewDidLoad{
     [super viewDidLoad];
-    [self authenticateLocalUser];
 }
 
 - (void)viewDidLayoutSubviews
@@ -30,8 +29,8 @@
     [super viewDidLayoutSubviews];
     // Configure the view.
     SKView * skView = (SKView *)self.view;
-//    skView.showsFPS = YES;
-//    skView.showsNodeCount = YES;
+    //    skView.showsFPS = YES;
+    //    skView.showsNodeCount = YES;
     
     // Create and configure the scene.
     SKScene * scene = [StartScene sceneWithSize:skView.bounds.size];
@@ -98,12 +97,23 @@
     [super viewWillDisappear:animated];
     [self dismissAdView];
     [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:@"CreatePost" object:nil];
+                                                    name:@"CreatePost"
+                                                  object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:@"showAds" object:nil];
+                                                    name:@"showAds"
+                                                  object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:@"hideAds" object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"GetScore" object:nil];
+                                                    name:@"hideAds"
+                                                  object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:@"GetScore"
+                                                  object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:@"Pause"
+                                                  object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:@"Resume"
+                                                  object:nil];
 }
 
 #pragma mark - Notification method
@@ -329,7 +339,7 @@
                 [self presentViewController:viewController animated:YES completion:nil];
             } else if (error){
                 NSLog(@"%@",[error localizedDescription]);
-            } 
+            }
         };
     }
 }
@@ -361,5 +371,7 @@
 #pragma mark - Game Center Delegate
 -(void)gameCenterViewControllerDidFinish:(GKGameCenterViewController *)gameCenterViewController{
     [self dismissViewControllerAnimated:YES completion:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"Resume" object:self];
 }
+
 @end

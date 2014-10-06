@@ -26,7 +26,7 @@
 {
     for (NSUInteger i = 0; i < NUMOFBLOCK; ++i) {
         NSInteger remainingCount = NUMOFBLOCK - i;
-        NSInteger exchangeIndex = i + arc4random_uniform(remainingCount);
+        NSInteger exchangeIndex = i + arc4random_uniform((int)remainingCount);
         [self.dropArray exchangeObjectAtIndex:i withObjectAtIndex:exchangeIndex];
     }
 }
@@ -34,7 +34,8 @@
 
 -(id)initWithSize:(CGSize)size {
     if (self = [super initWithSize:size]) {
-        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pause) name:@"Pause2" object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resume) name:@"Resume" object:nil];
         //First init
         [self createInitElements];
         
@@ -285,8 +286,10 @@
             self.view.paused = NO;
             if(options.soundOn)
                 [self runAction:[SKAction playSoundFileNamed:@"unpause.mp3" waitForCompletion:NO]];
-            if(options.musicOn)
+            if(options.musicOn){
+                [bgMusicPlayer pause];
                 [bgMusicPlayer play];
+            }
             bgBlack.alpha = 0.0;
             [self dropShape];
         }
@@ -722,5 +725,23 @@
     [self addChild:column8];
     [moveGroup addObject:column8];
     
+}
+
+-(void)pause{
+    [self removeActionForKey:@"dropShape"];
+    bgBlack.alpha = 0.3;
+    isPause = YES;
+    [bgMusicPlayer pause];
+}
+
+-(void)resume{
+    if(options.musicOn){
+        [bgMusicPlayer pause];
+        [bgMusicPlayer play];
+    }
+}
+
+-(void)dealloc{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 @end
