@@ -10,29 +10,29 @@
 	<string>GeometryCatch</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>CE109EC2-BDD8-42C9-AD49-FC01464A520E</key>
+		<key>D16A67BDD54C9E7EDD99441249C572567EE8F33C</key>
 		<string>https://github.com/thanhtr/GeometryCatch.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>GeometryCatch.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>CE109EC2-BDD8-42C9-AD49-FC01464A520E</key>
+		<key>D16A67BDD54C9E7EDD99441249C572567EE8F33C</key>
 		<string>../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>https://github.com/thanhtr/GeometryCatch.git</string>
 	<key>IDESourceControlProjectVersion</key>
-	<integer>110</integer>
+	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>CE109EC2-BDD8-42C9-AD49-FC01464A520E</string>
+	<string>D16A67BDD54C9E7EDD99441249C572567EE8F33C</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>CE109EC2-BDD8-42C9-AD49-FC01464A520E</string>
+			<string>D16A67BDD54C9E7EDD99441249C572567EE8F33C</string>
 			<key>IDESourceControlWCCName</key>
 			<string>GeometryCatch</string>
 		</dict>

@@ -111,7 +111,7 @@
     bgMusicPlayer.enableRate = YES;
     [bgMusicPlayer prepareToPlay];
     
-       //if music on play bg music
+    //if music on play bg music
     if (options.musicOn) {
         [bgMusicPlayer play];
     }
@@ -174,17 +174,6 @@
         [bgBlack setScale:1.2];
     [self addChild:bgBlack];
     
-    //Level bar init
-    levelBar = [[SKSpriteNode alloc]initWithImageNamed:@"levelBar"];
-    levelBar.anchorPoint = CGPointMake(0, 0.5);
-    levelBar.position = CGPointMake(0, self.size.height);
-    levelBar.size = CGSizeMake(self.size.width*0.5, levelBar.size.height);
-    //        levelBar.yScale = 2.0;
-    levelBar.color = bgColor;
-    levelBar.colorBlendFactor = 0.7;
-    if(IS_IPAD_SCREEN)
-        [levelBar setScale:1.5];
-    [self addChild:levelBar];
     
     //Particle rain
     NSString *rainPath =
@@ -199,6 +188,52 @@
     if(IS_IPAD_SCREEN)
         [rainNode setParticleScale:0.6];
     [self addChild:rainNode];
+    
+    
+    //Level bar init
+    SKSpriteNode *levelBarBehind;
+    if(IS_IPAD_SCREEN)
+    {
+        levelBarBehind = [[SKSpriteNode alloc] initWithImageNamed:@"interestBar_Below768"];
+    }
+    else
+        levelBarBehind = [[SKSpriteNode alloc] initWithImageNamed:@"interestBar_Below"];
+    levelBarBehind.anchorPoint = CGPointMake(0.5, 1);
+    levelBarBehind.position = CGPointMake(self.size.width/2, self.size.height);
+//    levelBarBehind.size = CGSizeMake(self.size.width, levelBarBehind.size.height);
+    //    [levelBarBehind setScale:2.0];
+    if(IS_IPAD_SCREEN)
+    {
+        levelBarBehind.xScale = 1.0;
+        levelBarBehind.yScale = 0.75;
+    }
+    else
+    {
+        levelBarBehind.xScale = 1.0;
+        levelBarBehind.yScale = 0.5;
+    }
+    [self addChild:levelBarBehind];
+    
+    levelBar = [[SKSpriteNode alloc]initWithImageNamed:@"interestBar_Above"];
+    levelBar.anchorPoint = CGPointMake(1, 1);
+    levelBar.position = CGPointMake(self.size.width, self.size.height);
+    levelBar.size = CGSizeMake(self.size.width*0.5, levelBar.size.height);
+    //        levelBar.yScale = 2.0;
+    //levelBar.color = bgColor;
+    //levelBar.colorBlendFactor = 0.7;
+    if(IS_IPAD_SCREEN)
+    {
+        levelBar.xScale = 1.5;
+        levelBar.yScale = 0.75;
+    }
+    else
+    {
+        levelBar.xScale = 1.0;
+        levelBar.yScale = 0.5;
+    }
+    
+    [self addChild:levelBar];
+    
     
     //Paddle init
     paddle = [[SKSpriteNode alloc] initWithImageNamed:@"paddle"];
@@ -340,14 +375,14 @@
     }
     //level bar reduced over time
     if(IS_IPAD_SCREEN)
-        levelBar.size = CGSizeMake(levelBar.size.width - 0.5, levelBar.size.height);
+        levelBar.size = CGSizeMake(levelBar.size.width + 0.5, levelBar.size.height);
     else
-        levelBar.size = CGSizeMake(levelBar.size.width - 0.2, levelBar.size.height);
+        levelBar.size = CGSizeMake(levelBar.size.width + 0.2, levelBar.size.height);
     scoreLabel.text = [NSString stringWithFormat:@"%d",score];
     
     // if level bar > screen next level, if level bar < 0 gameover
-    if(levelBar.size.width >= self.size.width){
-        levelBar.size = CGSizeMake(self.size.width*0.4, levelBar.size.height);
+    if(levelBar.size.width <= 0){
+        levelBar.size = CGSizeMake(self.size.width*0.6, levelBar.size.height);
         bgMusicPlayer.rate += 0.2;
         //        level++;
         if(IS_IPAD_SCREEN)
@@ -363,14 +398,14 @@
         bgColor = bgColorArray[randomBgColorIndex];
         [bg runAction:[SKAction colorizeWithColor:bgColor colorBlendFactor:1 duration:0.3]];
         
-        levelBar.color = bgColor;
-        levelBar.colorBlendFactor = 0.7;
+        //levelBar.color = bgColor;
+        //levelBar.colorBlendFactor = 0.7;
         [rainNode setParticleColorSequence:nil];
         [rainNode setParticleColor:bgColor];
         [rainNode setParticleColorBlendFactor:0.8];
         
     }
-    if(levelBar.size.width <= 0){
+    if(levelBar.size.width >= (self.size.width*1.05)){
         [self gameOver];
     }
     //pause and unpause action
@@ -427,7 +462,7 @@
                 paddleHoldShapeOffset = 0.5;
             else
                 paddleHoldShapeOffset = 1;
-            levelBar.size = CGSizeMake(levelBar.size.width - self.size.width*0.2, levelBar.size.height);
+            levelBar.size = CGSizeMake(levelBar.size.width + self.size.width*0.2, levelBar.size.height);
             if(options.soundOn)
                 [self runAction:[SKAction playSoundFileNamed:@"eat_sound.wav" waitForCompletion:NO]];
             SKAction *flash = [SKAction sequence:@[[SKAction fadeOutWithDuration:0.05], [SKAction waitForDuration:0.05], [SKAction fadeInWithDuration:0.05]]];
@@ -460,7 +495,7 @@
                 paddleHoldShapeOffset = 0.5;
             else
                 paddleHoldShapeOffset = 1;
-            levelBar.size = CGSizeMake(levelBar.size.width + self.size.width*0.3, levelBar.size.height);
+            levelBar.size = CGSizeMake(levelBar.size.width - self.size.width*0.3, levelBar.size.height);
             score += 1;
             
             NSString *matchingPath =

@@ -99,6 +99,15 @@
 		D7A4CEEE19BF7449008B93A8 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7A4CEED19BF7449008B93A8 /* MessageUI.framework */; };
 		D7A4CEF019BF7459008B93A8 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7A4CEEF19BF7459008B93A8 /* SystemConfiguration.framework */; };
 		D7A4CEF219BF746D008B93A8 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7A4CEF119BF746D008B93A8 /* AdSupport.framework */; };
+		D85207E619E473D7003DF6AF /* Coin.png in Resources */ = {isa = PBXBuildFile; fileRef = D85207DE19E473D7003DF6AF /* Coin.png */; };
+		D85207E719E473D7003DF6AF /* coinParticles.png in Resources */ = {isa = PBXBuildFile; fileRef = D85207DF19E473D7003DF6AF /* coinParticles.png */; };
+		D85207E819E473D7003DF6AF /* Focus_bead.png in Resources */ = {isa = PBXBuildFile; fileRef = D85207E019E473D7003DF6AF /* Focus_bead.png */; };
+		D85207E919E473D7003DF6AF /* Focus.png in Resources */ = {isa = PBXBuildFile; fileRef = D85207E119E473D7003DF6AF /* Focus.png */; };
+		D85207EA19E473D7003DF6AF /* interestBar_Above.png in Resources */ = {isa = PBXBuildFile; fileRef = D85207E219E473D7003DF6AF /* interestBar_Above.png */; };
+		D85207EB19E473D7003DF6AF /* interestBar_Below.png in Resources */ = {isa = PBXBuildFile; fileRef = D85207E319E473D7003DF6AF /* interestBar_Below.png */; };
+		D85207EC19E473D7003DF6AF /* x2_red.png in Resources */ = {isa = PBXBuildFile; fileRef = D85207E419E473D7003DF6AF /* x2_red.png */; };
+		D85207ED19E473D7003DF6AF /* x2_white.png in Resources */ = {isa = PBXBuildFile; fileRef = D85207E519E473D7003DF6AF /* x2_white.png */; };
+		D85207EF19E48CE1003DF6AF /* interestBar_Below768.png in Resources */ = {isa = PBXBuildFile; fileRef = D85207EE19E48CE1003DF6AF /* interestBar_Below768.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -112,7 +121,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		6A0CBBB01980411A003382ED /* ATOX.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ATOX.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6A0CBBB01980411A003382ED /* GeometryCatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GeometryCatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6A0CBBB31980411A003382ED /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		6A0CBBB51980411A003382ED /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		6A0CBBB71980411A003382ED /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -229,6 +238,15 @@
 		D7A4CEED19BF7449008B93A8 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		D7A4CEEF19BF7459008B93A8 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		D7A4CEF119BF746D008B93A8 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
+		D85207DE19E473D7003DF6AF /* Coin.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Coin.png; sourceTree = "<group>"; };
+		D85207DF19E473D7003DF6AF /* coinParticles.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = coinParticles.png; sourceTree = "<group>"; };
+		D85207E019E473D7003DF6AF /* Focus_bead.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Focus_bead.png; sourceTree = "<group>"; };
+		D85207E119E473D7003DF6AF /* Focus.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Focus.png; sourceTree = "<group>"; };
+		D85207E219E473D7003DF6AF /* interestBar_Above.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = interestBar_Above.png; sourceTree = "<group>"; };
+		D85207E319E473D7003DF6AF /* interestBar_Below.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = interestBar_Below.png; sourceTree = "<group>"; };
+		D85207E419E473D7003DF6AF /* x2_red.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = x2_red.png; sourceTree = "<group>"; };
+		D85207E519E473D7003DF6AF /* x2_white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = x2_white.png; sourceTree = "<group>"; };
+		D85207EE19E48CE1003DF6AF /* interestBar_Below768.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = interestBar_Below768.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -278,7 +296,7 @@
 		6A0CBBB11980411A003382ED /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				6A0CBBB01980411A003382ED /* ATOX.app */,
+				6A0CBBB01980411A003382ED /* GeometryCatch.app */,
 				6A0CBBD81980411A003382ED /* GeometryCatchTests.xctest */,
 			);
 			name = Products;
@@ -358,6 +376,15 @@
 		6A0CBBF2198041CC003382ED /* Art */ = {
 			isa = PBXGroup;
 			children = (
+				D85207EE19E48CE1003DF6AF /* interestBar_Below768.png */,
+				D85207DE19E473D7003DF6AF /* Coin.png */,
+				D85207DF19E473D7003DF6AF /* coinParticles.png */,
+				D85207E019E473D7003DF6AF /* Focus_bead.png */,
+				D85207E119E473D7003DF6AF /* Focus.png */,
+				D85207E219E473D7003DF6AF /* interestBar_Above.png */,
+				D85207E319E473D7003DF6AF /* interestBar_Below.png */,
+				D85207E419E473D7003DF6AF /* x2_red.png */,
+				D85207E519E473D7003DF6AF /* x2_white.png */,
 				6AAB6A9519C0D2D30080C4C1 /* icon_150x150.png */,
 				6AAB6A9619C0D2D30080C4C1 /* icon.png */,
 				6AAB6A9719C0D2D30080C4C1 /* credit_ipad.png */,
@@ -517,7 +544,7 @@
 			);
 			name = GeometryCatch;
 			productName = GeometryCatch;
-			productReference = 6A0CBBB01980411A003382ED /* ATOX.app */;
+			productReference = 6A0CBBB01980411A003382ED /* GeometryCatch.app */;
 			productType = "com.apple.product-type.application";
 		};
 		6A0CBBD71980411A003382ED /* GeometryCatchTests */ = {
@@ -593,17 +620,22 @@
 				6AACC548198E520C00DE8D7A /* aboutus.png in Resources */,
 				6AAB6A9919C0D2D30080C4C1 /* icon_150x150.png in Resources */,
 				6AB8C184198A829A00428ACB /* Main.storyboard in Resources */,
+				D85207E819E473D7003DF6AF /* Focus_bead.png in Resources */,
 				6AACC542198E520C00DE8D7A /* sfx_off.png in Resources */,
+				D85207EC19E473D7003DF6AF /* x2_red.png in Resources */,
+				D85207EB19E473D7003DF6AF /* interestBar_Below.png in Resources */,
 				6A648BEE199CFB8800126114 /* credit_button_touched.png in Resources */,
 				6A38B18919812B9B00376662 /* Rain.sks in Resources */,
 				6AA3774A199BA21C0057BFED /* pausegame.mp3 in Resources */,
 				6AB8C194198A84A300428ACB /* bg.png in Resources */,
 				6A648BE9199CFB8800126114 /* play_touched.png in Resources */,
 				6A648BE4199CFB8800126114 /* muted_sound_button_normal.png in Resources */,
+				D85207EF19E48CE1003DF6AF /* interestBar_Below768.png in Resources */,
 				6AB8C19B198A84A300428ACB /* shape_square.png in Resources */,
 				6A38B21119815DF000376662 /* Spark.sks in Resources */,
 				6A648BEC199CFB8800126114 /* sound_button_touched.png in Resources */,
 				6AB8C19D198A84A300428ACB /* shape_x.png in Resources */,
+				D85207E719E473D7003DF6AF /* coinParticles.png in Resources */,
 				6AAB6A9B19C0D2D30080C4C1 /* credit_ipad.png in Resources */,
 				6AACC555198F5A6800DE8D7A /* option_bg.png in Resources */,
 				6ADD148D1993787B00D8EAE8 /* play_normal.png in Resources */,
@@ -616,12 +648,15 @@
 				6A648BE5199CFB8800126114 /* muted_music_button_touched.png in Resources */,
 				6AB8C197198A84A300428ACB /* paddle.png in Resources */,
 				6AB8C196198A84A300428ACB /* levelBar.png in Resources */,
+				D85207EA19E473D7003DF6AF /* interestBar_Above.png in Resources */,
 				6AB8C195198A84A300428ACB /* bgBlack.png in Resources */,
 				6AB8C198198A84A300428ACB /* pauseBtn.png in Resources */,
 				6AB8C199198A84A300428ACB /* RainParticle.png in Resources */,
 				6AACC545198E520C00DE8D7A /* start.png in Resources */,
 				6AB8C19A198A84A300428ACB /* shape_circle.png in Resources */,
 				6A0CBBC01980411A003382ED /* InfoPlist.strings in Resources */,
+				D85207ED19E473D7003DF6AF /* x2_white.png in Resources */,
+				D85207E919E473D7003DF6AF /* Focus.png in Resources */,
 				6AB8C19E198A84A300428ACB /* spark.png in Resources */,
 				6AB8C19F198A84A300428ACB /* square_particle.png in Resources */,
 				6AB8C1A0198A84A300428ACB /* triangle_particle.png in Resources */,
@@ -629,6 +664,7 @@
 				6AACC544198E520C00DE8D7A /* music_off.png in Resources */,
 				6A9D08431999473900888896 /* gamecenter_button_normal.png in Resources */,
 				6A648BED199CFB8800126114 /* gamecenter_button_touched.png in Resources */,
+				D85207E619E473D7003DF6AF /* Coin.png in Resources */,
 				6A0CBBD31980411A003382ED /* Images.xcassets in Resources */,
 				6A648BD5199CBF4600126114 /* stroke_paddle.png in Resources */,
 				6AB8C19C198A84A300428ACB /* shape_triangle.png in Resources */,
@@ -815,7 +851,7 @@
 					"$(PROJECT_DIR)/GeometryCatch",
 				);
 				"OTHER_LDFLAGS[arch=*]" = "-ObjC";
-				PRODUCT_NAME = ATOX;
+				PRODUCT_NAME = GeometryCatch;
 				PROVISIONING_PROFILE = "";
 				SPRITEKIT_TEXTURE_ATLAS_OUTPUT = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -843,7 +879,7 @@
 					"$(PROJECT_DIR)/GeometryCatch",
 				);
 				"OTHER_LDFLAGS[arch=*]" = "-ObjC";
-				PRODUCT_NAME = ATOX;
+				PRODUCT_NAME = GeometryCatch;
 				PROVISIONING_PROFILE = "";
 				SPRITEKIT_TEXTURE_ATLAS_OUTPUT = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -867,7 +903,7 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = "GeometryCatchTests/GeometryCatchTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = GeometryCatchTests;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};
@@ -885,7 +921,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "GeometryCatch/GeometryCatch-Prefix.pch";
 				INFOPLIST_FILE = "GeometryCatchTests/GeometryCatchTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = GeometryCatchTests;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};
