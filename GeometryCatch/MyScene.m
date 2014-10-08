@@ -17,7 +17,7 @@
 @end
 
 @implementation MyScene
-@synthesize paddle,speedOffset,paddleArray,paddleHoldShapeOffset, paddleArrayIndex, bgColor, levelBar, scoreLabel, isGameOver,gameOverTextCanBeAdded,gameOverText,rainNode, sparkArrayIndex, bgColorArray, bg, bgBlack, isPause,moveGroup, bgColorIndex, pauseBtn, gameOverBg,bestScoreLbl,bestScorePoint,yourScoreLbl,yourScorePoint,shareBtn,playBtn,gameOverGroup, gameCenterBtn,options,bgMusicPlayer,musicBtn,soundBtn,creditBtn,aboutBg, properlyInView,lastButton,trailingSpriteArray,trailingSpriteArrayIndex,dropArray,dropArrayIndex;
+@synthesize paddle,speedOffset,paddleArray,paddleHoldShapeOffset, paddleArrayIndex, bgColor, levelBar, scoreLabel, isGameOver,gameOverTextCanBeAdded,gameOverText,rainNode, sparkArrayIndex, bgColorArray, bg, bgBlack, isPause,moveGroup, bgColorIndex, pauseBtn, gameOverBg,bestScoreLbl,bestScorePoint,yourScoreLbl,yourScorePoint,shareBtn,playBtn,gameOverGroup, gameCenterBtn,options,bgMusicPlayer,musicBtn,soundBtn,creditBtn,aboutBg, properlyInView,lastButton,trailingSpriteArray,trailingSpriteArrayIndex,dropArray,dropArrayIndex,level,combo,comboAnnouncer,multiplierAnnouncer, isDoubleScore;
 //@synthesize score;
 
 -(id)initWithSize:(CGSize)size {
@@ -92,6 +92,36 @@
         }];
         [self runAction:[SKAction sequence:@[move, wait, drop]]];
         
+        
+        comboAnnouncer = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
+        if(IS_568_SCREEN)
+            comboAnnouncer.position = CGPointMake(self.size.width*0.5, self.size.height*0.27);
+        else
+            comboAnnouncer.position = CGPointMake(self.size.width*0.5, self.size.height*0.33);
+        comboAnnouncer.fontColor = [SKColor colorWithRed:1 green:1 blue:1 alpha:0.3];
+        if(IS_IPAD_SCREEN)
+            comboAnnouncer.fontSize = 90;
+        else
+            comboAnnouncer.fontSize = 60;
+        [self addChild:comboAnnouncer];
+        
+        multiplierAnnouncer = [[SKSpriteNode alloc] initWithImageNamed:@"x2_white"];
+        if(IS_568_SCREEN)
+            multiplierAnnouncer.position = CGPointMake(self.size.width*0.5, self.size.height*0.80);
+        else
+            multiplierAnnouncer.position = CGPointMake(self.size.width*0.5, self.size.height*0.78);
+        if(IS_IPAD_SCREEN)
+            [multiplierAnnouncer setScale:1.0];
+        else
+            [multiplierAnnouncer setScale:0.5];
+        [self addChild:multiplierAnnouncer];
+        [self runAction:[SKAction repeatActionForever:[SKAction sequence:@[[SKAction runBlock:^{
+            multiplierAnnouncer.texture = [SKTexture textureWithImageNamed:@"x2_red"];
+        }],[SKAction waitForDuration:0.1],[SKAction runBlock:^{
+            multiplierAnnouncer.texture = [SKTexture textureWithImageNamed:@"x2_white"];
+        }], [SKAction waitForDuration:0.1]]]]];
+        multiplierAnnouncer.hidden = YES;
+        
     }
     return self;
 }
@@ -102,6 +132,9 @@
     dropArray = [[NSMutableArray alloc] init];
     trailingSpriteArrayIndex = 0;
     dropArrayIndex = 0;
+    level = 0;
+    combo = 0;
+    isDoubleScore = NO;
     
     //bg music
     NSError *error;
@@ -200,7 +233,7 @@
         levelBarBehind = [[SKSpriteNode alloc] initWithImageNamed:@"interestBar_Below"];
     levelBarBehind.anchorPoint = CGPointMake(0.5, 1);
     levelBarBehind.position = CGPointMake(self.size.width/2, self.size.height);
-//    levelBarBehind.size = CGSizeMake(self.size.width, levelBarBehind.size.height);
+    //    levelBarBehind.size = CGSizeMake(self.size.width, levelBarBehind.size.height);
     //    [levelBarBehind setScale:2.0];
     if(IS_IPAD_SCREEN)
     {
@@ -280,6 +313,7 @@
     else
         scoreLabel.fontSize = 80;
     [self addChild:scoreLabel];
+    
 }
 
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
@@ -383,6 +417,7 @@
     // if level bar > screen next level, if level bar < 0 gameover
     if(levelBar.size.width <= 0){
         levelBar.size = CGSizeMake(self.size.width*0.6, levelBar.size.height);
+        level ++;
         bgMusicPlayer.rate += 0.2;
         //        level++;
         if(IS_IPAD_SCREEN)
@@ -428,6 +463,19 @@
     }
 }
 
+-(NSString*)getComboTextWithCombo:(int)comboCount{
+    if(comboCount == 2)
+        return [NSString stringWithFormat:@"SWEET!"];
+    else if(comboCount == 3)
+        return [NSString stringWithFormat:@"COMBO!"];
+    else if(comboCount == 4)
+        return [NSString stringWithFormat:@"OH YEAH!"];
+    else if(comboCount >= 5)
+        return [NSString stringWithFormat:@"AWESOME!"];
+    else
+        return [NSString stringWithFormat:@""];
+    
+}
 -(void)didBeginContact:(SKPhysicsContact *)contact{
     SKSpriteNode * takenShape;
     Drops *shape = (Drops*)contact.bodyB.node;
@@ -467,6 +515,9 @@
                 [self runAction:[SKAction playSoundFileNamed:@"eat_sound.wav" waitForCompletion:NO]];
             SKAction *flash = [SKAction sequence:@[[SKAction fadeOutWithDuration:0.05], [SKAction waitForDuration:0.05], [SKAction fadeInWithDuration:0.05]]];
             [paddle runAction:flash];
+            isDoubleScore = NO;
+            combo = 0;
+            multiplierAnnouncer.hidden = YES;
         }
         
         //Or if the paddle array isn't full yet
@@ -496,7 +547,24 @@
             else
                 paddleHoldShapeOffset = 1;
             levelBar.size = CGSizeMake(levelBar.size.width - self.size.width*0.3, levelBar.size.height);
-            score += 1;
+            
+            if(isDoubleScore)
+                score += 2;
+            else
+                score += 1;
+            
+            //combo
+            combo ++;
+            SKAction *fadeInOutAndReposition = [SKAction sequence:@[[SKAction fadeInWithDuration:0.2], [SKAction waitForDuration:0.1], [SKAction fadeOutWithDuration:0.2], [SKAction moveByX:0 y:-50 duration:0.01]]];
+            SKAction *rise = [SKAction moveByX:0 y:50 duration:0.5];
+            comboAnnouncer.text = [self getComboTextWithCombo:combo];
+            [comboAnnouncer runAction:fadeInOutAndReposition];
+            [comboAnnouncer runAction:rise];
+            if(combo == 3)
+            {
+                multiplierAnnouncer.hidden = NO;
+                isDoubleScore = YES;
+            }
             
             NSString *matchingPath =
             [[NSBundle mainBundle]
