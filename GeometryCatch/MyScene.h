@@ -53,7 +53,6 @@ static int score;
 @property float speedOffset;
 @property float paddleHoldShapeOffset;
 @property int paddleArrayIndex;
-//@property int score;
 @property int sparkArrayIndex;
 @property int bgColorIndex;
 @property int trailingSpriteArrayIndex;

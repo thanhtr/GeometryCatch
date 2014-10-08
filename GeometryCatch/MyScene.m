@@ -92,7 +92,7 @@
         }];
         [self runAction:[SKAction sequence:@[move, wait, drop]]];
         
-        
+        //combo
         comboAnnouncer = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
         if(IS_568_SCREEN)
             comboAnnouncer.position = CGPointMake(self.size.width*0.5, self.size.height*0.27);
@@ -105,6 +105,8 @@
             comboAnnouncer.fontSize = 60;
         [self addChild:comboAnnouncer];
         
+        
+        //x2
         multiplierAnnouncer = [[SKSpriteNode alloc] initWithImageNamed:@"x2_white"];
         if(IS_568_SCREEN)
             multiplierAnnouncer.position = CGPointMake(self.size.width*0.5, self.size.height*0.80);
@@ -120,6 +122,16 @@
         }],[SKAction waitForDuration:0.1],[SKAction runBlock:^{
             multiplierAnnouncer.texture = [SKTexture textureWithImageNamed:@"x2_white"];
         }], [SKAction waitForDuration:0.1]]]]];
+        [self runAction:[SKAction repeatActionForever:[SKAction sequence:@[[SKAction runBlock:^{
+            multiplierAnnouncer.size = CGSizeMake(multiplierAnnouncer.size.width*1.05, multiplierAnnouncer.size.height*1.05);
+        }],[SKAction waitForDuration:0.05],[SKAction runBlock:^{
+            multiplierAnnouncer.size = CGSizeMake(multiplierAnnouncer.size.width*0.95, multiplierAnnouncer.size.height*0.95);
+        }], [SKAction waitForDuration:0.05]]]]];
+        [self runAction:[SKAction repeatActionForever:[SKAction sequence:@[[SKAction runBlock:^{
+            multiplierAnnouncer.position = CGPointMake(multiplierAnnouncer.position.x, multiplierAnnouncer.position.y + 1);
+        }],[SKAction waitForDuration:0.05],[SKAction runBlock:^{
+            multiplierAnnouncer.position = CGPointMake(multiplierAnnouncer.position.x, multiplierAnnouncer.position.y - 1);
+        }], [SKAction waitForDuration:0.05]]]]];
         multiplierAnnouncer.hidden = YES;
         
     }
