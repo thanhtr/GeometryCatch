@@ -17,7 +17,7 @@
 @end
 
 @implementation MyScene
-@synthesize paddle,speedOffset,paddleArray,paddleHoldShapeOffset, paddleArrayIndex, bgColor, levelBar, scoreLabel, isGameOver,gameOverTextCanBeAdded,gameOverText,rainNode, sparkArrayIndex, bgColorArray, bg, bgBlack, isPause,moveGroup, bgColorIndex, pauseBtn, gameOverBg,bestScoreLbl,bestScorePoint,yourScoreLbl,yourScorePoint,shareBtn,playBtn,gameOverGroup, gameCenterBtn,options,bgMusicPlayer,musicBtn,soundBtn,creditBtn,aboutBg, properlyInView,lastButton,trailingSpriteArray,trailingSpriteArrayIndex,dropArray,dropArrayIndex,level,combo,comboAnnouncer,multiplierAnnouncer, isDoubleScore;
+@synthesize paddle,speedOffset,paddleArray,paddleHoldShapeOffset, paddleArrayIndex, bgColor, levelBar, scoreLabel, isGameOver,gameOverTextCanBeAdded,gameOverText,rainNode, sparkArrayIndex, bgColorArray, bg, bgBlack, isPause,moveGroup, bgColorIndex, pauseBtn, gameOverBg,bestScoreLbl,bestScorePoint,yourScoreLbl,yourScorePoint,shareBtn,playBtn,gameOverGroup, gameCenterBtn,options,bgMusicPlayer,musicBtn,soundBtn,creditBtn,aboutBg, properlyInView,lastButton,trailingSpriteArray,trailingSpriteArrayIndex,dropArray,dropArrayIndex,level,combo,comboAnnouncer,multiplierAnnouncer, isDoubleScore,focusAnnouncer,isFocused,coin;
 //@synthesize score;
 
 -(id)initWithSize:(CGSize)size {
@@ -88,6 +88,7 @@
         SKAction *drop = [SKAction runBlock:^{
             //Drop shapes
             [self dropShape];
+            [self randomDelayedSpawnCoin];
             canLoadColoredColumn = NO;
         }];
         [self runAction:[SKAction sequence:@[move, wait, drop]]];
@@ -134,6 +135,29 @@
         }], [SKAction waitForDuration:0.05]]]]];
         multiplierAnnouncer.hidden = YES;
         
+        
+        //focus
+        focusAnnouncer = [[SKSpriteNode alloc] initWithImageNamed:@"Focus"];
+        if(IS_568_SCREEN)
+            focusAnnouncer.position = CGPointMake(self.size.width*0.5, self.size.height*0.75);
+        else
+            focusAnnouncer.position = CGPointMake(self.size.width*0.5, self.size.height*0.72);
+        
+        if(IS_IPAD_SCREEN)
+            [focusAnnouncer setScale:1.0];
+        else
+            [focusAnnouncer setScale:0.5];
+        [self addChild:focusAnnouncer];
+        [focusAnnouncer runAction:[SKAction repeatActionForever:[SKAction sequence:@[[SKAction fadeAlphaTo:0.3 duration:0.1],[SKAction fadeAlphaTo:0.7 duration:0.1]]]]];
+        //        focusAnnouncer.hidden = YES;
+        
+        //coin
+        coin = [[SKSpriteNode alloc] initWithImageNamed:@"Coin"];
+        [coin setScale:0.5];
+        coin.physicsBody = [SKPhysicsBody bodyWithCircleOfRadius:coin.size.height/2];
+        coin.physicsBody.dynamic = true;
+        coin.physicsBody.categoryBitMask = coinCategory;
+        coin.physicsBody.contactTestBitMask = paddleCategory | worldCategory;
     }
     return self;
 }
@@ -147,6 +171,7 @@
     level = 0;
     combo = 0;
     isDoubleScore = NO;
+    isFocused = NO;
     
     //bg music
     NSError *error;
@@ -342,6 +367,7 @@
         //pause
         if([node.name isEqualToString:@"pauseBtn"] && !isPause){
             [self removeActionForKey:@"dropShape"];
+            [self removeActionForKey:@"dropCoin"];
             bgBlack.alpha = 0.3;
             isPause = YES;
             if(options.soundOn)
@@ -358,6 +384,7 @@
                 [bgMusicPlayer play];
             bgBlack.alpha = 0.0;
             [self dropShape];
+            [self randomDelayedSpawnCoin];
         }
     }
 }
@@ -428,7 +455,7 @@
     
     // if level bar > screen next level, if level bar < 0 gameover
     if(levelBar.size.width <= 0){
-        levelBar.size = CGSizeMake(self.size.width*0.6, levelBar.size.height);
+        [levelBar runAction:[SKAction resizeToWidth:self.size.width*0.6 duration:0.2]];
         level ++;
         bgMusicPlayer.rate += 0.2;
         //        level++;
@@ -489,120 +516,154 @@
     
 }
 -(void)didBeginContact:(SKPhysicsContact *)contact{
-    SKSpriteNode * takenShape;
-    Drops *shape = (Drops*)contact.bodyB.node;
-    
-    //Spark particle init
-    SKEmitterNode *sparkNode = self.sparkEmitter[shape.type];
-    sparkNode.position = shape.position;
-    if (!sparkNode.parent){
-        [self addChild:sparkNode];
+    if(contact.bodyB.categoryBitMask == dropCategory){
+        SKSpriteNode * takenShape;
+        Drops *shape = (Drops*)contact.bodyB.node;
+        
+        //Spark particle init
+        SKEmitterNode *sparkNode = self.sparkEmitter[shape.type];
+        sparkNode.position = shape.position;
+        if (!sparkNode.parent){
+            [self addChild:sparkNode];
+        }
+        [sparkNode resetSimulation];
+        [self runAction:[SKAction runBlock:^{
+            shape.position = CGPointMake(self.size.width*2, self.size.height);
+        }]];
+        //If paddle is hit
+        if(contact.bodyA.categoryBitMask == paddleCategory){
+            SKAction *moveBack = [SKAction moveBy:CGVectorMake(0, -10.0) duration:0.02];
+            SKAction *moveForth = [SKAction moveBy:CGVectorMake(0, 10.0) duration:0.3];
+            SKAction *wait = [SKAction waitForDuration:0.02];
+            SKAction *paddleImpact = [SKAction sequence:@[moveBack, wait, moveForth]];
+            [paddle runAction:paddleImpact];
+            
+            //Add taken shapes to paddle
+            [paddleArray addObject:[NSNumber numberWithInt:shape.type]];
+            
+            //If the taken shape is not the same as the previous one
+            if(paddleArrayIndex >= 1 && [paddleArray[paddleArrayIndex-1] integerValue] != shape.type && paddleArray[paddleArrayIndex-1] != nil){
+                [paddleArray removeAllObjects];
+                paddleArrayIndex = 0;
+                [paddle removeAllChildren];
+                if(IS_IPAD_SCREEN)
+                    paddleHoldShapeOffset = 0.5;
+                else
+                    paddleHoldShapeOffset = 1;
+                [levelBar runAction:[SKAction resizeToWidth:(levelBar.size.width + self.size.width*0.2) duration:0.2]];
+                if(options.soundOn)
+                    [self runAction:[SKAction playSoundFileNamed:@"fail.wav" waitForCompletion:NO]];
+                SKAction *flash = [SKAction sequence:@[[SKAction fadeOutWithDuration:0.05], [SKAction waitForDuration:0.05], [SKAction fadeInWithDuration:0.05]]];
+                [paddle runAction:flash];
+                isDoubleScore = NO;
+                combo = 0;
+                multiplierAnnouncer.hidden = YES;
+            }
+            
+            //Or if the paddle array isn't full yet
+            else if(paddleArrayIndex != 2){
+                takenShape = [SKSpriteNode spriteNodeWithImageNamed:[self chooseShape:shape.type]];
+                [paddle addChild:takenShape];
+                takenShape.position = CGPointMake(paddle.size.width*(0-paddleHoldShapeOffset), 0);
+                takenShape.color = bgColor;
+                takenShape.colorBlendFactor = 1;
+                paddleArrayIndex += 1;
+                if(IS_IPAD_SCREEN)
+                    paddleHoldShapeOffset -= 0.5;
+                else
+                    paddleHoldShapeOffset -= 1;
+                if(options.soundOn)
+                    [self runAction:[SKAction playSoundFileNamed:@"eat_sound.wav" waitForCompletion:NO]];
+                
+            }
+            
+            //Or else- this case mean match 3 has been made
+            else{
+                [paddleArray removeAllObjects];
+                paddleArrayIndex = 0;
+                [paddle removeAllChildren];
+                if(IS_IPAD_SCREEN)
+                    paddleHoldShapeOffset = 0.5;
+                else
+                    paddleHoldShapeOffset = 1;
+                [levelBar runAction:[SKAction resizeToWidth:(levelBar.size.width - self.size.width*0.3) duration:0.2]];
+                
+                if(isDoubleScore)
+                    score += 2;
+                else
+                    score += 1;
+                
+                //combo
+                combo ++;
+                SKAction *fadeInOutAndReposition = [SKAction sequence:@[[SKAction fadeInWithDuration:0.2], [SKAction waitForDuration:0.1], [SKAction fadeOutWithDuration:0.2], [SKAction moveByX:0 y:-50 duration:0.01]]];
+                SKAction *rise = [SKAction moveByX:0 y:50 duration:0.5];
+                comboAnnouncer.text = [self getComboTextWithCombo:combo];
+                [comboAnnouncer runAction:fadeInOutAndReposition];
+                [comboAnnouncer runAction:rise];
+                if(combo == 3)
+                {
+                    multiplierAnnouncer.hidden = NO;
+                    isDoubleScore = YES;
+                }
+                
+                NSString *matchingPath =
+                [[NSBundle mainBundle]
+                 pathForResource:@"Matching" ofType:@"sks"];
+                SKEmitterNode *matchingNode =
+                [NSKeyedUnarchiver unarchiveObjectWithFile:matchingPath];
+                [paddle addChild:matchingNode];
+                if(options.soundOn)
+                    [self runAction:[SKAction playSoundFileNamed:@"success.wav" waitForCompletion:NO]];
+            }
+            
+            //Offset for taken shape displaying
+            if(IS_IPAD_SCREEN){
+                if(paddleHoldShapeOffset < -0.5){
+                    paddleHoldShapeOffset = 0.5;
+                }
+            }
+            else{
+                if(paddleHoldShapeOffset < -1){
+                    paddleHoldShapeOffset = 1;
+                }
+            }
+        }
     }
-    [sparkNode resetSimulation];
-    [self runAction:[SKAction runBlock:^{
-        shape.position = CGPointMake(self.size.width*2, self.size.height);
-    }]];
-    //If paddle is hit
-    if(contact.bodyA.categoryBitMask == paddleCategory){
-        SKAction *moveBack = [SKAction moveBy:CGVectorMake(0, -10.0) duration:0.02];
-        SKAction *moveForth = [SKAction moveBy:CGVectorMake(0, 10.0) duration:0.3];
-        SKAction *wait = [SKAction waitForDuration:0.02];
-        SKAction *paddleImpact = [SKAction sequence:@[moveBack, wait, moveForth]];
-        [paddle runAction:paddleImpact];
-        
-        //Add taken shapes to paddle
-        [paddleArray addObject:[NSNumber numberWithInt:shape.type]];
-        
-        //If the taken shape is not the same as the previous one
-        if(paddleArrayIndex >= 1 && [paddleArray[paddleArrayIndex-1] integerValue] != shape.type && paddleArray[paddleArrayIndex-1] != nil){
-            [paddleArray removeAllObjects];
-            paddleArrayIndex = 0;
-            [paddle removeAllChildren];
-            if(IS_IPAD_SCREEN)
-                paddleHoldShapeOffset = 0.5;
-            else
-                paddleHoldShapeOffset = 1;
-            levelBar.size = CGSizeMake(levelBar.size.width + self.size.width*0.2, levelBar.size.height);
-            if(options.soundOn)
-                [self runAction:[SKAction playSoundFileNamed:@"eat_sound.wav" waitForCompletion:NO]];
-            SKAction *flash = [SKAction sequence:@[[SKAction fadeOutWithDuration:0.05], [SKAction waitForDuration:0.05], [SKAction fadeInWithDuration:0.05]]];
-            [paddle runAction:flash];
-            isDoubleScore = NO;
-            combo = 0;
-            multiplierAnnouncer.hidden = YES;
+    else if(contact.bodyB.categoryBitMask == coinCategory){
+        if(contact.bodyA.categoryBitMask == paddleCategory){
+            [self runAction:[SKAction runBlock:^{
+                coin.position = CGPointMake(self.size.width*2, self.size.height);
+            }]];
         }
-        
-        //Or if the paddle array isn't full yet
-        else if(paddleArrayIndex != 2){
-            takenShape = [SKSpriteNode spriteNodeWithImageNamed:[self chooseShape:shape.type]];
-            [paddle addChild:takenShape];
-            takenShape.position = CGPointMake(paddle.size.width*(0-paddleHoldShapeOffset), 0);
-            takenShape.color = bgColor;
-            takenShape.colorBlendFactor = 1;
-            paddleArrayIndex += 1;
-            if(IS_IPAD_SCREEN)
-                paddleHoldShapeOffset -= 0.5;
-            else
-                paddleHoldShapeOffset -= 1;
-            if(options.soundOn)
-                [self runAction:[SKAction playSoundFileNamed:@"eat_sound.wav" waitForCompletion:NO]];
-            
-        }
-        
-        //Or else- this case mean match 3 has been made
-        else{
-            [paddleArray removeAllObjects];
-            paddleArrayIndex = 0;
-            [paddle removeAllChildren];
-            if(IS_IPAD_SCREEN)
-                paddleHoldShapeOffset = 0.5;
-            else
-                paddleHoldShapeOffset = 1;
-            levelBar.size = CGSizeMake(levelBar.size.width - self.size.width*0.3, levelBar.size.height);
-            
-            if(isDoubleScore)
-                score += 2;
-            else
-                score += 1;
-            
-            //combo
-            combo ++;
-            SKAction *fadeInOutAndReposition = [SKAction sequence:@[[SKAction fadeInWithDuration:0.2], [SKAction waitForDuration:0.1], [SKAction fadeOutWithDuration:0.2], [SKAction moveByX:0 y:-50 duration:0.01]]];
-            SKAction *rise = [SKAction moveByX:0 y:50 duration:0.5];
-            comboAnnouncer.text = [self getComboTextWithCombo:combo];
-            [comboAnnouncer runAction:fadeInOutAndReposition];
-            [comboAnnouncer runAction:rise];
-            if(combo == 3)
-            {
-                multiplierAnnouncer.hidden = NO;
-                isDoubleScore = YES;
-            }
-            
-            NSString *matchingPath =
-            [[NSBundle mainBundle]
-             pathForResource:@"Matching" ofType:@"sks"];
-            SKEmitterNode *matchingNode =
-            [NSKeyedUnarchiver unarchiveObjectWithFile:matchingPath];
-            [paddle addChild:matchingNode];
-            if(options.soundOn)
-                [self runAction:[SKAction playSoundFileNamed:@"success.wav" waitForCompletion:NO]];
-        }
-        
-        //Offset for taken shape displaying
-        if(IS_IPAD_SCREEN){
-            if(paddleHoldShapeOffset < -0.5){
-                paddleHoldShapeOffset = 0.5;
-            }
-        }
-        else{
-            if(paddleHoldShapeOffset < -1){
-                paddleHoldShapeOffset = 1;
-            }
-        }
+        else
+            [self runAction:[SKAction runBlock:^{
+                coin.position = CGPointMake(self.size.width*2, self.size.height);
+            }]];
     }
-    
 }
 
+-(void)dropCoinRandomPosition{
+    if(!isGameOver){
+        float dropPositionOffset = (float)((arc4random()%8 + 1)*0.1);
+        if(coin.parent == self){
+            coin.position = CGPointMake(self.size.width * dropPositionOffset, self.size.height);
+            coin.physicsBody.velocity = CGVectorMake(0, 0);
+        }
+        else
+            [self addChild:coin];
+    }
+}
+-(void)randomDelayedSpawnCoin{
+    SKAction *dropRandom = [SKAction runBlock:^{
+        [self dropCoinRandomPosition];
+    }];
+    int randomDelay = arc4random()%5 + 15;
+    SKAction *delay = [SKAction waitForDuration:randomDelay];
+    SKAction *dropAndDelay = [SKAction sequence:@[dropRandom, delay]];
+    SKAction *dropAndDelayForever = [SKAction repeatActionForever:dropAndDelay];
+    [self runAction:dropAndDelayForever withKey:@"dropCoin"];
+    
+}
 //Random shape and position of drops
 -(void)randomShapeAndPosition{
     if(!isGameOver){

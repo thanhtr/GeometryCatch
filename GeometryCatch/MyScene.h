@@ -16,6 +16,7 @@
 static UInt32 worldCategory = 1 << 1;
 static UInt32 paddleCategory = 1 << 2;
 static UInt32 dropCategory = 1 << 3;
+static UInt32 coinCategory = 1 << 4;
 static int score;
 
 @interface MyScene : SKScene <SKPhysicsContactDelegate>
@@ -33,6 +34,8 @@ static int score;
 @property SKSpriteNode *aboutBg;
 @property SKSpriteNode *pauseBtn;
 @property SKSpriteNode *multiplierAnnouncer;
+@property SKSpriteNode *focusAnnouncer;
+@property SKSpriteNode *coin;
 @property SKLabelNode *gameOverText;
 @property SKLabelNode *bestScoreLbl;
 @property SKLabelNode *bestScorePoint;
@@ -64,6 +67,7 @@ static int score;
 @property BOOL isPause;
 @property BOOL properlyInView;
 @property BOOL isDoubleScore;
+@property BOOL isFocused;
 @property SKColor *bgColor;
 @property Options *options;
 +(int)getScore;

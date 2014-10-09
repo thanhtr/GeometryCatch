@@ -108,6 +108,10 @@
 		D85207EC19E473D7003DF6AF /* x2_red.png in Resources */ = {isa = PBXBuildFile; fileRef = D85207E419E473D7003DF6AF /* x2_red.png */; };
 		D85207ED19E473D7003DF6AF /* x2_white.png in Resources */ = {isa = PBXBuildFile; fileRef = D85207E519E473D7003DF6AF /* x2_white.png */; };
 		D85207EF19E48CE1003DF6AF /* interestBar_Below768.png in Resources */ = {isa = PBXBuildFile; fileRef = D85207EE19E48CE1003DF6AF /* interestBar_Below768.png */; };
+		D8E2070E19E7018E00179E8C /* coin.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = D8E2070B19E7018E00179E8C /* coin.mp3 */; };
+		D8E2070F19E7018E00179E8C /* fail.wav in Resources */ = {isa = PBXBuildFile; fileRef = D8E2070C19E7018E00179E8C /* fail.wav */; };
+		D8E2071019E7018E00179E8C /* power_up.wav in Resources */ = {isa = PBXBuildFile; fileRef = D8E2070D19E7018E00179E8C /* power_up.wav */; };
+		D8E2071219E721BF00179E8C /* GetCoin.sks in Resources */ = {isa = PBXBuildFile; fileRef = D8E2071119E721BF00179E8C /* GetCoin.sks */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -247,6 +251,10 @@
 		D85207E419E473D7003DF6AF /* x2_red.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = x2_red.png; sourceTree = "<group>"; };
 		D85207E519E473D7003DF6AF /* x2_white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = x2_white.png; sourceTree = "<group>"; };
 		D85207EE19E48CE1003DF6AF /* interestBar_Below768.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = interestBar_Below768.png; sourceTree = "<group>"; };
+		D8E2070B19E7018E00179E8C /* coin.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = coin.mp3; sourceTree = "<group>"; };
+		D8E2070C19E7018E00179E8C /* fail.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = fail.wav; sourceTree = "<group>"; };
+		D8E2070D19E7018E00179E8C /* power_up.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = power_up.wav; sourceTree = "<group>"; };
+		D8E2071119E721BF00179E8C /* GetCoin.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GetCoin.sks; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -481,6 +489,7 @@
 				6A38B20F19815DF000376662 /* Spark.sks */,
 				6A9D083C1998BF1900888896 /* Explosion.sks */,
 				6A648BD2199CBF3000126114 /* Matching.sks */,
+				D8E2071119E721BF00179E8C /* GetCoin.sks */,
 			);
 			name = ParticleSystems;
 			sourceTree = "<group>";
@@ -495,6 +504,9 @@
 		6ADD148E1993B54D00D8EAE8 /* Sound&Music */ = {
 			isa = PBXGroup;
 			children = (
+				D8E2070B19E7018E00179E8C /* coin.mp3 */,
+				D8E2070C19E7018E00179E8C /* fail.wav */,
+				D8E2070D19E7018E00179E8C /* power_up.wav */,
 				6AA37745199BA21C0057BFED /* unpause.mp3 */,
 				6AA37746199BA21C0057BFED /* pausegame.mp3 */,
 				6AA37747199BA21C0057BFED /* ingame1.mp3 */,
@@ -612,6 +624,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6A648BE6199CFB8800126114 /* muted_music_button_normal.png in Resources */,
+				D8E2071019E7018E00179E8C /* power_up.wav in Resources */,
 				6AACC546198E520C00DE8D7A /* optionbutton.png in Resources */,
 				6AA3774B199BA21C0057BFED /* ingame1.mp3 in Resources */,
 				6ADD148C1993787B00D8EAE8 /* share_normal.png in Resources */,
@@ -646,6 +659,7 @@
 				6ADD14901993B64D00D8EAE8 /* Menu_Music.wav in Resources */,
 				6AACC543198E520C00DE8D7A /* music.png in Resources */,
 				6A648BE5199CFB8800126114 /* muted_music_button_touched.png in Resources */,
+				D8E2070F19E7018E00179E8C /* fail.wav in Resources */,
 				6AB8C197198A84A300428ACB /* paddle.png in Resources */,
 				6AB8C196198A84A300428ACB /* levelBar.png in Resources */,
 				D85207EA19E473D7003DF6AF /* interestBar_Above.png in Resources */,
@@ -658,6 +672,7 @@
 				D85207ED19E473D7003DF6AF /* x2_white.png in Resources */,
 				D85207E919E473D7003DF6AF /* Focus.png in Resources */,
 				6AB8C19E198A84A300428ACB /* spark.png in Resources */,
+				D8E2070E19E7018E00179E8C /* coin.mp3 in Resources */,
 				6AB8C19F198A84A300428ACB /* square_particle.png in Resources */,
 				6AB8C1A0198A84A300428ACB /* triangle_particle.png in Resources */,
 				6AA3774C199BA21C0057BFED /* eat_sound.wav in Resources */,
@@ -679,6 +694,7 @@
 				6A9D084E19995F1B00888896 /* success.wav in Resources */,
 				6AAB6A9A19C0D2D30080C4C1 /* icon.png in Resources */,
 				6AAB6A9C19C0D2D30080C4C1 /* credit.png in Resources */,
+				D8E2071219E721BF00179E8C /* GetCoin.sks in Resources */,
 				6A648BE3199CFB8800126114 /* muted_sound_button_touched.png in Resources */,
 				6A648BE7199CFB8800126114 /* sound_button_normal.png in Resources */,
 				6AAB68611994F4AF008776A7 /* Screenshot.png in Resources */,
