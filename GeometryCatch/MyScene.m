@@ -17,7 +17,7 @@
 @end
 
 @implementation MyScene
-@synthesize paddle,speedOffset,paddleArray,paddleHoldShapeOffset, paddleArrayIndex, bgColor, levelBar, scoreLabel, isGameOver,gameOverTextCanBeAdded,gameOverText,rainNode, sparkArrayIndex, bgColorArray, bg, bgBlack, isPause,moveGroup, bgColorIndex, pauseBtn, gameOverBg,bestScoreLbl,bestScorePoint,yourScoreLbl,yourScorePoint,shareBtn,playBtn,gameOverGroup, gameCenterBtn,options,bgMusicPlayer,musicBtn,soundBtn,creditBtn,aboutBg, properlyInView,lastButton,trailingSpriteArray,trailingSpriteArrayIndex,dropArray,dropArrayIndex,level,combo,comboAnnouncer,multiplierAnnouncer, isDoubleScore,focusAnnouncer,isFocused,coin;
+@synthesize paddle,speedOffset,paddleArray,paddleHoldShapeOffset, paddleArrayIndex, bgColor, levelBar, scoreLabel, isGameOver,gameOverTextCanBeAdded,gameOverText,rainNode, sparkArrayIndex, bgColorArray, bg, bgBlack, isPause,moveGroup, bgColorIndex, pauseBtn, gameOverBg,bestScoreLbl,bestScorePoint,yourScoreLbl,yourScorePoint,shareBtn,playBtn,gameOverGroup, gameCenterBtn,options,bgMusicPlayer,musicBtn,soundBtn,creditBtn,aboutBg, properlyInView,lastButton,trailingSpriteArray,trailingSpriteArrayIndex,dropArray,dropArrayIndex,level,combo,comboAnnouncer,multiplierAnnouncer, isDoubleScore,focusAnnouncer,isFocused,coin,focusBead;
 //@synthesize score;
 
 -(id)initWithSize:(CGSize)size {
@@ -153,13 +153,41 @@
         
         //coin
         coin = [[SKSpriteNode alloc] initWithImageNamed:@"Coin"];
-        [coin setScale:0.5];
+        [coin setScale:0.35];
         coin.physicsBody = [SKPhysicsBody bodyWithCircleOfRadius:coin.size.height/2];
         coin.physicsBody.dynamic = true;
         coin.physicsBody.categoryBitMask = coinCategory;
         coin.physicsBody.contactTestBitMask = paddleCategory | worldCategory;
+        
+        //focus bead
+        focusBead = [[SKSpriteNode alloc] initWithImageNamed:@"Focus_bead"];
+        [focusBead setScale:0.35];
+        focusBead.position = CGPointMake(self.size.width/2, self.size.height/2);
+//        focusBead.physicsBody = [SKPhysicsBody bodyWithCircleOfRadius:focusBead.size.height/2];
+//        focusBead.physicsBody.dynamic = true;
+//        focusBead.physicsBody.categoryBitMask = focusCategory;
+//        focusBead.physicsBody.contactTestBitMask = paddleCategory | worldCategory;
+        [self addChild:focusBead];
+        [self randomHueFocusBead];
+        
+        SKSpriteNode *glow = [[SKSpriteNode alloc] initWithImageNamed:@"bead_white"];
+        [glow setScale:1.15];
+        [focusBead addChild:glow];
+        [glow runAction:[SKAction repeatActionForever:[SKAction sequence:@[[SKAction fadeAlphaTo:0.5 duration:0.1],[SKAction fadeAlphaTo:0.1 duration:0.1]]]]];
+
+
     }
     return self;
+}
+-(void)randomHueFocusBead{
+    SKAction *random = [SKAction runBlock:^{
+        float random = (float)((arc4random()%10)*0.1);
+        [focusBead runAction:[SKAction colorizeWithColor:[UIColor colorWithHue:random saturation:1 brightness:1           alpha:1] colorBlendFactor:1 duration:0.5]];
+    }];
+    SKAction *delay = [SKAction waitForDuration:0.5];
+    SKAction *randomAndDelay = [SKAction sequence:@[random, delay]];
+    SKAction *randomAndDelayForever = [SKAction repeatActionForever:randomAndDelay];
+    [self runAction:randomAndDelayForever];
 }
 -(void)createInitElements{
     options = [[Options alloc] init];
@@ -458,7 +486,6 @@
         [levelBar runAction:[SKAction resizeToWidth:self.size.width*0.6 duration:0.2]];
         level ++;
         bgMusicPlayer.rate += 0.2;
-        //        level++;
         if(IS_IPAD_SCREEN)
             speedOffset -= 4;
         else
@@ -586,8 +613,10 @@
                     paddleHoldShapeOffset = 0.5;
                 else
                     paddleHoldShapeOffset = 1;
-                [levelBar runAction:[SKAction resizeToWidth:(levelBar.size.width - self.size.width*0.3) duration:0.2]];
-                
+                if(levelBar.size.width > self.size.width*0.3)
+                    [levelBar runAction:[SKAction resizeToWidth:(levelBar.size.width - self.size.width*0.3) duration:0.2]];
+                else
+                    [levelBar runAction:[SKAction resizeToWidth:-0.3 duration:0.2]];
                 if(isDoubleScore)
                     score += 2;
                 else
@@ -657,9 +686,9 @@
     SKAction *dropRandom = [SKAction runBlock:^{
         [self dropCoinRandomPosition];
     }];
-    int randomDelay = arc4random()%5 + 15;
+    int randomDelay = arc4random()%5 + 10;
     SKAction *delay = [SKAction waitForDuration:randomDelay];
-    SKAction *dropAndDelay = [SKAction sequence:@[dropRandom, delay]];
+    SKAction *dropAndDelay = [SKAction sequence:@[delay, dropRandom]];
     SKAction *dropAndDelayForever = [SKAction repeatActionForever:dropAndDelay];
     [self runAction:dropAndDelayForever withKey:@"dropCoin"];
     

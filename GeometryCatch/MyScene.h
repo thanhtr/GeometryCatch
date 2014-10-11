@@ -17,6 +17,8 @@ static UInt32 worldCategory = 1 << 1;
 static UInt32 paddleCategory = 1 << 2;
 static UInt32 dropCategory = 1 << 3;
 static UInt32 coinCategory = 1 << 4;
+static UInt32 focusCategory = 1 << 5;
+
 static int score;
 
 @interface MyScene : SKScene <SKPhysicsContactDelegate>
@@ -36,6 +38,7 @@ static int score;
 @property SKSpriteNode *multiplierAnnouncer;
 @property SKSpriteNode *focusAnnouncer;
 @property SKSpriteNode *coin;
+@property SKSpriteNode *focusBead;
 @property SKLabelNode *gameOverText;
 @property SKLabelNode *bestScoreLbl;
 @property SKLabelNode *bestScorePoint;

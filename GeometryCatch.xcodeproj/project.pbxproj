@@ -99,6 +99,7 @@
 		D7A4CEEE19BF7449008B93A8 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7A4CEED19BF7449008B93A8 /* MessageUI.framework */; };
 		D7A4CEF019BF7459008B93A8 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7A4CEEF19BF7459008B93A8 /* SystemConfiguration.framework */; };
 		D7A4CEF219BF746D008B93A8 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7A4CEF119BF746D008B93A8 /* AdSupport.framework */; };
+		D8156EE719E9A99E00743A29 /* bead_white.png in Resources */ = {isa = PBXBuildFile; fileRef = D8156EE619E9A99D00743A29 /* bead_white.png */; };
 		D85207E619E473D7003DF6AF /* Coin.png in Resources */ = {isa = PBXBuildFile; fileRef = D85207DE19E473D7003DF6AF /* Coin.png */; };
 		D85207E719E473D7003DF6AF /* coinParticles.png in Resources */ = {isa = PBXBuildFile; fileRef = D85207DF19E473D7003DF6AF /* coinParticles.png */; };
 		D85207E819E473D7003DF6AF /* Focus_bead.png in Resources */ = {isa = PBXBuildFile; fileRef = D85207E019E473D7003DF6AF /* Focus_bead.png */; };
@@ -242,6 +243,7 @@
 		D7A4CEED19BF7449008B93A8 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		D7A4CEEF19BF7459008B93A8 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		D7A4CEF119BF746D008B93A8 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
+		D8156EE619E9A99D00743A29 /* bead_white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bead_white.png; sourceTree = "<group>"; };
 		D85207DE19E473D7003DF6AF /* Coin.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Coin.png; sourceTree = "<group>"; };
 		D85207DF19E473D7003DF6AF /* coinParticles.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = coinParticles.png; sourceTree = "<group>"; };
 		D85207E019E473D7003DF6AF /* Focus_bead.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Focus_bead.png; sourceTree = "<group>"; };
@@ -384,6 +386,7 @@
 		6A0CBBF2198041CC003382ED /* Art */ = {
 			isa = PBXGroup;
 			children = (
+				D8156EE619E9A99D00743A29 /* bead_white.png */,
 				D85207EE19E48CE1003DF6AF /* interestBar_Below768.png */,
 				D85207DE19E473D7003DF6AF /* Coin.png */,
 				D85207DF19E473D7003DF6AF /* coinParticles.png */,
@@ -636,6 +639,7 @@
 				D85207E819E473D7003DF6AF /* Focus_bead.png in Resources */,
 				6AACC542198E520C00DE8D7A /* sfx_off.png in Resources */,
 				D85207EC19E473D7003DF6AF /* x2_red.png in Resources */,
+				D8156EE719E9A99E00743A29 /* bead_white.png in Resources */,
 				D85207EB19E473D7003DF6AF /* interestBar_Below.png in Resources */,
 				6A648BEE199CFB8800126114 /* credit_button_touched.png in Resources */,
 				6A38B18919812B9B00376662 /* Rain.sks in Resources */,
