@@ -25,218 +25,227 @@
         
         //First init
         [self createInitElements];
-        
-        //Gameover elements
-        //        [self createGameOverBoardElements];
-        
-        //Initial opening animation
+        [self initShapesAndParticlesArray];
+        [self initSpecialDrops];
+        [self initLevelBar];
         if(canLoadColoredColumn)
             [self initColoredBackground];
-        self.sparkEmitter = [[NSMutableArray alloc] init];
-        for (int i = 0; i< 3; i++){
-            NSString *sparkPath =
-            [[NSBundle mainBundle]
-             pathForResource:@"Spark" ofType:@"sks"];
-            SKEmitterNode *sparkNode =
-            [NSKeyedUnarchiver unarchiveObjectWithFile:sparkPath];
-            [sparkNode setParticleTexture:[SKTexture textureWithImageNamed:[self chooseParticleShape:i]]];
-            if(IS_IPAD_SCREEN)
-                [sparkNode setParticleScale:0.3];
-            //    [shape removeFromParent];
-            sparkNode.name = @"sparkNode";
-            [self.sparkEmitter insertObject:sparkNode atIndex:i];
-            
-        }
-        for (int i = 0; i< 30; i++) {
-            int dropType = arc4random()%3;
-            float dropPositionOffset = (float)((arc4random()%8 + 1)*0.1);
-            Drops *drop;
-            
-            drop = [[Drops alloc] init:[self chooseShape:dropType]];
-            if(IS_IPAD_SCREEN)
-                [drop setScale:0.8];
-            
-            drop.type = dropType;
-            drop.name = @"drop";
-            drop.position = CGPointMake(self.size.width * dropPositionOffset, self.size.height);
-            
-            [dropArray addObject:drop];
-        }
-        
-        SKAction *move = [SKAction runBlock:^{
-            if(canLoadColoredColumn){
-                for (int i = 0; i< moveGroup.count; i++) {
-                    if(i < bgColorIndex){
-                        SKAction *slide = [SKAction moveByX:-self.size.width y:0 duration:1];
-                        slide.timingMode = SKActionTimingEaseInEaseOut;
-                        [moveGroup[i] runAction:slide];
-                    }
-                    else if (i > bgColorIndex){
-                        SKAction *slide = [SKAction moveByX:self.size.width y:0 duration:1];
-                        slide.timingMode = SKActionTimingEaseInEaseOut;
-                        [moveGroup[i] runAction:slide];                }
-                    else if (i == bgColorIndex){
-                        [moveGroup[i] runAction:[SKAction sequence:@[[SKAction colorizeWithColor:[SKColor clearColor] colorBlendFactor:1 duration:0.0], [SKAction waitForDuration:1.0], [SKAction runBlock:^{
-                            [moveGroup[i] removeFromParent];
-                        }]]]];
-                    }
-                }
-            }
-        }];
-        
-        SKAction *wait = [SKAction waitForDuration:1.5];
-        SKAction *drop = [SKAction runBlock:^{
-            //Drop shapes
-            [self dropShape];
-            [self randomDelayedSpawnCoin];
-            [self randomDelayedSpawnFocus];
-            canLoadColoredColumn = NO;
-        }];
-        [self runAction:[SKAction sequence:@[move, wait, drop]]];
-        
-        
-        //Level bar init
-        SKSpriteNode *levelBarBehind;
-        if(IS_IPAD_SCREEN)
-        {
-            levelBarBehind = [[SKSpriteNode alloc] initWithImageNamed:@"interestBar_Below768"];
-        }
-        else
-            levelBarBehind = [[SKSpriteNode alloc] initWithImageNamed:@"interestBar_Below"];
-        levelBarBehind.anchorPoint = CGPointMake(0.5, 1);
-        levelBarBehind.position = CGPointMake(self.size.width/2, self.size.height);
-        //    levelBarBehind.size = CGSizeMake(self.size.width, levelBarBehind.size.height);
-        //    [levelBarBehind setScale:2.0];
-        if(IS_IPAD_SCREEN)
-        {
-            levelBarBehind.xScale = 1.0;
-            levelBarBehind.yScale = 0.75;
-        }
-        else
-        {
-            levelBarBehind.xScale = 1.0;
-            levelBarBehind.yScale = 0.5;
-        }
-        [self addChild:levelBarBehind];
-        
-        levelBar = [[SKSpriteNode alloc]initWithImageNamed:@"interestBar_Above"];
-        levelBar.anchorPoint = CGPointMake(1, 1);
-        levelBar.position = CGPointMake(self.size.width, self.size.height);
-        levelBar.size = CGSizeMake(self.size.width*0.5, levelBar.size.height);
-        //        levelBar.yScale = 2.0;
-        //levelBar.color = bgColor;
-        //levelBar.colorBlendFactor = 0.7;
-        if(IS_IPAD_SCREEN)
-        {
-            levelBar.xScale = 1.5;
-            levelBar.yScale = 0.75;
-        }
-        else
-        {
-            levelBar.xScale = 1.0;
-            levelBar.yScale = 0.5;
-        }
-        
-        [self addChild:levelBar];
-        
-        //combo
-        comboAnnouncer = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
-        if(IS_568_SCREEN)
-            comboAnnouncer.position = CGPointMake(self.size.width*0.5, self.size.height*0.27);
-        else
-            comboAnnouncer.position = CGPointMake(self.size.width*0.5, self.size.height*0.33);
-        comboAnnouncer.fontColor = [SKColor colorWithRed:1 green:1 blue:1 alpha:0.3];
-        if(IS_IPAD_SCREEN)
-            comboAnnouncer.fontSize = 90;
-        else
-            comboAnnouncer.fontSize = 60;
-        [self addChild:comboAnnouncer];
-        
-        
-        //x2
-        multiplierAnnouncer = [[SKSpriteNode alloc] initWithImageNamed:@"x2_white"];
-        if(IS_568_SCREEN)
-            multiplierAnnouncer.position = CGPointMake(self.size.width*0.5, self.size.height*0.80);
-        else
-            multiplierAnnouncer.position = CGPointMake(self.size.width*0.5, self.size.height*0.78);
-        if(IS_IPAD_SCREEN)
-            [multiplierAnnouncer setScale:1.0];
-        else
-            [multiplierAnnouncer setScale:0.5];
-        [self addChild:multiplierAnnouncer];
-        [self runAction:[SKAction repeatActionForever:[SKAction sequence:@[[SKAction runBlock:^{
-            multiplierAnnouncer.texture = [SKTexture textureWithImageNamed:@"x2_red"];
-        }],[SKAction waitForDuration:0.1],[SKAction runBlock:^{
-            multiplierAnnouncer.texture = [SKTexture textureWithImageNamed:@"x2_white"];
-        }], [SKAction waitForDuration:0.1]]]]];
-        [self runAction:[SKAction repeatActionForever:[SKAction sequence:@[[SKAction runBlock:^{
-            multiplierAnnouncer.size = CGSizeMake(multiplierAnnouncer.size.width*1.05, multiplierAnnouncer.size.height*1.05);
-        }],[SKAction waitForDuration:0.05],[SKAction runBlock:^{
-            multiplierAnnouncer.size = CGSizeMake(multiplierAnnouncer.size.width*0.95, multiplierAnnouncer.size.height*0.95);
-        }], [SKAction waitForDuration:0.05]]]]];
-        [self runAction:[SKAction repeatActionForever:[SKAction sequence:@[[SKAction runBlock:^{
-            multiplierAnnouncer.position = CGPointMake(multiplierAnnouncer.position.x, multiplierAnnouncer.position.y + 1);
-        }],[SKAction waitForDuration:0.05],[SKAction runBlock:^{
-            multiplierAnnouncer.position = CGPointMake(multiplierAnnouncer.position.x, multiplierAnnouncer.position.y - 1);
-        }], [SKAction waitForDuration:0.05]]]]];
-        multiplierAnnouncer.hidden = YES;
-        
-        
-        //focus
-        focusAnnouncer = [[SKSpriteNode alloc] initWithImageNamed:@"Focus"];
-        if(IS_568_SCREEN)
-            focusAnnouncer.position = CGPointMake(self.size.width*0.5, self.size.height*0.75);
-        else
-            focusAnnouncer.position = CGPointMake(self.size.width*0.5, self.size.height*0.72);
-        
-        if(IS_IPAD_SCREEN)
-            [focusAnnouncer setScale:1.0];
-        else
-            [focusAnnouncer setScale:0.5];
-        [self addChild:focusAnnouncer];
-        [focusAnnouncer runAction:[SKAction repeatActionForever:[SKAction sequence:@[[SKAction fadeAlphaTo:0.3 duration:0.1],[SKAction fadeAlphaTo:0.7 duration:0.1]]]]];
-        focusAnnouncer.hidden = YES;
-        
-        //coin
-        coin = [[SKSpriteNode alloc] initWithImageNamed:@"Coin"];
-        if(IS_IPAD_SCREEN)
-            [coin setScale:0.7];
-        else
-            [coin setScale:0.35];
-        coin.physicsBody = [SKPhysicsBody bodyWithCircleOfRadius:coin.size.height/2];
-        coin.physicsBody.dynamic = true;
-        coin.physicsBody.categoryBitMask = coinCategory;
-        coin.physicsBody.contactTestBitMask = paddleCategory | worldCategory;
-        coin.name = @"coin";
-        [coin runAction:[SKAction repeatActionForever:[SKAction sequence:@[[SKAction resizeToWidth:coin.size.width*0.9 height:coin.size.height*0.9 duration:0.3],[SKAction resizeToWidth:coin.size.width*1.1 height:coin.size.height*1.1 duration:0.3]]]]];
-        //coin fake glow
-        SKSpriteNode *glowCoin = [[SKSpriteNode alloc] initWithImageNamed:@"Coin"];
-        [glowCoin setScale:1.5];
-        [coin addChild:glowCoin];
-        [glowCoin runAction:[SKAction repeatActionForever:[SKAction sequence:@[[SKAction fadeAlphaTo:0.5 duration:0.3],[SKAction fadeAlphaTo:0.1 duration:0.3]]]]];
-        
-        //focus bead
-        focusBead = [[SKSpriteNode alloc] initWithImageNamed:@"Focus_bead"];
-        if(IS_IPAD_SCREEN)
-            [focusBead setScale:0.7];
-        else
-            [focusBead setScale:0.35];
-        //        focusBead.position = CGPointMake(self.size.width/2, self.size.height/2);
-        focusBead.physicsBody = [SKPhysicsBody bodyWithCircleOfRadius:focusBead.size.height/2];
-        focusBead.physicsBody.dynamic = true;
-        focusBead.physicsBody.categoryBitMask = focusCategory;
-        focusBead.physicsBody.contactTestBitMask = paddleCategory | worldCategory;
-        //        [self addChild:focusBead];
-        [self randomHueFocusBead];
-        //focus bead fake glow
-        SKSpriteNode *glowFocus = [[SKSpriteNode alloc] initWithImageNamed:@"bead_white"];
-        [glowFocus setScale:1.15];
-        [focusBead addChild:glowFocus];
-        [glowFocus runAction:[SKAction repeatActionForever:[SKAction sequence:@[[SKAction fadeAlphaTo:0.5 duration:0.1],[SKAction fadeAlphaTo:0.1 duration:0.1]]]]];
-        
+        [self initColoredColumnTransitionAndStart];
         
     }
     return self;
+}
+
+-(void)initLevelBar{
+    //Level bar init
+    SKSpriteNode *levelBarBehind;
+    if(IS_IPAD_SCREEN)
+    {
+        levelBarBehind = [[SKSpriteNode alloc] initWithImageNamed:@"interestBar_Below768"];
+    }
+    else
+        levelBarBehind = [[SKSpriteNode alloc] initWithImageNamed:@"interestBar_Below"];
+    levelBarBehind.anchorPoint = CGPointMake(0.5, 1);
+    levelBarBehind.position = CGPointMake(self.size.width/2, self.size.height);
+    //    levelBarBehind.size = CGSizeMake(self.size.width, levelBarBehind.size.height);
+    //    [levelBarBehind setScale:2.0];
+    if(IS_IPAD_SCREEN)
+    {
+        levelBarBehind.xScale = 1.0;
+        levelBarBehind.yScale = 0.75;
+    }
+    else
+    {
+        levelBarBehind.xScale = 1.0;
+        levelBarBehind.yScale = 0.5;
+    }
+    [self addChild:levelBarBehind];
+    
+    levelBar = [[SKSpriteNode alloc]initWithImageNamed:@"interestBar_Above"];
+    levelBar.anchorPoint = CGPointMake(1, 1);
+    levelBar.position = CGPointMake(self.size.width, self.size.height);
+    levelBar.size = CGSizeMake(self.size.width*0.5, levelBar.size.height);
+    //        levelBar.yScale = 2.0;
+    //levelBar.color = bgColor;
+    //levelBar.colorBlendFactor = 0.7;
+    if(IS_IPAD_SCREEN)
+    {
+        levelBar.xScale = 1.5;
+        levelBar.yScale = 0.75;
+    }
+    else
+    {
+        levelBar.xScale = 1.0;
+        levelBar.yScale = 0.5;
+    }
+    
+    [self addChild:levelBar];
+
+}
+-(void)initShapesAndParticlesArray{
+    for (int i = 0; i< 3; i++){
+        NSString *sparkPath =
+        [[NSBundle mainBundle]
+         pathForResource:@"Spark" ofType:@"sks"];
+        SKEmitterNode *sparkNode =
+        [NSKeyedUnarchiver unarchiveObjectWithFile:sparkPath];
+        [sparkNode setParticleTexture:[SKTexture textureWithImageNamed:[self chooseParticleShape:i]]];
+        if(IS_IPAD_SCREEN)
+            [sparkNode setParticleScale:0.3];
+        //    [shape removeFromParent];
+        sparkNode.name = @"sparkNode";
+        [self.sparkEmitter insertObject:sparkNode atIndex:i];
+    }
+    
+    for (int i = 0; i< 30; i++) {
+        int dropType = arc4random()%3;
+        float dropPositionOffset = (float)((arc4random()%8 + 1)*0.1);
+        Drops *drop;
+        
+        drop = [[Drops alloc] init:[self chooseShape:dropType]];
+        if(IS_IPAD_SCREEN)
+            [drop setScale:0.8];
+        
+        drop.type = dropType;
+        drop.name = @"drop";
+        drop.position = CGPointMake(self.size.width * dropPositionOffset, self.size.height);
+        
+        [dropArray addObject:drop];
+    }
+    
+
+}
+-(void)initSpecialDrops{
+    //combo
+    comboAnnouncer = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
+    if(IS_568_SCREEN)
+        comboAnnouncer.position = CGPointMake(self.size.width*0.5, self.size.height*0.27);
+    else
+        comboAnnouncer.position = CGPointMake(self.size.width*0.5, self.size.height*0.33);
+    comboAnnouncer.fontColor = [SKColor colorWithRed:1 green:1 blue:1 alpha:0.3];
+    if(IS_IPAD_SCREEN)
+        comboAnnouncer.fontSize = 90;
+    else
+        comboAnnouncer.fontSize = 60;
+    [self addChild:comboAnnouncer];
+    
+    
+    //x2
+    multiplierAnnouncer = [[SKSpriteNode alloc] initWithImageNamed:@"x2_white"];
+    if(IS_568_SCREEN)
+        multiplierAnnouncer.position = CGPointMake(self.size.width*0.5, self.size.height*0.80);
+    else
+        multiplierAnnouncer.position = CGPointMake(self.size.width*0.5, self.size.height*0.78);
+    if(IS_IPAD_SCREEN)
+        [multiplierAnnouncer setScale:1.0];
+    else
+        [multiplierAnnouncer setScale:0.5];
+    [self addChild:multiplierAnnouncer];
+    [self runAction:[SKAction repeatActionForever:[SKAction sequence:@[[SKAction runBlock:^{
+        multiplierAnnouncer.texture = [SKTexture textureWithImageNamed:@"x2_red"];
+    }],[SKAction waitForDuration:0.1],[SKAction runBlock:^{
+        multiplierAnnouncer.texture = [SKTexture textureWithImageNamed:@"x2_white"];
+    }], [SKAction waitForDuration:0.1]]]]];
+    [self runAction:[SKAction repeatActionForever:[SKAction sequence:@[[SKAction runBlock:^{
+        multiplierAnnouncer.size = CGSizeMake(multiplierAnnouncer.size.width*1.05, multiplierAnnouncer.size.height*1.05);
+    }],[SKAction waitForDuration:0.05],[SKAction runBlock:^{
+        multiplierAnnouncer.size = CGSizeMake(multiplierAnnouncer.size.width*0.95, multiplierAnnouncer.size.height*0.95);
+    }], [SKAction waitForDuration:0.05]]]]];
+    [self runAction:[SKAction repeatActionForever:[SKAction sequence:@[[SKAction runBlock:^{
+        multiplierAnnouncer.position = CGPointMake(multiplierAnnouncer.position.x, multiplierAnnouncer.position.y + 1);
+    }],[SKAction waitForDuration:0.05],[SKAction runBlock:^{
+        multiplierAnnouncer.position = CGPointMake(multiplierAnnouncer.position.x, multiplierAnnouncer.position.y - 1);
+    }], [SKAction waitForDuration:0.05]]]]];
+    multiplierAnnouncer.hidden = YES;
+    
+    
+    //focus
+    focusAnnouncer = [[SKSpriteNode alloc] initWithImageNamed:@"Focus"];
+    if(IS_568_SCREEN)
+        focusAnnouncer.position = CGPointMake(self.size.width*0.5, self.size.height*0.75);
+    else
+        focusAnnouncer.position = CGPointMake(self.size.width*0.5, self.size.height*0.72);
+    
+    if(IS_IPAD_SCREEN)
+        [focusAnnouncer setScale:1.0];
+    else
+        [focusAnnouncer setScale:0.5];
+    [self addChild:focusAnnouncer];
+    [focusAnnouncer runAction:[SKAction repeatActionForever:[SKAction sequence:@[[SKAction fadeAlphaTo:0.3 duration:0.1],[SKAction fadeAlphaTo:0.7 duration:0.1]]]]];
+    focusAnnouncer.hidden = YES;
+    
+    //coin
+    coin = [[SKSpriteNode alloc] initWithImageNamed:@"Coin"];
+    if(IS_IPAD_SCREEN)
+        [coin setScale:0.7];
+    else
+        [coin setScale:0.35];
+    coin.physicsBody = [SKPhysicsBody bodyWithCircleOfRadius:coin.size.height/2];
+    coin.physicsBody.dynamic = true;
+    coin.physicsBody.categoryBitMask = coinCategory;
+    coin.physicsBody.contactTestBitMask = paddleCategory | worldCategory;
+    coin.name = @"coin";
+    [coin runAction:[SKAction repeatActionForever:[SKAction sequence:@[[SKAction resizeToWidth:coin.size.width*0.9 height:coin.size.height*0.9 duration:0.3],[SKAction resizeToWidth:coin.size.width*1.1 height:coin.size.height*1.1 duration:0.3]]]]];
+    //coin fake glow
+    SKSpriteNode *glowCoin = [[SKSpriteNode alloc] initWithImageNamed:@"Coin"];
+    [glowCoin setScale:1.5];
+    [coin addChild:glowCoin];
+    [glowCoin runAction:[SKAction repeatActionForever:[SKAction sequence:@[[SKAction fadeAlphaTo:0.5 duration:0.3],[SKAction fadeAlphaTo:0.1 duration:0.3]]]]];
+    
+    //focus bead
+    focusBead = [[SKSpriteNode alloc] initWithImageNamed:@"Focus_bead"];
+    if(IS_IPAD_SCREEN)
+        [focusBead setScale:0.7];
+    else
+        [focusBead setScale:0.35];
+    //        focusBead.position = CGPointMake(self.size.width/2, self.size.height/2);
+    focusBead.physicsBody = [SKPhysicsBody bodyWithCircleOfRadius:focusBead.size.height/2];
+    focusBead.physicsBody.dynamic = true;
+    focusBead.physicsBody.categoryBitMask = focusCategory;
+    focusBead.physicsBody.contactTestBitMask = paddleCategory | worldCategory;
+    //        [self addChild:focusBead];
+    [self randomHueFocusBead];
+    //focus bead fake glow
+    SKSpriteNode *glowFocus = [[SKSpriteNode alloc] initWithImageNamed:@"bead_white"];
+    [glowFocus setScale:1.15];
+    [focusBead addChild:glowFocus];
+    [glowFocus runAction:[SKAction repeatActionForever:[SKAction sequence:@[[SKAction fadeAlphaTo:0.5 duration:0.1],[SKAction fadeAlphaTo:0.1 duration:0.1]]]]];
+}
+-(void)initColoredColumnTransitionAndStart{
+    //Initial opening animation
+    
+    SKAction *move = [SKAction runBlock:^{
+        if(canLoadColoredColumn){
+            for (int i = 0; i< moveGroup.count; i++) {
+                if(i < bgColorIndex){
+                    SKAction *slide = [SKAction moveByX:-self.size.width y:0 duration:1];
+                    slide.timingMode = SKActionTimingEaseInEaseOut;
+                    [moveGroup[i] runAction:slide];
+                }
+                else if (i > bgColorIndex){
+                    SKAction *slide = [SKAction moveByX:self.size.width y:0 duration:1];
+                    slide.timingMode = SKActionTimingEaseInEaseOut;
+                    [moveGroup[i] runAction:slide];                }
+                else if (i == bgColorIndex){
+                    [moveGroup[i] runAction:[SKAction sequence:@[[SKAction colorizeWithColor:[SKColor clearColor] colorBlendFactor:1 duration:0.0], [SKAction waitForDuration:1.0], [SKAction runBlock:^{
+                        [moveGroup[i] removeFromParent];
+                    }]]]];
+                }
+            }
+        }
+    }];
+    
+    SKAction *wait = [SKAction waitForDuration:1.5];
+    SKAction *drop = [SKAction runBlock:^{
+        //Drop shapes
+        [self dropShape];
+        [self randomDelayedSpawnCoin];
+        [self randomDelayedSpawnFocus];
+        canLoadColoredColumn = NO;
+    }];
+    [self runAction:[SKAction sequence:@[move, wait, drop]]];
+    
+    
 }
 -(void)randomHueFocusBead{
     SKAction *random = [SKAction runBlock:^{
@@ -254,6 +263,8 @@
     trailingSpriteArray = [[NSMutableArray alloc] init];
     trailingCoinArray = [[NSMutableArray alloc] init];
     dropArray = [[NSMutableArray alloc] init];
+    self.sparkEmitter = [[NSMutableArray alloc] init];
+    
     trailingSpriteArrayIndex = 0;
     dropArrayIndex = 0;
     trailingCoinArrayIndex = 0;
@@ -459,7 +470,7 @@
                     trailSprite.position = CGPointMake(drop.position.x, drop.position.y -4);
                 else
                     trailSprite.position = CGPointMake(drop.position.x, drop.position.y -2);
-
+                
                 trailSprite.alpha = 0.05;
                 [trailSprite runAction:[SKAction fadeAlphaTo:0 duration:0.1]];
                 
@@ -498,7 +509,7 @@
             self.timeSinceUpdated = currentTime;
         }
         [self createTrailingSprites];
-
+        
     }
     //level bar reduced over time
     if(IS_IPAD_SCREEN)
@@ -507,6 +518,20 @@
         levelBar.size = CGSizeMake(levelBar.size.width + 0.2, levelBar.size.height);
     scoreLabel.text = [NSString stringWithFormat:@"%d",score];
     
+    [self levelUpAndGameOverHandler];
+        [self pauseAndUnpauseHandler];
+        //restrain paddle position within view
+    if(paddle.position.x < paddle.size.width/2){
+        paddle.position = CGPointMake(paddle.size.width/2, paddle.position.y);
+    }
+    else if (paddle.position.x > self.size.width -paddle.size.width/2){
+        paddle.position = CGPointMake(self.size.width -paddle.size.width/2, paddle.position.y);
+    }
+    
+    coin.zRotation = 0;
+    focusBead.zRotation = 0;
+}
+-(void)levelUpAndGameOverHandler{
     // if level bar > screen next level, if level bar < 0 gameover
     if(levelBar.size.width <= 0){
         [levelBar runAction:[SKAction resizeToWidth:self.size.width*0.6 duration:0.2]];
@@ -535,6 +560,9 @@
     if(levelBar.size.width >= (self.size.width*1.05)){
         [self gameOver];
     }
+
+}
+-(void)pauseAndUnpauseHandler{
     //pause and unpause action
     if(!isPause){
         if(self.physicsWorld.speed < 1)
@@ -546,18 +574,8 @@
         else if (self.physicsWorld.speed <= 0)
             self.view.paused = YES;
     }
-    //restrain paddle position within view
-    if(paddle.position.x < paddle.size.width/2){
-        paddle.position = CGPointMake(paddle.size.width/2, paddle.position.y);
-    }
-    else if (paddle.position.x > self.size.width -paddle.size.width/2){
-        paddle.position = CGPointMake(self.size.width -paddle.size.width/2, paddle.position.y);
-    }
-    
-    coin.zRotation = 0;
-    focusBead.zRotation = 0;
-}
 
+}
 -(NSString*)getComboTextWithCombo:(int)comboCount{
     if(comboCount == 2)
         return [NSString stringWithFormat:@"SWEET!"];
