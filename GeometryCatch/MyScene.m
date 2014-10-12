@@ -17,7 +17,7 @@
 @end
 
 @implementation MyScene
-@synthesize paddle,speedOffset,paddleArray,paddleHoldShapeOffset, paddleArrayIndex, bgColor, levelBar, scoreLabel, isGameOver,gameOverTextCanBeAdded,gameOverText,rainNode, sparkArrayIndex, bgColorArray, bg, bgBlack, isPause,moveGroup, bgColorIndex, pauseBtn, gameOverBg,bestScoreLbl,bestScorePoint,yourScoreLbl,yourScorePoint,shareBtn,playBtn,gameOverGroup, gameCenterBtn,options,bgMusicPlayer,musicBtn,soundBtn,creditBtn,aboutBg, properlyInView,lastButton,trailingSpriteArray,trailingSpriteArrayIndex,dropArray,dropArrayIndex,level,combo,comboAnnouncer,multiplierAnnouncer, isDoubleScore,focusAnnouncer,isFocused,coin,focusBead;
+@synthesize paddle,speedOffset,paddleArray,paddleHoldShapeOffset, paddleArrayIndex, bgColor, levelBar, scoreLabel, isGameOver,gameOverTextCanBeAdded,gameOverText,rainNode, sparkArrayIndex, bgColorArray, bg, bgBlack, isPause,moveGroup, bgColorIndex, pauseBtn, gameOverBg,bestScoreLbl,bestScorePoint,yourScoreLbl,yourScorePoint,shareBtn,playBtn,gameOverGroup, gameCenterBtn,options,bgMusicPlayer,musicBtn,soundBtn,creditBtn,aboutBg, properlyInView,lastButton,trailingSpriteArray,trailingSpriteArrayIndex,dropArray,dropArrayIndex,level,combo,comboAnnouncer,multiplierAnnouncer, isDoubleScore,focusAnnouncer,isFocused,coin,focusBead,trailingCoinArray,trailingCoinArrayIndex;
 //@synthesize score;
 
 -(id)initWithSize:(CGSize)size {
@@ -89,9 +89,55 @@
             //Drop shapes
             [self dropShape];
             [self randomDelayedSpawnCoin];
+            [self randomDelayedSpawnFocus];
             canLoadColoredColumn = NO;
         }];
         [self runAction:[SKAction sequence:@[move, wait, drop]]];
+        
+        
+        //Level bar init
+        SKSpriteNode *levelBarBehind;
+        if(IS_IPAD_SCREEN)
+        {
+            levelBarBehind = [[SKSpriteNode alloc] initWithImageNamed:@"interestBar_Below768"];
+        }
+        else
+            levelBarBehind = [[SKSpriteNode alloc] initWithImageNamed:@"interestBar_Below"];
+        levelBarBehind.anchorPoint = CGPointMake(0.5, 1);
+        levelBarBehind.position = CGPointMake(self.size.width/2, self.size.height);
+        //    levelBarBehind.size = CGSizeMake(self.size.width, levelBarBehind.size.height);
+        //    [levelBarBehind setScale:2.0];
+        if(IS_IPAD_SCREEN)
+        {
+            levelBarBehind.xScale = 1.0;
+            levelBarBehind.yScale = 0.75;
+        }
+        else
+        {
+            levelBarBehind.xScale = 1.0;
+            levelBarBehind.yScale = 0.5;
+        }
+        [self addChild:levelBarBehind];
+        
+        levelBar = [[SKSpriteNode alloc]initWithImageNamed:@"interestBar_Above"];
+        levelBar.anchorPoint = CGPointMake(1, 1);
+        levelBar.position = CGPointMake(self.size.width, self.size.height);
+        levelBar.size = CGSizeMake(self.size.width*0.5, levelBar.size.height);
+        //        levelBar.yScale = 2.0;
+        //levelBar.color = bgColor;
+        //levelBar.colorBlendFactor = 0.7;
+        if(IS_IPAD_SCREEN)
+        {
+            levelBar.xScale = 1.5;
+            levelBar.yScale = 0.75;
+        }
+        else
+        {
+            levelBar.xScale = 1.0;
+            levelBar.yScale = 0.5;
+        }
+        
+        [self addChild:levelBar];
         
         //combo
         comboAnnouncer = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
@@ -149,33 +195,46 @@
             [focusAnnouncer setScale:0.5];
         [self addChild:focusAnnouncer];
         [focusAnnouncer runAction:[SKAction repeatActionForever:[SKAction sequence:@[[SKAction fadeAlphaTo:0.3 duration:0.1],[SKAction fadeAlphaTo:0.7 duration:0.1]]]]];
-        //        focusAnnouncer.hidden = YES;
+        focusAnnouncer.hidden = YES;
         
         //coin
         coin = [[SKSpriteNode alloc] initWithImageNamed:@"Coin"];
-        [coin setScale:0.35];
+        if(IS_IPAD_SCREEN)
+            [coin setScale:0.7];
+        else
+            [coin setScale:0.35];
         coin.physicsBody = [SKPhysicsBody bodyWithCircleOfRadius:coin.size.height/2];
         coin.physicsBody.dynamic = true;
         coin.physicsBody.categoryBitMask = coinCategory;
         coin.physicsBody.contactTestBitMask = paddleCategory | worldCategory;
+        coin.name = @"coin";
+        [coin runAction:[SKAction repeatActionForever:[SKAction sequence:@[[SKAction resizeToWidth:coin.size.width*0.9 height:coin.size.height*0.9 duration:0.3],[SKAction resizeToWidth:coin.size.width*1.1 height:coin.size.height*1.1 duration:0.3]]]]];
+        //coin fake glow
+        SKSpriteNode *glowCoin = [[SKSpriteNode alloc] initWithImageNamed:@"Coin"];
+        [glowCoin setScale:1.5];
+        [coin addChild:glowCoin];
+        [glowCoin runAction:[SKAction repeatActionForever:[SKAction sequence:@[[SKAction fadeAlphaTo:0.5 duration:0.3],[SKAction fadeAlphaTo:0.1 duration:0.3]]]]];
         
         //focus bead
         focusBead = [[SKSpriteNode alloc] initWithImageNamed:@"Focus_bead"];
-        [focusBead setScale:0.35];
-        focusBead.position = CGPointMake(self.size.width/2, self.size.height/2);
-//        focusBead.physicsBody = [SKPhysicsBody bodyWithCircleOfRadius:focusBead.size.height/2];
-//        focusBead.physicsBody.dynamic = true;
-//        focusBead.physicsBody.categoryBitMask = focusCategory;
-//        focusBead.physicsBody.contactTestBitMask = paddleCategory | worldCategory;
-        [self addChild:focusBead];
+        if(IS_IPAD_SCREEN)
+            [focusBead setScale:0.7];
+        else
+            [focusBead setScale:0.35];
+        //        focusBead.position = CGPointMake(self.size.width/2, self.size.height/2);
+        focusBead.physicsBody = [SKPhysicsBody bodyWithCircleOfRadius:focusBead.size.height/2];
+        focusBead.physicsBody.dynamic = true;
+        focusBead.physicsBody.categoryBitMask = focusCategory;
+        focusBead.physicsBody.contactTestBitMask = paddleCategory | worldCategory;
+        //        [self addChild:focusBead];
         [self randomHueFocusBead];
+        //focus bead fake glow
+        SKSpriteNode *glowFocus = [[SKSpriteNode alloc] initWithImageNamed:@"bead_white"];
+        [glowFocus setScale:1.15];
+        [focusBead addChild:glowFocus];
+        [glowFocus runAction:[SKAction repeatActionForever:[SKAction sequence:@[[SKAction fadeAlphaTo:0.5 duration:0.1],[SKAction fadeAlphaTo:0.1 duration:0.1]]]]];
         
-        SKSpriteNode *glow = [[SKSpriteNode alloc] initWithImageNamed:@"bead_white"];
-        [glow setScale:1.15];
-        [focusBead addChild:glow];
-        [glow runAction:[SKAction repeatActionForever:[SKAction sequence:@[[SKAction fadeAlphaTo:0.5 duration:0.1],[SKAction fadeAlphaTo:0.1 duration:0.1]]]]];
-
-
+        
     }
     return self;
 }
@@ -193,10 +252,12 @@
     options = [[Options alloc] init];
     lastButton = [[NSString alloc] init];
     trailingSpriteArray = [[NSMutableArray alloc] init];
+    trailingCoinArray = [[NSMutableArray alloc] init];
     dropArray = [[NSMutableArray alloc] init];
     trailingSpriteArrayIndex = 0;
     dropArrayIndex = 0;
-    level = 0;
+    trailingCoinArrayIndex = 0;
+    level = 1;
     combo = 0;
     isDoubleScore = NO;
     isFocused = NO;
@@ -273,6 +334,7 @@
     [self addChild:bgBlack];
     
     
+    
     //Particle rain
     NSString *rainPath =
     [[NSBundle mainBundle]
@@ -286,52 +348,6 @@
     if(IS_IPAD_SCREEN)
         [rainNode setParticleScale:0.6];
     [self addChild:rainNode];
-    
-    
-    //Level bar init
-    SKSpriteNode *levelBarBehind;
-    if(IS_IPAD_SCREEN)
-    {
-        levelBarBehind = [[SKSpriteNode alloc] initWithImageNamed:@"interestBar_Below768"];
-    }
-    else
-        levelBarBehind = [[SKSpriteNode alloc] initWithImageNamed:@"interestBar_Below"];
-    levelBarBehind.anchorPoint = CGPointMake(0.5, 1);
-    levelBarBehind.position = CGPointMake(self.size.width/2, self.size.height);
-    //    levelBarBehind.size = CGSizeMake(self.size.width, levelBarBehind.size.height);
-    //    [levelBarBehind setScale:2.0];
-    if(IS_IPAD_SCREEN)
-    {
-        levelBarBehind.xScale = 1.0;
-        levelBarBehind.yScale = 0.75;
-    }
-    else
-    {
-        levelBarBehind.xScale = 1.0;
-        levelBarBehind.yScale = 0.5;
-    }
-    [self addChild:levelBarBehind];
-    
-    levelBar = [[SKSpriteNode alloc]initWithImageNamed:@"interestBar_Above"];
-    levelBar.anchorPoint = CGPointMake(1, 1);
-    levelBar.position = CGPointMake(self.size.width, self.size.height);
-    levelBar.size = CGSizeMake(self.size.width*0.5, levelBar.size.height);
-    //        levelBar.yScale = 2.0;
-    //levelBar.color = bgColor;
-    //levelBar.colorBlendFactor = 0.7;
-    if(IS_IPAD_SCREEN)
-    {
-        levelBar.xScale = 1.5;
-        levelBar.yScale = 0.75;
-    }
-    else
-    {
-        levelBar.xScale = 1.0;
-        levelBar.yScale = 0.5;
-    }
-    
-    [self addChild:levelBar];
-    
     
     //Paddle init
     paddle = [[SKSpriteNode alloc] initWithImageNamed:@"paddle"];
@@ -396,6 +412,7 @@
         if([node.name isEqualToString:@"pauseBtn"] && !isPause){
             [self removeActionForKey:@"dropShape"];
             [self removeActionForKey:@"dropCoin"];
+            [self removeActionForKey:@"dropFocus"];
             bgBlack.alpha = 0.3;
             isPause = YES;
             if(options.soundOn)
@@ -413,6 +430,7 @@
             bgBlack.alpha = 0.0;
             [self dropShape];
             [self randomDelayedSpawnCoin];
+            [self randomDelayedSpawnFocus];
         }
     }
 }
@@ -433,11 +451,15 @@
         if([child.name isEqualToString:@"drop"] && child.position.x < self.size.width){
             Drops *drop = (Drops*)child;
             SKSpriteNode *trailSprite;
-            if (trailingSpriteArray.count >= 30) {
+            if (trailingSpriteArray.count >= 20) {
                 trailSprite = trailingSpriteArray[trailingSpriteArrayIndex];
                 trailSprite.texture = [SKTexture textureWithImageNamed:[self chooseShape:drop.type]];
                 trailSprite.zRotation = drop.zRotation;
-                trailSprite.position = CGPointMake(drop.position.x, drop.position.y -2);
+                if(IS_IPAD_SCREEN)
+                    trailSprite.position = CGPointMake(drop.position.x, drop.position.y -4);
+                else
+                    trailSprite.position = CGPointMake(drop.position.x, drop.position.y -2);
+
                 trailSprite.alpha = 0.05;
                 [trailSprite runAction:[SKAction fadeAlphaTo:0 duration:0.1]];
                 
@@ -447,7 +469,10 @@
                 trailSprite.texture = [SKTexture textureWithImageNamed:[self chooseShape:drop.type]];
                 trailSprite.zRotation = drop.zRotation;
                 trailSprite.blendMode = SKBlendModeAdd;
-                trailSprite.position = CGPointMake(drop.position.x, drop.position.y -2);
+                if(IS_IPAD_SCREEN)
+                    trailSprite.position = CGPointMake(drop.position.x, drop.position.y -4);
+                else
+                    trailSprite.position = CGPointMake(drop.position.x, drop.position.y -2);
                 trailSprite.alpha = 0.05;
                 if(!IS_IPAD_SCREEN){
                     [trailSprite setScale:0.35];
@@ -457,7 +482,7 @@
                 [trailSprite runAction:[SKAction fadeAlphaTo:0 duration:0.1]];
                 
             }
-            if(trailingSpriteArrayIndex < 29)
+            if(trailingSpriteArrayIndex < 19)
                 trailingSpriteArrayIndex ++;
             else trailingSpriteArrayIndex = 0;
         }
@@ -469,10 +494,11 @@
     
     //create trailing sprite of drops
     if(!isGameOver){
-        if (self.timeSinceUpdated == 0 || currentTime - self.timeSinceUpdated > 0.01) {
-            [self createTrailingSprites];
+        if (self.timeSinceUpdated == 0 || currentTime - self.timeSinceUpdated > 0.05) {
             self.timeSinceUpdated = currentTime;
         }
+        [self createTrailingSprites];
+
     }
     //level bar reduced over time
     if(IS_IPAD_SCREEN)
@@ -527,6 +553,9 @@
     else if (paddle.position.x > self.size.width -paddle.size.width/2){
         paddle.position = CGPointMake(self.size.width -paddle.size.width/2, paddle.position.y);
     }
+    
+    coin.zRotation = 0;
+    focusBead.zRotation = 0;
 }
 
 -(NSString*)getComboTextWithCombo:(int)comboCount{
@@ -616,7 +645,12 @@
                 if(levelBar.size.width > self.size.width*0.3)
                     [levelBar runAction:[SKAction resizeToWidth:(levelBar.size.width - self.size.width*0.3) duration:0.2]];
                 else
-                    [levelBar runAction:[SKAction resizeToWidth:-0.3 duration:0.2]];
+                {
+                    if(IS_IPAD_SCREEN)
+                        [levelBar runAction:[SKAction resizeToWidth:-0.5 duration:0.2]];
+                    else
+                        [levelBar runAction:[SKAction resizeToWidth:-0.2 duration:0.2]];
+                }
                 if(isDoubleScore)
                     score += 2;
                 else
@@ -663,12 +697,46 @@
             [self runAction:[SKAction runBlock:^{
                 coin.position = CGPointMake(self.size.width*2, self.size.height);
             }]];
+            if(isDoubleScore)
+                score += 2;
+            else
+                score += 1;
         }
         else
             [self runAction:[SKAction runBlock:^{
                 coin.position = CGPointMake(self.size.width*2, self.size.height);
             }]];
     }
+    else if(contact.bodyB.categoryBitMask == focusCategory){
+        if(contact.bodyA.categoryBitMask == paddleCategory){
+            [self runAction:[SKAction runBlock:^{
+                focusBead.position = CGPointMake(self.size.width*2, self.size.height);
+            }]];
+            [self runAction:[SKAction sequence:@[[SKAction runBlock:^{
+                focusAnnouncer.hidden = NO;
+                speedOffset = speedOffset/level;
+                self.physicsWorld.gravity = CGVectorMake(0, speedOffset);
+            }],[SKAction waitForDuration:8], [SKAction runBlock:^{
+                focusAnnouncer.hidden = YES;
+                if(IS_IPAD_SCREEN)
+                    speedOffset = -4*level;
+                else
+                    speedOffset = -2*level;
+                self.physicsWorld.gravity = CGVectorMake(0, speedOffset);
+            }]]]];
+            [bgBlack runAction:[SKAction repeatAction:[SKAction sequence:@[[SKAction runBlock:^{
+                bgBlack.texture = [SKTexture textureWithImageNamed:@"bg"];
+            }],[SKAction fadeAlphaTo:0.3 duration:0.5],[SKAction fadeAlphaTo:0 duration:0.5],[SKAction runBlock:^{
+                bgBlack.texture = [SKTexture textureWithImageNamed:@"bgBlack"];
+            }]]] count:8]];
+            
+        }
+        else
+            [self runAction:[SKAction runBlock:^{
+                focusBead.position = CGPointMake(self.size.width*2, self.size.height);
+            }]];
+    }
+    
 }
 
 -(void)dropCoinRandomPosition{
@@ -686,13 +754,35 @@
     SKAction *dropRandom = [SKAction runBlock:^{
         [self dropCoinRandomPosition];
     }];
-    int randomDelay = arc4random()%5 + 10;
-    SKAction *delay = [SKAction waitForDuration:randomDelay];
+    SKAction *delay = [SKAction waitForDuration:arc4random()%10 + 5];
     SKAction *dropAndDelay = [SKAction sequence:@[delay, dropRandom]];
     SKAction *dropAndDelayForever = [SKAction repeatActionForever:dropAndDelay];
     [self runAction:dropAndDelayForever withKey:@"dropCoin"];
     
 }
+
+-(void)dropFocusRandomPosition{
+    if(!isGameOver){
+        float dropPositionOffset = (float)((arc4random()%8 + 1)*0.1);
+        if(focusBead.parent == self){
+            focusBead.position = CGPointMake(self.size.width * dropPositionOffset, self.size.height);
+            focusBead.physicsBody.velocity = CGVectorMake(0, 0);
+        }
+        else
+            [self addChild:focusBead];
+    }
+}
+-(void)randomDelayedSpawnFocus{
+    SKAction *dropRandom = [SKAction runBlock:^{
+        [self dropFocusRandomPosition];
+    }];
+    SKAction *delay = [SKAction waitForDuration:arc4random()%15 + 5];
+    SKAction *dropAndDelay = [SKAction sequence:@[delay, dropRandom]];
+    SKAction *dropAndDelayForever = [SKAction repeatActionForever:dropAndDelay];
+    [self runAction:dropAndDelayForever withKey:@"dropFocus"];
+    
+}
+
 //Random shape and position of drops
 -(void)randomShapeAndPosition{
     if(!isGameOver){
@@ -769,7 +859,6 @@
 //Gameover handling: disable actions and such
 -(void)gameOver{
     isGameOver = YES;
-    [pauseBtn removeFromParent];
     if(self.view.paused)
         self.view.paused = NO;
     //shake screen animation
@@ -831,7 +920,7 @@
                     drop.position = CGPointMake(self.size.width*2, self.size.height);
                 }
             }
-            
+            [pauseBtn removeFromParent];
             GameOverScene *gameOverScene = [[GameOverScene alloc] initWithSize:self.size];
             SKTransition *reveal = [SKTransition moveInWithDirection:SKTransitionDirectionUp duration:0.5];
             [self.view presentScene:gameOverScene transition:reveal];

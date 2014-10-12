@@ -65,18 +65,45 @@
             [rainNode setParticleScale:0.6];
         [self addChild:rainNode];
         
-        levelBar = [[SKSpriteNode alloc]initWithImageNamed:@"levelBar"];
-        levelBar.anchorPoint = CGPointMake(0, 0.5);
-        levelBar.position = CGPointMake(0, self.size.height);
-        levelBar.size = CGSizeMake(self.size.width*0.5, levelBar.size.height);
-        //        levelBar.yScale = 2.0;
-        levelBar.color = bgColor;
-        levelBar.colorBlendFactor = 0.7;
+        SKSpriteNode *levelBarBehind;
         if(IS_IPAD_SCREEN)
-            [levelBar setScale:1.5];
+        {
+            levelBarBehind = [[SKSpriteNode alloc] initWithImageNamed:@"interestBar_Below768"];
+        }
+        else
+            levelBarBehind = [[SKSpriteNode alloc] initWithImageNamed:@"interestBar_Below"];
+        levelBarBehind.anchorPoint = CGPointMake(0.5, 1);
+        levelBarBehind.position = CGPointMake(self.size.width/2, self.size.height);
+        //    levelBarBehind.size = CGSizeMake(self.size.width, levelBarBehind.size.height);
+        //    [levelBarBehind setScale:2.0];
+        if(IS_IPAD_SCREEN)
+        {
+            levelBarBehind.xScale = 1.0;
+            levelBarBehind.yScale = 0.75;
+        }
+        else
+        {
+            levelBarBehind.xScale = 1.0;
+            levelBarBehind.yScale = 0.5;
+        }
+        [self addChild:levelBarBehind];
+        
+        levelBar = [[SKSpriteNode alloc]initWithImageNamed:@"interestBar_Above"];
+        levelBar.anchorPoint = CGPointMake(1, 1);
+        levelBar.position = CGPointMake(self.size.width, self.size.height);
+        levelBar.size = CGSizeMake(self.size.width*0.5, levelBar.size.height);
+        if(IS_IPAD_SCREEN)
+        {
+            levelBar.xScale = 1.5;
+            levelBar.yScale = 0.75;
+        }
+        else
+        {
+            levelBar.xScale = 1.0;
+            levelBar.yScale = 0.5;
+        }
         [self addChild:levelBar];
-        
-        
+
         paddle = [[SKSpriteNode alloc] initWithImageNamed:@"paddle"];
         [paddle setScale:0.2];
         if(IS_568_SCREEN)
@@ -444,7 +471,7 @@
     }
     
     if (canBurnEnergy) {
-        levelBar.size = CGSizeMake(levelBar.size.width - 0.05, levelBar.size.height);
+        levelBar.size = CGSizeMake(levelBar.size.width + 0.05, levelBar.size.height);
     }
     
     if(secondStepPhaseOneOk){
@@ -459,7 +486,7 @@
     if (partTwoOk) {
         [self finalWordsPhaseOne];
     }
-    if(levelBar.size.width <=0)
+    if(levelBar.size.width >= self.size.width)
         levelBar.size = CGSizeMake(self.size.width*0.5, levelBar.size.height);
     
 }
