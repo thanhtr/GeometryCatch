@@ -80,7 +80,7 @@
     }
     
     [self addChild:levelBar];
-
+    
 }
 -(void)initShapesAndParticlesArray{
     for (int i = 0; i< 3; i++){
@@ -113,7 +113,7 @@
         [dropArray addObject:drop];
     }
     
-
+    
 }
 -(void)initSpecialDrops{
     //combo
@@ -519,8 +519,8 @@
     scoreLabel.text = [NSString stringWithFormat:@"%d",score];
     
     [self levelUpAndGameOverHandler];
-        [self pauseAndUnpauseHandler];
-        //restrain paddle position within view
+    [self pauseAndUnpauseHandler];
+    //restrain paddle position within view
     if(paddle.position.x < paddle.size.width/2){
         paddle.position = CGPointMake(paddle.size.width/2, paddle.position.y);
     }
@@ -560,7 +560,7 @@
     if(levelBar.size.width >= (self.size.width*1.05)){
         [self gameOver];
     }
-
+    
 }
 -(void)pauseAndUnpauseHandler{
     //pause and unpause action
@@ -574,7 +574,7 @@
         else if (self.physicsWorld.speed <= 0)
             self.view.paused = YES;
     }
-
+    
 }
 -(NSString*)getComboTextWithCombo:(int)comboCount{
     if(comboCount == 2)
@@ -719,6 +719,8 @@
                 score += 2;
             else
                 score += 1;
+            if(options.soundOn)
+                [self runAction:[SKAction playSoundFileNamed:@"coin.mp3" waitForCompletion:NO]];
         }
         else
             [self runAction:[SKAction runBlock:^{
@@ -734,6 +736,7 @@
                 focusAnnouncer.hidden = NO;
                 speedOffset = speedOffset/level;
                 self.physicsWorld.gravity = CGVectorMake(0, speedOffset);
+                bgMusicPlayer.rate = 0.5;
             }],[SKAction waitForDuration:8], [SKAction runBlock:^{
                 focusAnnouncer.hidden = YES;
                 if(IS_IPAD_SCREEN)
@@ -741,12 +744,15 @@
                 else
                     speedOffset = -2*level;
                 self.physicsWorld.gravity = CGVectorMake(0, speedOffset);
+                bgMusicPlayer.rate = 1 + ((level-1)*0.2);
             }]]]];
             [bgBlack runAction:[SKAction repeatAction:[SKAction sequence:@[[SKAction runBlock:^{
                 bgBlack.texture = [SKTexture textureWithImageNamed:@"bg"];
             }],[SKAction fadeAlphaTo:0.3 duration:0.5],[SKAction fadeAlphaTo:0 duration:0.5],[SKAction runBlock:^{
                 bgBlack.texture = [SKTexture textureWithImageNamed:@"bgBlack"];
             }]]] count:8]];
+            if(options.soundOn)
+                [self runAction:[SKAction playSoundFileNamed:@"power_up.wav" waitForCompletion:NO]];
             
         }
         else
@@ -758,14 +764,17 @@
 }
 
 -(void)dropCoinRandomPosition{
+    
     if(!isGameOver){
-        float dropPositionOffset = (float)((arc4random()%8 + 1)*0.1);
-        if(coin.parent == self){
-            coin.position = CGPointMake(self.size.width * dropPositionOffset, self.size.height);
-            coin.physicsBody.velocity = CGVectorMake(0, 0);
+        if(level > 1){
+            float dropPositionOffset = (float)((arc4random()%8 + 1)*0.1);
+            if(coin.parent == self){
+                coin.position = CGPointMake(self.size.width * dropPositionOffset, self.size.height);
+                coin.physicsBody.velocity = CGVectorMake(0, 0);
+            }
+            else
+                [self addChild:coin];
         }
-        else
-            [self addChild:coin];
     }
 }
 -(void)randomDelayedSpawnCoin{
@@ -781,13 +790,15 @@
 
 -(void)dropFocusRandomPosition{
     if(!isGameOver){
-        float dropPositionOffset = (float)((arc4random()%8 + 1)*0.1);
-        if(focusBead.parent == self){
-            focusBead.position = CGPointMake(self.size.width * dropPositionOffset, self.size.height);
-            focusBead.physicsBody.velocity = CGVectorMake(0, 0);
+        if(level > 1){
+            float dropPositionOffset = (float)((arc4random()%8 + 1)*0.1);
+            if(focusBead.parent == self){
+                focusBead.position = CGPointMake(self.size.width * dropPositionOffset, self.size.height);
+                focusBead.physicsBody.velocity = CGVectorMake(0, 0);
+            }
+            else
+                [self addChild:focusBead];
         }
-        else
-            [self addChild:focusBead];
     }
 }
 -(void)randomDelayedSpawnFocus{
