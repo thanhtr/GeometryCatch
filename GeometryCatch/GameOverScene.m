@@ -21,7 +21,8 @@
         self.backgroundColor = [SKColor whiteColor];
         options = [[Options alloc] init];
         properlyInView = YES;
-        score = [MyScene getScore];
+//        score = [MyScene getScore];
+        score = 40;
         //bg music
         NSError *error;
         NSURL * backgroundMusicURL = [[NSBundle mainBundle] URLForResource:@"Menu_Music" withExtension:@"wav"];
@@ -247,9 +248,38 @@
             bestScorePoint.text = [NSString stringWithFormat:@"%d", score];
             [self saveHighscore:score];
         }
+        CGFloat hue;
+        CGFloat saturation;
+        CGFloat brightness;
+        CGFloat alpha;
+        BOOL successBest = [bestScorePoint.fontColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+        NSLog(@"bestScorePoint: %f %f %f %f", hue, saturation, brightness, alpha);
+        BOOL successYour = [yourScorePoint.fontColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+        NSLog(@"yourScorePoint: %f %f %f %f", hue, saturation, brightness, alpha);
+//        SKAction *random = [SKAction runBlock:^{
+//            float random = (float)((arc4random()%10)*0.1);
+//            bestScorePoint.fontColor = [UIColor colorWithHue:random saturation:0.663636 brightness:0.862745 alpha:1];
+//            yourScorePoint.fontColor = [UIColor colorWithHue:random saturation:0.689498 brightness:0.858824 alpha:1];
+//        }];
+//        SKAction *delay = [SKAction waitForDuration:0.05];
+//        SKAction *randomAndDelay = [SKAction sequence:@[random, delay]];
+//        SKAction *randomAndDelayForSeconds = [SKAction repeatAction:randomAndDelay count:20];
+//        [self runAction:[SKAction runBlock:^{
+//            [self incrementScore:score label:yourScorePoint];
+//        }] completion:^{
+//            [self runAction:randomAndDelayForSeconds completion:^{
+//                [self runAction:[SKAction runBlock:^{
+//                    bestScorePoint.fontColor = [UIColor colorWithHue:0.594749 saturation:0.663636 brightness:0.862745 alpha:1];
+//                    yourScorePoint.fontColor = [UIColor colorWithHue:0.983444 saturation:0.689498 brightness:0.858824 alpha:1];
+//                }]];
+//            }];
+//        }];
         [[RevMobAds session] showFullscreen];
         [[NSNotificationCenter defaultCenter] postNotificationName:@"showAds" object:self];
 
+        
+        //record games played
+//        [self saveOneMoreGames];
     }
     return self;
 }
@@ -444,6 +474,26 @@
 -(void)saveHighscore:(int)points{
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults setObject:@(points) forKey:@"highscore"];
+    [defaults synchronize];
+}
+
+//retrieve high score from device
+-(int)getGamesPlayed{
+    long highscore;
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if([defaults objectForKey:@"gamesPlayed"] != nil){
+        highscore = [defaults integerForKey:@"gamesPlayed"];
+    } else highscore = 0;
+    return (int)highscore;
+}
+//save high score to device
+-(void)saveOneMoreGames{
+    int games;
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if([defaults objectForKey:@"gamesPlayed"] != nil){
+        games = [defaults integerForKey:@"gamesPlayed"];
+    } else games = 0;
+    [defaults setObject:@(games+1) forKey:@"gamesPlayed"];
     [defaults synchronize];
 }
 

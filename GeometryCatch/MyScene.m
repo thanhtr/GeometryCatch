@@ -17,7 +17,7 @@
 @end
 
 @implementation MyScene
-@synthesize paddle,speedOffset,paddleArray,paddleHoldShapeOffset, paddleArrayIndex, bgColor, levelBar, scoreLabel, isGameOver,gameOverTextCanBeAdded,gameOverText,rainNode, sparkArrayIndex, bgColorArray, bg, bgBlack, isPause,moveGroup, bgColorIndex, pauseBtn, gameOverBg,bestScoreLbl,bestScorePoint,yourScoreLbl,yourScorePoint,shareBtn,playBtn,gameOverGroup, gameCenterBtn,options,bgMusicPlayer,musicBtn,soundBtn,creditBtn,aboutBg, properlyInView,lastButton,trailingSpriteArray,trailingSpriteArrayIndex,dropArray,dropArrayIndex,level,combo,comboAnnouncer,multiplierAnnouncer, isDoubleScore,focusAnnouncer,isFocused,coin,focusBead,trailingCoinArray,trailingCoinArrayIndex;
+@synthesize paddle,speedOffset,paddleArray,paddleHoldShapeOffset, paddleArrayIndex, bgColor, levelBar, scoreLabel, isGameOver,gameOverTextCanBeAdded,gameOverText,rainNode, sparkArrayIndex, bgColorArray, bg, bgBlack, isPause,moveGroup, bgColorIndex, pauseBtn, gameOverBg,bestScoreLbl,bestScorePoint,yourScoreLbl,yourScorePoint,shareBtn,playBtn,gameOverGroup, gameCenterBtn,options,bgMusicPlayer,musicBtn,soundBtn,creditBtn,aboutBg, properlyInView,lastButton,trailingSpriteArray,trailingSpriteArrayIndex,dropArray,dropArrayIndex,level,combo,comboAnnouncer,multiplierAnnouncer, isDoubleScore,focusAnnouncer,isFocused,coin,focusBead,trailingCoinArray,trailingCoinArrayIndex, coinNode,canStart;
 //@synthesize score;
 
 -(id)initWithSize:(CGSize)size {
@@ -27,10 +27,10 @@
         [self createInitElements];
         [self initShapesAndParticlesArray];
         [self initSpecialDrops];
+        [self initColoredColumnTransitionAndStart];
         [self initLevelBar];
         if(canLoadColoredColumn)
             [self initColoredBackground];
-        [self initColoredColumnTransitionAndStart];
         
     }
     return self;
@@ -59,15 +59,20 @@
         levelBarBehind.xScale = 1.0;
         levelBarBehind.yScale = 0.5;
     }
+    levelBarBehind.zPosition = 1;
     [self addChild:levelBarBehind];
     
     levelBar = [[SKSpriteNode alloc]initWithImageNamed:@"interestBar_Above"];
     levelBar.anchorPoint = CGPointMake(1, 1);
     levelBar.position = CGPointMake(self.size.width, self.size.height);
-    levelBar.size = CGSizeMake(self.size.width*0.5, levelBar.size.height);
+    if(IS_IPAD_SCREEN)
+        levelBar.size = CGSizeMake(self.size.width*0.4, levelBar.size.height);
+    else
+        levelBar.size = CGSizeMake(self.size.width*0.5, levelBar.size.height);
     //        levelBar.yScale = 2.0;
     //levelBar.color = bgColor;
     //levelBar.colorBlendFactor = 0.7;
+    levelBar.zPosition = 1;
     if(IS_IPAD_SCREEN)
     {
         levelBar.xScale = 1.5;
@@ -137,19 +142,21 @@
     else
         multiplierAnnouncer.position = CGPointMake(self.size.width*0.5, self.size.height*0.78);
     if(IS_IPAD_SCREEN)
-        [multiplierAnnouncer setScale:1.0];
+        [multiplierAnnouncer setScale:1.6];
     else
-        [multiplierAnnouncer setScale:0.5];
+        [multiplierAnnouncer setScale:0.8];
     [self addChild:multiplierAnnouncer];
+    CGFloat defaultWidth = multiplierAnnouncer.size.width;
+    CGFloat defaultHeigth = multiplierAnnouncer.size.height;
     [self runAction:[SKAction repeatActionForever:[SKAction sequence:@[[SKAction runBlock:^{
         multiplierAnnouncer.texture = [SKTexture textureWithImageNamed:@"x2_red"];
     }],[SKAction waitForDuration:0.1],[SKAction runBlock:^{
         multiplierAnnouncer.texture = [SKTexture textureWithImageNamed:@"x2_white"];
     }], [SKAction waitForDuration:0.1]]]]];
     [self runAction:[SKAction repeatActionForever:[SKAction sequence:@[[SKAction runBlock:^{
-        multiplierAnnouncer.size = CGSizeMake(multiplierAnnouncer.size.width*1.05, multiplierAnnouncer.size.height*1.05);
+        multiplierAnnouncer.size = CGSizeMake(defaultWidth*1.05, defaultHeigth*1.05);
     }],[SKAction waitForDuration:0.05],[SKAction runBlock:^{
-        multiplierAnnouncer.size = CGSizeMake(multiplierAnnouncer.size.width*0.95, multiplierAnnouncer.size.height*0.95);
+        multiplierAnnouncer.size = CGSizeMake(defaultWidth*0.95, defaultHeigth*0.95);
     }], [SKAction waitForDuration:0.05]]]]];
     [self runAction:[SKAction repeatActionForever:[SKAction sequence:@[[SKAction runBlock:^{
         multiplierAnnouncer.position = CGPointMake(multiplierAnnouncer.position.x, multiplierAnnouncer.position.y + 1);
@@ -231,6 +238,8 @@
                         [moveGroup[i] removeFromParent];
                     }]]]];
                 }
+                SKNode *col = moveGroup[i];
+                col.zPosition = 2;
             }
         }
     }];
@@ -242,6 +251,7 @@
         [self randomDelayedSpawnCoin];
         [self randomDelayedSpawnFocus];
         canLoadColoredColumn = NO;
+        canStart = YES;
     }];
     [self runAction:[SKAction sequence:@[move, wait, drop]]];
     
@@ -265,6 +275,20 @@
     dropArray = [[NSMutableArray alloc] init];
     self.sparkEmitter = [[NSMutableArray alloc] init];
     
+    NSString *coinPath =
+    [[NSBundle mainBundle]
+     pathForResource:@"Spark" ofType:@"sks"];
+    coinNode =
+    [NSKeyedUnarchiver unarchiveObjectWithFile:coinPath];
+    [coinNode setParticleTexture:[SKTexture textureWithImageNamed:@"coinParticles"]];
+    if(IS_IPAD_SCREEN)
+        [coinNode setParticleScale:1.0];
+    else
+        [coinNode setParticleScale:0.5];
+    //    [shape removeFromParent];
+    coinNode.name = @"sparkNode";
+
+    
     trailingSpriteArrayIndex = 0;
     dropArrayIndex = 0;
     trailingCoinArrayIndex = 0;
@@ -272,6 +296,7 @@
     combo = 0;
     isDoubleScore = NO;
     isFocused = NO;
+    canStart = NO;
     
     //bg music
     NSError *error;
@@ -512,10 +537,12 @@
         
     }
     //level bar reduced over time
-    if(IS_IPAD_SCREEN)
-        levelBar.size = CGSizeMake(levelBar.size.width + 0.5, levelBar.size.height);
-    else
-        levelBar.size = CGSizeMake(levelBar.size.width + 0.2, levelBar.size.height);
+    if(canStart){
+        if(IS_IPAD_SCREEN)
+            levelBar.size = CGSizeMake(levelBar.size.width + 0.5, levelBar.size.height);
+        else
+            levelBar.size = CGSizeMake(levelBar.size.width + 0.2, levelBar.size.height);
+    }
     scoreLabel.text = [NSString stringWithFormat:@"%d",score];
     
     [self levelUpAndGameOverHandler];
@@ -536,7 +563,7 @@
     if(levelBar.size.width <= 0){
         [levelBar runAction:[SKAction resizeToWidth:self.size.width*0.6 duration:0.2]];
         level ++;
-        bgMusicPlayer.rate += 0.2;
+        bgMusicPlayer.rate += 0.1;
         if(IS_IPAD_SCREEN)
             speedOffset -= 4;
         else
@@ -726,6 +753,11 @@
             [self runAction:[SKAction runBlock:^{
                 coin.position = CGPointMake(self.size.width*2, self.size.height);
             }]];
+        coinNode.position = contact.bodyB.node.position;
+        if (!coinNode.parent){
+            [self addChild:coinNode];
+        }
+        [coinNode resetSimulation];
     }
     else if(contact.bodyB.categoryBitMask == focusCategory){
         if(contact.bodyA.categoryBitMask == paddleCategory){
@@ -744,7 +776,7 @@
                 else
                     speedOffset = -2*level;
                 self.physicsWorld.gravity = CGVectorMake(0, speedOffset);
-                bgMusicPlayer.rate = 1 + ((level-1)*0.2);
+                bgMusicPlayer.rate = 1 + ((level-1)*0.1);
             }]]]];
             [bgBlack runAction:[SKAction repeatAction:[SKAction sequence:@[[SKAction runBlock:^{
                 bgBlack.texture = [SKTexture textureWithImageNamed:@"bg"];
@@ -767,7 +799,7 @@
     
     if(!isGameOver){
         if(level > 1){
-            float dropPositionOffset = (float)((arc4random()%8 + 1)*0.1);
+            float dropPositionOffset = (float)((arc4random()%7 + 1)*0.1 +0.05);
             if(coin.parent == self){
                 coin.position = CGPointMake(self.size.width * dropPositionOffset, self.size.height);
                 coin.physicsBody.velocity = CGVectorMake(0, 0);
@@ -791,7 +823,7 @@
 -(void)dropFocusRandomPosition{
     if(!isGameOver){
         if(level > 1){
-            float dropPositionOffset = (float)((arc4random()%8 + 1)*0.1);
+            float dropPositionOffset = (float)((arc4random()%7 + 1)*0.1+0.05);
             if(focusBead.parent == self){
                 focusBead.position = CGPointMake(self.size.width * dropPositionOffset, self.size.height);
                 focusBead.physicsBody.velocity = CGVectorMake(0, 0);
@@ -832,6 +864,7 @@
             dropArrayIndex++;
         }
         else dropArrayIndex = 0;
+        NSLog(@"%f", drop.zPosition);
     }
 }
 
