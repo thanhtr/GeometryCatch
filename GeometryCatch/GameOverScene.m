@@ -243,12 +243,10 @@
         
         //run auto increment score func
         [self incrementScore:score label:yourScorePoint];
-        [self getHighscore];
         if([self getHighscore] > score)
             bestScorePoint.text = [NSString stringWithFormat:@"%d", [self getHighscore]];
         else {
             bestScorePoint.text = [NSString stringWithFormat:@"%d", score];
-            [self saveHighscore:score];
         }
 //        CGFloat hue;
 //        CGFloat saturation;
@@ -274,6 +272,8 @@
         yourScorePoint.fontColor = [UIColor colorWithHue:random saturation:random brightness:0.858824 alpha:1];
     }],[SKAction waitForDuration:0.05]]]]];
     canHueHue = NO;
+    [self saveHighscore:score];
+
 }
 
 -(void)update:(NSTimeInterval)currentTime{

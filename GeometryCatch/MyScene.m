@@ -530,7 +530,9 @@
     
     //create trailing sprite of drops
     if(!isGameOver){
-        if (self.timeSinceUpdated == 0 || currentTime - self.timeSinceUpdated > 0.05) {
+        if (self.timeSinceUpdated == 0 || currentTime - self.timeSinceUpdated > 10) {
+            
+//            isDoubleScore = NO;
             self.timeSinceUpdated = currentTime;
         }
         [self createTrailingSprites];
