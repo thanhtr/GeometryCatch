@@ -570,7 +570,7 @@
             speedOffset -= 2;
         self.physicsWorld.gravity = CGVectorMake(0, speedOffset);
         int randomBgColorIndex = arc4random()%(bgColorArray.count);
-        while (bgColorIndex == randomBgColorIndex) {
+        while (bgColorIndex == randomBgColorIndex || randomBgColorIndex == 2) {
             randomBgColorIndex = arc4random()%(bgColorArray.count);
         }
         bgColorIndex = randomBgColorIndex;
@@ -799,7 +799,8 @@
     
     if(!isGameOver){
         if(level > 1){
-            float dropPositionOffset = (float)((arc4random()%7 + 1)*0.1 +0.05);
+            int random = (arc4random()%3 + 1)*2;
+            float dropPositionOffset = (float)(random*0.1 +0.05);
             if(coin.parent == self){
                 coin.position = CGPointMake(self.size.width * dropPositionOffset, self.size.height);
                 coin.physicsBody.velocity = CGVectorMake(0, 0);
@@ -823,7 +824,8 @@
 -(void)dropFocusRandomPosition{
     if(!isGameOver){
         if(level > 1){
-            float dropPositionOffset = (float)((arc4random()%7 + 1)*0.1+0.05);
+            int random = ((arc4random()%3 + 1)*2)-1;
+            float dropPositionOffset = (float)(random*0.1 +0.05);
             if(focusBead.parent == self){
                 focusBead.position = CGPointMake(self.size.width * dropPositionOffset, self.size.height);
                 focusBead.physicsBody.velocity = CGVectorMake(0, 0);
@@ -837,7 +839,7 @@
     SKAction *dropRandom = [SKAction runBlock:^{
         [self dropFocusRandomPosition];
     }];
-    SKAction *delay = [SKAction waitForDuration:arc4random()%15 + 5];
+    SKAction *delay = [SKAction waitForDuration:arc4random()%20 + 5];
     SKAction *dropAndDelay = [SKAction sequence:@[delay, dropRandom]];
     SKAction *dropAndDelayForever = [SKAction repeatActionForever:dropAndDelay];
     [self runAction:dropAndDelayForever withKey:@"dropFocus"];
