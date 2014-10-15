@@ -410,12 +410,13 @@
             //release share: change sprite and pop up share window with predefined status
             else if([node.name isEqualToString:@"shareBtn"]){
                 shareBtn.texture = [SKTexture textureWithImageNamed:[self chooseSpriteWithState:NO isTouched:NO baseFileName:@"share" hasPrefix:NO]];
-                NSString *postText = [NSString stringWithFormat: @"I just got %d points in a ATOX run. How about you?", score];
+                NSString *postText = [NSString stringWithFormat: @"I just got %d points in a ATOX run. How about you?\n", score];
+                NSURL *postURL = [NSURL URLWithString:@"http://itunes.com/apps/atox/"];
                 UIGraphicsBeginImageContextWithOptions(self.view.bounds.size, NO, 0.0);
                 [self.view drawViewHierarchyInRect:self.view.bounds afterScreenUpdates:YES];
                 UIImage *postPicture = UIGraphicsGetImageFromCurrentImageContext();
                 UIGraphicsEndImageContext();
-                NSDictionary *userInfo = [NSDictionary dictionaryWithObjects:@[postText, postPicture] forKeys:@[@"postText", @"postPicture"]];
+                NSDictionary *userInfo = [NSDictionary dictionaryWithObjects:@[postText, postPicture, postURL] forKeys:@[@"postText", @"postPicture", @"postURL"]];
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"CreatePost" object:self userInfo:userInfo];
             }
             //release play: change sprite and reset game

@@ -33,7 +33,7 @@
     skView.showsNodeCount = YES;
     
     // Create and configure the scene.
-    SKScene * scene = [MyScene sceneWithSize:skView.bounds.size];
+    SKScene * scene = [GameOverScene sceneWithSize:skView.bounds.size];
     scene.scaleMode = SKSceneScaleModeAspectFill;
     
     // Present the scene.
@@ -110,10 +110,13 @@
     NSDictionary *postData = [notification userInfo];
     NSString *postText = (NSString *)[postData objectForKey:@"postText"];
     UIImage *postPicture = (UIImage*)[postData objectForKey:@"postPicture"];
+    NSURL *postURL = (NSURL*)[postData objectForKey:@"postURL"];
     // build your tweet, facebook, etc...
     SLComposeViewController *mySLComposerSheet = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeFacebook];
     [mySLComposerSheet setInitialText:postText];
     [mySLComposerSheet addImage:postPicture];
+    [mySLComposerSheet addURL:postURL];
+    NSLog([mySLComposerSheet addURL:postURL] ? @"YES" : @"NO");
     [self presentViewController:mySLComposerSheet animated:YES completion:nil];
     
 }
