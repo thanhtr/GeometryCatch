@@ -17,7 +17,7 @@
 @end
 
 @implementation MyScene
-@synthesize paddle,speedOffset,paddleArray,paddleHoldShapeOffset, paddleArrayIndex, bgColor, levelBar, scoreLabel, isGameOver,gameOverTextCanBeAdded,gameOverText,rainNode, sparkArrayIndex, bgColorArray, bg, bgBlack, isPause,moveGroup, bgColorIndex, pauseBtn, gameOverBg,bestScoreLbl,bestScorePoint,yourScoreLbl,yourScorePoint,shareBtn,playBtn,gameOverGroup, gameCenterBtn,options,bgMusicPlayer,musicBtn,soundBtn,creditBtn,aboutBg, properlyInView,lastButton,trailingSpriteArray,trailingSpriteArrayIndex,dropArray,dropArrayIndex,level,combo,comboAnnouncer,multiplierAnnouncer, isDoubleScore,focusAnnouncer,isFocused,coin,focusBead,trailingCoinArray,trailingCoinArrayIndex, coinNode,canStart;
+@synthesize paddle,speedOffset,paddleArray,paddleHoldShapeOffset, paddleArrayIndex, bgColor, levelBar, scoreLabel, isGameOver,gameOverTextCanBeAdded,gameOverText,rainNode, sparkArrayIndex, bgColorArray, bg, bgBlack, isPause,moveGroup, bgColorIndex, pauseBtn, gameOverBg,bestScoreLbl,bestScorePoint,yourScoreLbl,yourScorePoint,shareBtn,playBtn,gameOverGroup, gameCenterBtn,options,bgMusicPlayer,musicBtn,soundBtn,creditBtn,aboutBg, properlyInView,lastButton,trailingSpriteArray,trailingSpriteArrayIndex,dropArray,dropArrayIndex,level,combo,comboAnnouncer,multiplierAnnouncer, isDoubleScore,focusAnnouncer,isFocused,coin,focusBead,trailingCoinArray,trailingCoinArrayIndex, coinNode,canStart,multiplierElapsedTime;
 //@synthesize score;
 
 -(id)initWithSize:(CGSize)size {
@@ -294,6 +294,7 @@
     trailingCoinArrayIndex = 0;
     level = 1;
     combo = 0;
+    multiplierElapsedTime = 0;
     isDoubleScore = NO;
     isFocused = NO;
     canStart = NO;
@@ -535,6 +536,13 @@
 //            isDoubleScore = NO;
             self.timeSinceUpdated = currentTime;
         }
+        if(multiplierElapsedTime == 0 ){
+            self.multiplierElapsedTime = currentTime;
+        }
+        else if (currentTime - multiplierElapsedTime > 8){
+            isDoubleScore = NO;
+            multiplierAnnouncer.hidden = YES;
+        }
         [self createTrailingSprites];
         
     }
@@ -661,6 +669,7 @@
                 isDoubleScore = NO;
                 combo = 0;
                 multiplierAnnouncer.hidden = YES;
+                multiplierElapsedTime = 0;
             }
             
             //Or if the paddle array isn't full yet
@@ -724,6 +733,7 @@
                 [paddle addChild:matchingNode];
                 if(options.soundOn)
                     [self runAction:[SKAction playSoundFileNamed:@"success.wav" waitForCompletion:NO]];
+                multiplierElapsedTime = 0;
             }
             
             //Offset for taken shape displaying

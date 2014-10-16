@@ -60,6 +60,7 @@ static int score;
 @property float timeSinceUpdated;
 @property float speedOffset;
 @property float paddleHoldShapeOffset;
+@property float multiplierElapsedTime;
 @property int paddleArrayIndex;
 @property int sparkArrayIndex;
 @property int bgColorIndex;
