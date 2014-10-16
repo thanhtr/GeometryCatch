@@ -29,11 +29,11 @@
     [super viewDidLayoutSubviews];
     // Configure the view.
     SKView * skView = (SKView *)self.view;
-    //    skView.showsFPS = YES;
-    //    skView.showsNodeCount = YES;
+    skView.showsFPS = YES;
+    skView.showsNodeCount = YES;
     
     // Create and configure the scene.
-    SKScene * scene = [StartScene sceneWithSize:skView.bounds.size];
+    SKScene * scene = [MyScene sceneWithSize:skView.bounds.size];
     scene.scaleMode = SKSceneScaleModeAspectFill;
     
     // Present the scene.
@@ -97,23 +97,12 @@
     [super viewWillDisappear:animated];
     [self dismissAdView];
     [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:@"CreatePost"
-                                                  object:nil];
+                                                    name:@"CreatePost" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:@"showAds"
-                                                  object:nil];
+                                                    name:@"showAds" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:@"hideAds"
-                                                  object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:@"GetScore"
-                                                  object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:@"Pause"
-                                                  object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:@"Resume"
-                                                  object:nil];
+                                                    name:@"hideAds" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"GetScore" object:nil];
 }
 
 #pragma mark - Notification method
@@ -121,10 +110,13 @@
     NSDictionary *postData = [notification userInfo];
     NSString *postText = (NSString *)[postData objectForKey:@"postText"];
     UIImage *postPicture = (UIImage*)[postData objectForKey:@"postPicture"];
+    NSURL *postURL = (NSURL*)[postData objectForKey:@"postURL"];
     // build your tweet, facebook, etc...
     SLComposeViewController *mySLComposerSheet = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeFacebook];
     [mySLComposerSheet setInitialText:postText];
     [mySLComposerSheet addImage:postPicture];
+    [mySLComposerSheet addURL:postURL];
+    NSLog([mySLComposerSheet addURL:postURL] ? @"YES" : @"NO");
     [self presentViewController:mySLComposerSheet animated:YES completion:nil];
     
 }
@@ -339,7 +331,7 @@
                 [self presentViewController:viewController animated:YES completion:nil];
             } else if (error){
                 NSLog(@"%@",[error localizedDescription]);
-            }
+            } 
         };
     }
 }
@@ -371,7 +363,5 @@
 #pragma mark - Game Center Delegate
 -(void)gameCenterViewControllerDidFinish:(GKGameCenterViewController *)gameCenterViewController{
     [self dismissViewControllerAnimated:YES completion:nil];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"Resume" object:self];
 }
-
 @end

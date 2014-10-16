@@ -27,4 +27,6 @@
 @property NSString* lastButton;
 @property AVAudioPlayer *bgMusicPlayer;
 @property int score;
+@property BOOL canHueHue;
+@property BOOL canRevertColor;
 @end

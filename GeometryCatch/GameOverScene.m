@@ -13,7 +13,7 @@
 #import <RevMobAds/RevMobAds.h>
 
 @implementation GameOverScene
-@synthesize shareBtn,creditBtn,playBtn,soundBtn,gameCenterBtn,bestScorePoint,bestScoreLbl,aboutBg,pauseBtn,yourScoreLbl,yourScorePoint,musicBtn, options, properlyInView, lastButton, bgMusicPlayer,score;
+@synthesize shareBtn,creditBtn,playBtn,soundBtn,gameCenterBtn,bestScorePoint,bestScoreLbl,aboutBg,pauseBtn,yourScoreLbl,yourScorePoint,musicBtn, options, properlyInView, lastButton, bgMusicPlayer,score,canHueHue,canRevertColor;
 
 
 -(id)initWithSize:(CGSize)size{
@@ -21,7 +21,10 @@
         self.backgroundColor = [SKColor whiteColor];
         options = [[Options alloc] init];
         properlyInView = YES;
+        canHueHue = NO;
+        canRevertColor = NO;
         score = [MyScene getScore];
+        
         //bg music
         NSError *error;
         NSURL * backgroundMusicURL = [[NSBundle mainBundle] URLForResource:@"Menu_Music" withExtension:@"wav"];
@@ -240,18 +243,43 @@
         
         //run auto increment score func
         [self incrementScore:score label:yourScorePoint];
-        [self getHighscore];
         if([self getHighscore] > score)
             bestScorePoint.text = [NSString stringWithFormat:@"%d", [self getHighscore]];
         else {
             bestScorePoint.text = [NSString stringWithFormat:@"%d", score];
-            [self saveHighscore:score];
         }
+//        CGFloat hue;
+//        CGFloat saturation;
+//        CGFloat brightness;
+//        CGFloat alpha;
+//        BOOL successBest = [bestScorePoint.fontColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+//        NSLog(@"bestScorePoint: %f %f %f %f", hue, saturation, brightness, alpha);
+//        BOOL successYour = [yourScorePoint.fontColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+//        NSLog(@"yourScorePoint: %f %f %f %f", hue, saturation, brightness, alpha);
         [[RevMobAds session] showFullscreen];
         [[NSNotificationCenter defaultCenter] postNotificationName:@"showAds" object:self];
 
+        
+        //record games played
+//        [self saveOneMoreGames];
     }
     return self;
+}
+-(void)hueHueHighScore{
+    [self runAction:[SKAction repeatActionForever:[SKAction sequence:@[[SKAction runBlock:^{
+        float random = (float)((arc4random()%10)*0.1);
+        bestScorePoint.fontColor = [UIColor colorWithHue:random saturation:random brightness:0.862745 alpha:1];
+        yourScorePoint.fontColor = [UIColor colorWithHue:random saturation:random brightness:0.858824 alpha:1];
+    }],[SKAction waitForDuration:0.05]]]]];
+    canHueHue = NO;
+    [self saveHighscore:score];
+
+}
+
+-(void)update:(NSTimeInterval)currentTime{
+    if(canHueHue && ([self getHighscore] < score)){
+        [self hueHueHighScore];
+    }
 }
 
 //func to choose sprites for buttons
@@ -382,12 +410,13 @@
             //release share: change sprite and pop up share window with predefined status
             else if([node.name isEqualToString:@"shareBtn"]){
                 shareBtn.texture = [SKTexture textureWithImageNamed:[self chooseSpriteWithState:NO isTouched:NO baseFileName:@"share" hasPrefix:NO]];
-                NSString *postText = [NSString stringWithFormat: @"I just got %d points in a ATOX run. How about you?", score];
+                NSString *postText = [NSString stringWithFormat: @"I just got %d points in a ATOX run. How about you?\n", score];
+                NSURL *postURL = [NSURL URLWithString:@"itunes.apple.com/fi/app/atox/id920181613?mt=8"];
                 UIGraphicsBeginImageContextWithOptions(self.view.bounds.size, NO, 0.0);
                 [self.view drawViewHierarchyInRect:self.view.bounds afterScreenUpdates:YES];
                 UIImage *postPicture = UIGraphicsGetImageFromCurrentImageContext();
                 UIGraphicsEndImageContext();
-                NSDictionary *userInfo = [NSDictionary dictionaryWithObjects:@[postText, postPicture] forKeys:@[@"postText", @"postPicture"]];
+                NSDictionary *userInfo = [NSDictionary dictionaryWithObjects:@[postText, postPicture, postURL] forKeys:@[@"postText", @"postPicture", @"postURL"]];
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"CreatePost" object:self userInfo:userInfo];
             }
             //release play: change sprite and reset game
@@ -429,6 +458,8 @@
     [label runAction:[SKAction repeatAction:[SKAction sequence:@[[SKAction runBlock:^{
         label.text = [NSString stringWithFormat:@"%d", i];
         i++;
+        if(i == limit)
+            canHueHue = YES;
     }],[SKAction waitForDuration:0.0000]]] count:limit+1]];
 }
 //retrieve high score from device
@@ -444,6 +475,26 @@
 -(void)saveHighscore:(int)points{
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults setObject:@(points) forKey:@"highscore"];
+    [defaults synchronize];
+}
+
+//retrieve high score from device
+-(int)getGamesPlayed{
+    long highscore;
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if([defaults objectForKey:@"gamesPlayed"] != nil){
+        highscore = [defaults integerForKey:@"gamesPlayed"];
+    } else highscore = 0;
+    return (int)highscore;
+}
+//save high score to device
+-(void)saveOneMoreGames{
+    int games;
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if([defaults objectForKey:@"gamesPlayed"] != nil){
+        games = [defaults integerForKey:@"gamesPlayed"];
+    } else games = 0;
+    [defaults setObject:@(games+1) forKey:@"gamesPlayed"];
     [defaults synchronize];
 }
 
