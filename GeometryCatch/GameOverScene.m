@@ -410,7 +410,7 @@
             //release share: change sprite and pop up share window with predefined status
             else if([node.name isEqualToString:@"shareBtn"]){
                 shareBtn.texture = [SKTexture textureWithImageNamed:[self chooseSpriteWithState:NO isTouched:NO baseFileName:@"share" hasPrefix:NO]];
-                NSString *postText = [NSString stringWithFormat: @"I just got %d points in a ATOX run. How about you?\n", score];
+                NSString *postText = [NSString stringWithFormat: @"I just got %d points in a ATOX run. How about you?\n#atox #c63studio\n", score];
                 NSURL *postURL = [NSURL URLWithString:@"itunes.apple.com/fi/app/atox/id920181613?mt=8"];
                 UIGraphicsBeginImageContextWithOptions(self.view.bounds.size, NO, 0.0);
                 [self.view drawViewHierarchyInRect:self.view.bounds afterScreenUpdates:YES];
