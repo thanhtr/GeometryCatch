@@ -773,6 +773,7 @@
     }
     else if(contact.bodyB.categoryBitMask == focusCategory){
         if(contact.bodyA.categoryBitMask == paddleCategory){
+            [bgBlack removeActionForKey:@"focusAction"];
             isFocused = YES;
             [self runAction:[SKAction runBlock:^{
                 focusBead.position = CGPointMake(self.size.width*2, self.size.height);
@@ -793,13 +794,16 @@
                         speedOffset = -2*level;
                     self.physicsWorld.gravity = CGVectorMake(0, speedOffset);
                     bgMusicPlayer.rate = 1 + ((level-1)*0.1);
+                    [bgBlack removeActionForKey:@"focusAction"];
+                    bgBlack.texture = [SKTexture textureWithImageNamed:@"bgBlack"];
+                    [bgBlack runAction:[SKAction fadeAlphaTo:0 duration:0.5]];
                 }
             }]]]];
-            [bgBlack runAction:[SKAction repeatAction:[SKAction sequence:@[[SKAction runBlock:^{
+            [bgBlack runAction:[SKAction repeatActionForever:[SKAction sequence:@[[SKAction runBlock:^{
                 bgBlack.texture = [SKTexture textureWithImageNamed:@"bg"];
             }],[SKAction fadeAlphaTo:0.3 duration:0.5],[SKAction fadeAlphaTo:0 duration:0.5],[SKAction runBlock:^{
                 bgBlack.texture = [SKTexture textureWithImageNamed:@"bgBlack"];
-            }]]] count:8]];
+            }]]]] withKey:@"focusAction"];
             if(options.soundOn)
                 [self runAction:[SKAction playSoundFileNamed:@"power_up.wav" waitForCompletion:NO]];
             
