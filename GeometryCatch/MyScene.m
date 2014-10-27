@@ -772,12 +772,16 @@
         [coinNode resetSimulation];
     }
     else if(contact.bodyB.categoryBitMask == focusCategory){
+        [self runAction:[SKAction runBlock:^{
+            focusBead.position = CGPointMake(self.size.width*2, self.size.height);
+        }]];
         if(contact.bodyA.categoryBitMask == paddleCategory){
             [bgBlack removeActionForKey:@"focusAction"];
+            [self removeActionForKey:@"focusSelfAction"];
             isFocused = YES;
-            [self runAction:[SKAction runBlock:^{
-                focusBead.position = CGPointMake(self.size.width*2, self.size.height);
-            }]];
+//            [self runAction:[SKAction runBlock:^{
+//                focusBead.position = CGPointMake(self.size.width*2, self.size.height);
+//            }]];
             [self runAction:[SKAction sequence:@[[SKAction runBlock:^{
                 focusAnnouncer.hidden = NO;
                 speedOffset = speedOffset/level;
@@ -798,7 +802,7 @@
                     bgBlack.texture = [SKTexture textureWithImageNamed:@"bgBlack"];
                     [bgBlack runAction:[SKAction fadeAlphaTo:0 duration:0.5]];
                 }
-            }]]]];
+            }]]] withKey:@"focusSelfAction"];
             [bgBlack runAction:[SKAction repeatActionForever:[SKAction sequence:@[[SKAction runBlock:^{
                 bgBlack.texture = [SKTexture textureWithImageNamed:@"bg"];
             }],[SKAction fadeAlphaTo:0.3 duration:0.5],[SKAction fadeAlphaTo:0 duration:0.5],[SKAction runBlock:^{
@@ -808,10 +812,6 @@
                 [self runAction:[SKAction playSoundFileNamed:@"power_up.wav" waitForCompletion:NO]];
             
         }
-        else
-            [self runAction:[SKAction runBlock:^{
-                focusBead.position = CGPointMake(self.size.width*2, self.size.height);
-            }]];
     }
     
 }
