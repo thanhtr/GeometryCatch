@@ -14,7 +14,7 @@
 		<string>https://github.com/thanhtr/GeometryCatch.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>GeometryCatch.xcodeproj/project.xcworkspace</string>
+	<string>GeometryCatch.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>D16A67BDD54C9E7EDD99441249C572567EE8F33C</key>
