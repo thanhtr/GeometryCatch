@@ -146,7 +146,7 @@
             yourScorePoint.position = CGPointMake(self.size.width/2, self.size.height*0.65 );
         
         yourScorePoint.fontColor = [SKColor colorWithRed:(float)219/255 green:(float)68/255 blue:(float)83/255 alpha:1.0];
-        yourScorePoint.fontSize = 100;
+        yourScorePoint.fontSize = 120;
         if (IS_IPAD_SCREEN) {
             [yourScorePoint setScale:1.2];
         }
