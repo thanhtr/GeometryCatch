@@ -40,7 +40,7 @@
         logo = [[SKSpriteNode alloc] initWithImageNamed:@"logo"];
         if(IS_IPAD_SCREEN)
         {
-            logo.position = CGPointMake(self.size.width/2, self.size.height*0.9);
+            logo.position = CGPointMake(self.size.width/2, self.size.height*0.85);
             [logo setScale:1.2];
         }
         else
@@ -158,10 +158,12 @@
         shareBtn = [[SKSpriteNode alloc] initWithImageNamed:@"share_normal"];
         if(IS_568_SCREEN)
             shareBtn.position = CGPointMake(self.size.width/2, self.size.height*0.158 );
+        else if(IS_IPAD_SCREEN)
+            shareBtn.position = CGPointMake(self.size.width/2, self.size.height*0.145 );
         else
             shareBtn.position = CGPointMake(self.size.width/2, self.size.height*0.15 );
         if (IS_IPAD_SCREEN) {
-            [shareBtn setScale:0.8];
+            [shareBtn setScale:1.2];
         }
         else
             [shareBtn setScale:0.5];
