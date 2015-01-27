@@ -451,6 +451,14 @@
             [self removeActionForKey:@"dropCoin"];
             [self removeActionForKey:@"dropFocus"];
             bgBlack.alpha = 0.3;
+            NSArray *children = self.children;
+            for (int i = 0; i < children.count; i++) {
+                if(([[children[i] name]  isEqual: @"gameOverText"])){
+                    gameOverTextCanBeAdded = NO;
+                    break;
+                }
+            }
+
             isPause = YES;
             if(options.soundOn)
                 [self runAction:[SKAction playSoundFileNamed:@"pausegame.mp3" waitForCompletion:NO]];
