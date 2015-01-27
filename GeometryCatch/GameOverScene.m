@@ -54,9 +54,9 @@
         //shadow of "best score"
         SKLabelNode *bestScoreLblShadow = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
         if(IS_568_SCREEN)
-            bestScoreLblShadow.position = CGPointMake(self.size.width/2, self.size.height*0.55  -3);
+            bestScoreLblShadow.position = CGPointMake(self.size.width/2, self.size.height*0.56  -3);
         else
-            bestScoreLblShadow.position = CGPointMake(self.size.width/2, self.size.height*0.58  -3);
+            bestScoreLblShadow.position = CGPointMake(self.size.width/2, self.size.height*0.56  -3);
         
         bestScoreLblShadow.text = @"Best score";
         bestScoreLblShadow.fontColor = [SKColor colorWithRed:(float)74/255 green:(float)137/255 blue:(float)220/255 alpha:1.0];
@@ -71,9 +71,9 @@
         //"best score"
         bestScoreLbl = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
         if(IS_568_SCREEN)
-            bestScoreLbl.position = CGPointMake(self.size.width/2, self.size.height*0.55 );
+            bestScoreLbl.position = CGPointMake(self.size.width/2, self.size.height*0.56 );
         else
-            bestScoreLbl.position = CGPointMake(self.size.width/2, self.size.height*0.58 );
+            bestScoreLbl.position = CGPointMake(self.size.width/2, self.size.height*0.56 );
         
         bestScoreLbl.text = @"Best score";
         bestScoreLbl.fontColor = [SKColor blackColor];
@@ -91,7 +91,7 @@
             
             bestScorePoint.position = CGPointMake(self.size.width/2, self.size.height*0.48 );
         else
-            bestScorePoint.position = CGPointMake(self.size.width/2, self.size.height*0.5 );
+            bestScorePoint.position = CGPointMake(self.size.width/2, self.size.height*0.48 );
         
         bestScorePoint.fontColor = [SKColor colorWithRed:(float)74/255 green:(float)137/255 blue:(float)220/255 alpha:1.0];
         bestScorePoint.fontSize = 67.5;
@@ -141,9 +141,9 @@
         //current score (points)
         yourScorePoint = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
         if(IS_568_SCREEN)
-            yourScorePoint.position = CGPointMake(self.size.width/2, self.size.height*0.62 );
+            yourScorePoint.position = CGPointMake(self.size.width/2, self.size.height*0.63 );
         else
-            yourScorePoint.position = CGPointMake(self.size.width/2, self.size.height*0.65 );
+            yourScorePoint.position = CGPointMake(self.size.width/2, self.size.height*0.63 );
         
         yourScorePoint.fontColor = [SKColor colorWithRed:(float)219/255 green:(float)68/255 blue:(float)83/255 alpha:1.0];
         yourScorePoint.fontSize = 120;
