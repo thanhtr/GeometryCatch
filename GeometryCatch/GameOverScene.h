@@ -18,6 +18,7 @@
 @property SKSpriteNode *creditBtn;
 @property SKSpriteNode *aboutBg;
 @property SKSpriteNode *pauseBtn;
+@property SKSpriteNode *logo;
 @property SKLabelNode *bestScoreLbl;
 @property SKLabelNode *bestScorePoint;
 @property SKLabelNode *yourScoreLbl;

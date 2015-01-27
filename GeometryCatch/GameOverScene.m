@@ -13,7 +13,7 @@
 #import <RevMobAds/RevMobAds.h>
 
 @implementation GameOverScene
-@synthesize shareBtn,creditBtn,playBtn,soundBtn,gameCenterBtn,bestScorePoint,bestScoreLbl,aboutBg,pauseBtn,yourScoreLbl,yourScorePoint,musicBtn, options, properlyInView, lastButton, bgMusicPlayer,score,canHueHue,canRevertColor;
+@synthesize shareBtn,creditBtn,playBtn,soundBtn,gameCenterBtn,bestScorePoint,bestScoreLbl,aboutBg,pauseBtn,yourScoreLbl,yourScorePoint,musicBtn, options, properlyInView, lastButton, bgMusicPlayer,score,canHueHue,canRevertColor,logo;
 
 
 -(id)initWithSize:(CGSize)size{
@@ -35,6 +35,22 @@
         if(options.musicOn)
             [bgMusicPlayer play];
         
+        //logo
+        //game title label
+        logo = [[SKSpriteNode alloc] initWithImageNamed:@"logo"];
+        if(IS_IPAD_SCREEN)
+        {
+            logo.position = CGPointMake(self.size.width/2, self.size.height*0.9);
+            [logo setScale:1.2];
+        }
+        else
+        {
+            logo.position = CGPointMake(self.size.width/2, self.size.height*0.85);
+            [logo setScale:0.5];
+        }
+        [self addChild:logo];
+        
+        
         //shadow of "best score"
         SKLabelNode *bestScoreLblShadow = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
         if(IS_568_SCREEN)
@@ -44,7 +60,7 @@
         
         bestScoreLblShadow.text = @"Best score";
         bestScoreLblShadow.fontColor = [SKColor colorWithRed:(float)74/255 green:(float)137/255 blue:(float)220/255 alpha:1.0];
-        bestScoreLblShadow.fontSize = 67.5;
+        bestScoreLblShadow.fontSize = 60;
         if(IS_IPAD_SCREEN)
             [bestScoreLblShadow setScale:1.2];
         else
@@ -61,7 +77,7 @@
         
         bestScoreLbl.text = @"Best score";
         bestScoreLbl.fontColor = [SKColor blackColor];
-        bestScoreLbl.fontSize = 67.5;
+        bestScoreLbl.fontSize = 60;
         if (IS_IPAD_SCREEN) {
             [bestScoreLbl setScale:1.2];
         }
@@ -85,7 +101,8 @@
         else
             [bestScorePoint setScale:0.5];
         [self addChild:bestScorePoint];
-        
+       
+        /*
         //"your score" shadow
         SKLabelNode *yourScoreLblShadow = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
         if(IS_568_SCREEN)
@@ -119,6 +136,7 @@
         else
             [yourScoreLbl setScale:0.5];
         [self addChild:yourScoreLbl];
+        */
         
         //current score (points)
         yourScorePoint = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
@@ -128,7 +146,7 @@
             yourScorePoint.position = CGPointMake(self.size.width/2, self.size.height*0.65 );
         
         yourScorePoint.fontColor = [SKColor colorWithRed:(float)219/255 green:(float)68/255 blue:(float)83/255 alpha:1.0];
-        yourScorePoint.fontSize = 90;
+        yourScorePoint.fontSize = 100;
         if (IS_IPAD_SCREEN) {
             [yourScorePoint setScale:1.2];
         }
@@ -139,11 +157,11 @@
         //share button
         shareBtn = [[SKSpriteNode alloc] initWithImageNamed:@"share_normal"];
         if(IS_568_SCREEN)
-            shareBtn.position = CGPointMake(self.size.width/2, self.size.height*0.38 );
+            shareBtn.position = CGPointMake(self.size.width/2, self.size.height*0.158 );
         else
-            shareBtn.position = CGPointMake(self.size.width/2, self.size.height*0.415 );
+            shareBtn.position = CGPointMake(self.size.width/2, self.size.height*0.15 );
         if (IS_IPAD_SCREEN) {
-            [shareBtn setScale:1.2];
+            [shareBtn setScale:0.8];
         }
         else
             [shareBtn setScale:0.5];
@@ -153,9 +171,9 @@
         //play button
         playBtn  = [[SKSpriteNode alloc] initWithImageNamed:@"play_normal"];
         if(IS_568_SCREEN)
-            playBtn.position = CGPointMake(self.size.width/2, self.size.height*0.24 );
+            playBtn.position = CGPointMake(self.size.width/2, self.size.height*0.35 );
         else
-            playBtn.position = CGPointMake(self.size.width/2, self.size.height*0.25 );
+            playBtn.position = CGPointMake(self.size.width/2, self.size.height*0.35 );
         if (IS_IPAD_SCREEN) {
             playBtn.xScale = 1.2;
             playBtn.yScale = 1;
@@ -170,11 +188,11 @@
         gameCenterBtn.anchorPoint = CGPointMake(0.5, 1);
         if (IS_IPAD_SCREEN) {
             [gameCenterBtn setScale:1.2];
-            gameCenterBtn.position = CGPointMake(self.size.width*0.3, self.size.height );
+            gameCenterBtn.position = CGPointMake(self.size.width*0.25, self.size.height*0.2 );
         }
         else {
             [gameCenterBtn setScale:0.5];
-            gameCenterBtn.position = CGPointMake(self.size.width*0.3, self.size.height );
+            gameCenterBtn.position = CGPointMake(self.size.width*0.25, self.size.height*0.2 );
         }
         gameCenterBtn.name = @"gameCenterBtn";
         [self addChild:gameCenterBtn];
@@ -185,11 +203,11 @@
         soundBtn.name = @"soundBtn";
         if(IS_IPAD_SCREEN){
             [soundBtn setScale:1.2];
-            soundBtn.position = CGPointMake(self.size.width*0.75, self.size.height );
+            soundBtn.position = CGPointMake(self.size.width*0.75, self.size.height*0.2 );
         }
         else {
             [soundBtn setScale:0.5];
-            soundBtn.position = CGPointMake(self.size.width*0.75, self.size.height);
+            soundBtn.position = CGPointMake(self.size.width*0.75, self.size.height*0.2);
         }
         [self addChild:soundBtn];
         
@@ -199,11 +217,11 @@
         musicBtn.name = @"musicBtn";
         if(IS_IPAD_SCREEN){
             [musicBtn setScale:1.2];
-            musicBtn.position = CGPointMake(self.size.width*0.9, self.size.height);
+            musicBtn.position = CGPointMake(self.size.width*0.9, self.size.height*0.2);
         }
         else{
             [musicBtn setScale:0.5];
-            musicBtn.position = CGPointMake(self.size.width*0.9, self.size.height);
+            musicBtn.position = CGPointMake(self.size.width*0.9, self.size.height*0.2);
         }
         [self addChild:musicBtn];
         
@@ -211,11 +229,11 @@
         creditBtn = [[SKSpriteNode alloc] initWithImageNamed:[self chooseSpriteWithState:NO isTouched:NO baseFileName:@"credit_button" hasPrefix:NO]];
         creditBtn.anchorPoint = CGPointMake(0.5, 1);
         if(IS_IPAD_SCREEN){
-            creditBtn.position = CGPointMake(self.size.width * 0.1, self.size.height );
+            creditBtn.position = CGPointMake(self.size.width * 0.1, self.size.height*0.2 );
             [creditBtn setScale:1.2];
         }
         else {
-            creditBtn.position = CGPointMake(self.size.width * 0.1, self.size.height );
+            creditBtn.position = CGPointMake(self.size.width * 0.1, self.size.height*0.2 );
             [creditBtn setScale:0.5];
         }
         creditBtn.name = @"creditBtn";

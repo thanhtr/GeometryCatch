@@ -113,6 +113,7 @@
 		D7BD479619FE2FC100514A1B /* power_up.wav in Resources */ = {isa = PBXBuildFile; fileRef = D7BD478819FE2FC100514A1B /* power_up.wav */; };
 		D7BD479719FE2FC100514A1B /* x2_red.png in Resources */ = {isa = PBXBuildFile; fileRef = D7BD478919FE2FC100514A1B /* x2_red.png */; };
 		D7BD479819FE2FC100514A1B /* x2_white.png in Resources */ = {isa = PBXBuildFile; fileRef = D7BD478A19FE2FC100514A1B /* x2_white.png */; };
+		D86ACD0F1A77AD75006EA764 /* logo.png in Resources */ = {isa = PBXBuildFile; fileRef = D86ACD0E1A77AD75006EA764 /* logo.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -126,7 +127,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		6A0CBBB01980411A003382ED /* ATOX.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ATOX.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6A0CBBB01980411A003382ED /* GeometryCatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GeometryCatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6A0CBBB31980411A003382ED /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		6A0CBBB51980411A003382ED /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		6A0CBBB71980411A003382ED /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -257,6 +258,7 @@
 		D7BD478819FE2FC100514A1B /* power_up.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = power_up.wav; sourceTree = "<group>"; };
 		D7BD478919FE2FC100514A1B /* x2_red.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = x2_red.png; sourceTree = "<group>"; };
 		D7BD478A19FE2FC100514A1B /* x2_white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = x2_white.png; sourceTree = "<group>"; };
+		D86ACD0E1A77AD75006EA764 /* logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = logo.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -306,7 +308,7 @@
 		6A0CBBB11980411A003382ED /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				6A0CBBB01980411A003382ED /* ATOX.app */,
+				6A0CBBB01980411A003382ED /* GeometryCatch.app */,
 				6A0CBBD81980411A003382ED /* GeometryCatchTests.xctest */,
 			);
 			name = Products;
@@ -386,6 +388,7 @@
 		6A0CBBF2198041CC003382ED /* Art */ = {
 			isa = PBXGroup;
 			children = (
+				D86ACD0E1A77AD75006EA764 /* logo.png */,
 				D7BD477D19FE2FC100514A1B /* bead_white.png */,
 				D7BD477F19FE2FC100514A1B /* Coin.png */,
 				D7BD478019FE2FC100514A1B /* coinParticles.png */,
@@ -559,7 +562,7 @@
 			);
 			name = GeometryCatch;
 			productName = GeometryCatch;
-			productReference = 6A0CBBB01980411A003382ED /* ATOX.app */;
+			productReference = 6A0CBBB01980411A003382ED /* GeometryCatch.app */;
 			productType = "com.apple.product-type.application";
 		};
 		6A0CBBD71980411A003382ED /* GeometryCatchTests */ = {
@@ -672,6 +675,7 @@
 				6AB8C19A198A84A300428ACB /* shape_circle.png in Resources */,
 				D7BD479119FE2FC100514A1B /* Focus.png in Resources */,
 				6A0CBBC01980411A003382ED /* InfoPlist.strings in Resources */,
+				D86ACD0F1A77AD75006EA764 /* logo.png in Resources */,
 				6AB8C19E198A84A300428ACB /* spark.png in Resources */,
 				6AB8C19F198A84A300428ACB /* square_particle.png in Resources */,
 				6AB8C1A0198A84A300428ACB /* triangle_particle.png in Resources */,
@@ -871,7 +875,7 @@
 					"$(PROJECT_DIR)/GeometryCatch",
 				);
 				"OTHER_LDFLAGS[arch=*]" = "-ObjC";
-				PRODUCT_NAME = ATOX;
+				PRODUCT_NAME = GeometryCatch;
 				PROVISIONING_PROFILE = "";
 				SPRITEKIT_TEXTURE_ATLAS_OUTPUT = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -899,7 +903,7 @@
 					"$(PROJECT_DIR)/GeometryCatch",
 				);
 				"OTHER_LDFLAGS[arch=*]" = "-ObjC";
-				PRODUCT_NAME = ATOX;
+				PRODUCT_NAME = GeometryCatch;
 				PROVISIONING_PROFILE = "";
 				SPRITEKIT_TEXTURE_ATLAS_OUTPUT = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -923,7 +927,7 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = "GeometryCatchTests/GeometryCatchTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = GeometryCatchTests;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};
@@ -941,7 +945,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "GeometryCatch/GeometryCatch-Prefix.pch";
 				INFOPLIST_FILE = "GeometryCatchTests/GeometryCatchTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = GeometryCatchTests;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};
