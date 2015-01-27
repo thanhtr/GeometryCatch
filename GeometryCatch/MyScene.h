@@ -46,6 +46,8 @@ static int score;
 @property SKLabelNode *scoreLabel;
 @property SKLabelNode *yourScorePoint;
 @property SKLabelNode *comboAnnouncer;
+@property SKLabelNode *resumeBtn;
+@property SKLabelNode *menuBtn;
 @property SKEmitterNode *rainNode;
 @property SKEmitterNode *coinNode;
 @property NSArray *bgColorArray;

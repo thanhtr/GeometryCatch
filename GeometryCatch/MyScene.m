@@ -17,7 +17,7 @@
 @end
 
 @implementation MyScene
-@synthesize paddle,speedOffset,paddleArray,paddleHoldShapeOffset, paddleArrayIndex, bgColor, levelBar, scoreLabel, isGameOver,gameOverTextCanBeAdded,gameOverText,rainNode, sparkArrayIndex, bgColorArray, bg, bgBlack, isPause,moveGroup, bgColorIndex, pauseBtn, gameOverBg,bestScoreLbl,bestScorePoint,yourScoreLbl,yourScorePoint,shareBtn,playBtn,gameOverGroup, gameCenterBtn,options,bgMusicPlayer,musicBtn,soundBtn,creditBtn,aboutBg, properlyInView,lastButton,trailingSpriteArray,trailingSpriteArrayIndex,dropArray,dropArrayIndex,level,combo,comboAnnouncer,multiplierAnnouncer, isDoubleScore,focusAnnouncer,isFocused,coin,focusBead,trailingCoinArray,trailingCoinArrayIndex, coinNode,canStart,multiplierElapsedTime;
+@synthesize paddle,speedOffset,paddleArray,paddleHoldShapeOffset, paddleArrayIndex, bgColor, levelBar, scoreLabel, isGameOver,gameOverTextCanBeAdded,gameOverText,rainNode, sparkArrayIndex, bgColorArray, bg, bgBlack, isPause,moveGroup, bgColorIndex, pauseBtn, gameOverBg,bestScoreLbl,bestScorePoint,yourScoreLbl,yourScorePoint,shareBtn,playBtn,gameOverGroup, gameCenterBtn,options,bgMusicPlayer,musicBtn,soundBtn,creditBtn,aboutBg, properlyInView,lastButton,trailingSpriteArray,trailingSpriteArrayIndex,dropArray,dropArrayIndex,level,combo,comboAnnouncer,multiplierAnnouncer, isDoubleScore,focusAnnouncer,isFocused,coin,focusBead,trailingCoinArray,trailingCoinArrayIndex, coinNode,canStart,multiplierElapsedTime,menuBtn,resumeBtn;
 //@synthesize score;
 
 -(id)initWithSize:(CGSize)size {
@@ -432,6 +432,44 @@
         scoreLabel.fontSize = 80;
     [self addChild:scoreLabel];
     
+    
+    //menu button
+    menuBtn = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
+    if(IS_568_SCREEN)
+        
+        menuBtn.position = CGPointMake(self.size.width/2, self.size.height*0.53 );
+    else
+        menuBtn.position = CGPointMake(self.size.width/2, self.size.height*0.55 );
+    menuBtn.text = @"TITLE";
+    menuBtn.fontColor = [SKColor whiteColor];
+    menuBtn.fontSize = 67.5;
+    if (IS_IPAD_SCREEN) {
+        [menuBtn setScale:1.2];
+    }
+    else
+        [menuBtn setScale:0.5];
+    menuBtn.name = @"menuBtn";
+    [self addChild:menuBtn];
+    menuBtn.zPosition = -10;
+    
+    //resume button
+    resumeBtn = [[SKLabelNode alloc] initWithFontNamed:@"SquareFont"];
+    if(IS_568_SCREEN)
+        
+        resumeBtn.position = CGPointMake(self.size.width/2, self.size.height*0.43 );
+    else
+        resumeBtn.position = CGPointMake(self.size.width/2, self.size.height*0.45 );
+    resumeBtn.text = @"RESUME";
+    resumeBtn.fontColor = [SKColor whiteColor];
+    resumeBtn.fontSize = 67.5;
+    if (IS_IPAD_SCREEN) {
+        [resumeBtn setScale:1.2];
+    }
+    else
+        [resumeBtn setScale:0.5];
+    resumeBtn.name = @"resumeBtn";
+    [self addChild:resumeBtn];
+    resumeBtn.zPosition = -10;
 }
 
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
@@ -450,7 +488,13 @@
             [self removeActionForKey:@"dropShape"];
             [self removeActionForKey:@"dropCoin"];
             [self removeActionForKey:@"dropFocus"];
+            
             bgBlack.alpha = 0.3;
+            bgBlack.zPosition = 2.0;
+            
+            resumeBtn.zPosition = 2.0;
+            menuBtn.zPosition = 2.0;
+            
             NSArray *children = self.children;
             for (int i = 0; i < children.count; i++) {
                 if(([[children[i] name]  isEqual: @"gameOverText"])){
@@ -464,8 +508,8 @@
                 [self runAction:[SKAction playSoundFileNamed:@"pausegame.mp3" waitForCompletion:NO]];
             [bgMusicPlayer pause];
         }
-        //un pause
-        else if ([node.name isEqualToString:@"pauseBtn"] && isPause){
+        //unpause
+        else if ([node.name isEqualToString:@"resumeBtn"] && isPause){
             isPause = NO;
             self.view.paused = NO;
             if(options.soundOn)
@@ -473,9 +517,51 @@
             if(options.musicOn)
                 [bgMusicPlayer play];
             bgBlack.alpha = 0.0;
+            
+            bgBlack.zPosition = -10.0;
+            
+            resumeBtn.zPosition = -10.0;
+            menuBtn.zPosition = -10.0;
+            
             [self dropShape];
             [self randomDelayedSpawnCoin];
             [self randomDelayedSpawnFocus];
+        }
+        else if ([node.name isEqualToString:@"menuBtn"] && isPause){
+            isPause = NO;
+            self.view.paused = NO;
+//            bgBlack.zPosition = -10.0;
+//            
+//            resumeBtn.zPosition = -10.0;
+//            menuBtn.zPosition = -10.0;
+//            
+            [self runAction:[SKAction sequence:@[[SKAction runBlock:^{
+                for (int i = 0; i< moveGroup.count; i++) {
+                    SKNode* col = moveGroup[i];
+                    col.zPosition = 2;
+                    if(i < bgColorIndex){
+                        SKAction *slide = [SKAction moveByX:self.size.width y:0 duration:1];
+                        slide.timingMode = SKActionTimingEaseInEaseOut;
+                        [moveGroup[i] runAction:slide];
+                    }
+                    else if (i > bgColorIndex){
+                        SKAction *slide = [SKAction moveByX:-self.size.width y:0 duration:1];
+                        slide.timingMode = SKActionTimingEaseInEaseOut;
+                        [moveGroup[i] runAction:slide];
+                    }
+                }
+                
+            }], [SKAction waitForDuration:0.5], [SKAction runBlock:^{
+                for (int i = 0; i< moveGroup.count; i++) {
+                    if (i == bgColorIndex){
+                        [moveGroup[i] runAction:[SKAction colorizeWithColor:bgColor colorBlendFactor:1 duration:0.0]];
+                    }
+                }
+            }], [SKAction waitForDuration:0.5], [SKAction runBlock:^{
+                StartScene *startScene = [[StartScene alloc] initWithSize:self.size];
+                [self.view presentScene:startScene];
+            }]]]];
+            
         }
     }
 }
