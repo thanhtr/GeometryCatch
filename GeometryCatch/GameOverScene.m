@@ -10,7 +10,6 @@
 #import "StartScene.h"
 #import "SKEase.h"
 #import "MyScene.h"
-#import <RevMobAds/RevMobAds.h>
 
 @implementation GameOverScene
 @synthesize shareBtn,creditBtn,playBtn,soundBtn,gameCenterBtn,bestScorePoint,bestScoreLbl,aboutBg,pauseBtn,yourScoreLbl,yourScorePoint,musicBtn, options, properlyInView, lastButton, bgMusicPlayer,score,canHueHue,canRevertColor,logo;
@@ -276,7 +275,6 @@
 //        NSLog(@"bestScorePoint: %f %f %f %f", hue, saturation, brightness, alpha);
 //        BOOL successYour = [yourScorePoint.fontColor getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
 //        NSLog(@"yourScorePoint: %f %f %f %f", hue, saturation, brightness, alpha);
-        [[RevMobAds session] showFullscreen];
         [[NSNotificationCenter defaultCenter] postNotificationName:@"showAds" object:self];
 
         

@@ -94,7 +94,6 @@
 		D73A929419CA4A8C00A4BF77 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D73A929319CA4A8C00A4BF77 /* GameKit.framework */; };
 		D7A4CEE619BF6CD6008B93A8 /* libGoogleAdMobAds.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D7A4CEE519BF6CD6008B93A8 /* libGoogleAdMobAds.a */; };
 		D7A4CEE819BF6CEA008B93A8 /* RevMobAds.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7A4CEE719BF6CEA008B93A8 /* RevMobAds.framework */; };
-		D7A4CEEA19BF743C008B93A8 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7A4CEE919BF743C008B93A8 /* StoreKit.framework */; };
 		D7A4CEEC19BF7442008B93A8 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7A4CEEB19BF7442008B93A8 /* MediaPlayer.framework */; };
 		D7A4CEEE19BF7449008B93A8 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7A4CEED19BF7449008B93A8 /* MessageUI.framework */; };
 		D7A4CEF019BF7459008B93A8 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7A4CEEF19BF7459008B93A8 /* SystemConfiguration.framework */; };
@@ -127,7 +126,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		6A0CBBB01980411A003382ED /* GeometryCatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GeometryCatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6A0CBBB01980411A003382ED /* ATOX.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ATOX.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6A0CBBB31980411A003382ED /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		6A0CBBB51980411A003382ED /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		6A0CBBB71980411A003382ED /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -239,7 +238,6 @@
 		D7A4CEE419BF6CD6008B93A8 /* GADRequestError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GADRequestError.h; sourceTree = "<group>"; };
 		D7A4CEE519BF6CD6008B93A8 /* libGoogleAdMobAds.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libGoogleAdMobAds.a; sourceTree = "<group>"; };
 		D7A4CEE719BF6CEA008B93A8 /* RevMobAds.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RevMobAds.framework; sourceTree = "<group>"; };
-		D7A4CEE919BF743C008B93A8 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		D7A4CEEB19BF7442008B93A8 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		D7A4CEED19BF7449008B93A8 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		D7A4CEEF19BF7459008B93A8 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -271,7 +269,6 @@
 				D7A4CEEE19BF7449008B93A8 /* MessageUI.framework in Frameworks */,
 				D7A4CEEC19BF7442008B93A8 /* MediaPlayer.framework in Frameworks */,
 				D73A929419CA4A8C00A4BF77 /* GameKit.framework in Frameworks */,
-				D7A4CEEA19BF743C008B93A8 /* StoreKit.framework in Frameworks */,
 				6AAB685F1994DA0E008776A7 /* Social.framework in Frameworks */,
 				D7A4CEE819BF6CEA008B93A8 /* RevMobAds.framework in Frameworks */,
 				6A0CBBB61980411A003382ED /* CoreGraphics.framework in Frameworks */,
@@ -308,7 +305,7 @@
 		6A0CBBB11980411A003382ED /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				6A0CBBB01980411A003382ED /* GeometryCatch.app */,
+				6A0CBBB01980411A003382ED /* ATOX.app */,
 				6A0CBBD81980411A003382ED /* GeometryCatchTests.xctest */,
 			);
 			name = Products;
@@ -322,7 +319,6 @@
 				D7A4CEEF19BF7459008B93A8 /* SystemConfiguration.framework */,
 				D7A4CEED19BF7449008B93A8 /* MessageUI.framework */,
 				D7A4CEEB19BF7442008B93A8 /* MediaPlayer.framework */,
-				D7A4CEE919BF743C008B93A8 /* StoreKit.framework */,
 				6AAB685E1994DA0E008776A7 /* Social.framework */,
 				6A0CBBB31980411A003382ED /* Foundation.framework */,
 				6A0CBBB51980411A003382ED /* CoreGraphics.framework */,
@@ -562,7 +558,7 @@
 			);
 			name = GeometryCatch;
 			productName = GeometryCatch;
-			productReference = 6A0CBBB01980411A003382ED /* GeometryCatch.app */;
+			productReference = 6A0CBBB01980411A003382ED /* ATOX.app */;
 			productType = "com.apple.product-type.application";
 		};
 		6A0CBBD71980411A003382ED /* GeometryCatchTests */ = {
@@ -597,6 +593,9 @@
 						SystemCapabilities = {
 							com.apple.GameCenter = {
 								enabled = 1;
+							};
+							com.apple.InAppPurchase = {
+								enabled = 0;
 							};
 						};
 					};
@@ -875,7 +874,7 @@
 					"$(PROJECT_DIR)/GeometryCatch",
 				);
 				"OTHER_LDFLAGS[arch=*]" = "-ObjC";
-				PRODUCT_NAME = GeometryCatch;
+				PRODUCT_NAME = ATOX;
 				PROVISIONING_PROFILE = "";
 				SPRITEKIT_TEXTURE_ATLAS_OUTPUT = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -903,7 +902,7 @@
 					"$(PROJECT_DIR)/GeometryCatch",
 				);
 				"OTHER_LDFLAGS[arch=*]" = "-ObjC";
-				PRODUCT_NAME = GeometryCatch;
+				PRODUCT_NAME = ATOX;
 				PROVISIONING_PROFILE = "";
 				SPRITEKIT_TEXTURE_ATLAS_OUTPUT = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";

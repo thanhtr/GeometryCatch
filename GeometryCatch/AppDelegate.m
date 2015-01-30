@@ -7,7 +7,6 @@
 //
 
 #import "AppDelegate.h"
-#import <RevMobAds/RevMobAds.h>
 #import "ViewController.h"
 
 @implementation AppDelegate
@@ -15,7 +14,6 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
-    [RevMobAds startSessionWithAppID:@"540ad85a409ac5d10635e515"];
     return YES;
 }
 
@@ -41,7 +39,6 @@
 {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     [[NSNotificationCenter defaultCenter] postNotificationName:@"Resume" object:self];
-    [[RevMobAds session] showFullscreen];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application
